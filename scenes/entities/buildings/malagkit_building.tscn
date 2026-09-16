@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://gwt3ibbtmbhk"]
+
+[ext_resource type="PackedScene" uid="uid://6qbxb7g4rfvd" path="res://scenes/entities/buildings/Building.tscn" id="1_eysyl"]
+[ext_resource type="Resource" uid="uid://c28prk5j7uq6a" path="res://scripts/data/MALAGKIT_Building.tres" id="2_3xumc"]
+
+[node name="MALAGKIT_Building" unique_id=1724933800 instance=ExtResource("1_eysyl")]
+data = ExtResource("2_3xumc")

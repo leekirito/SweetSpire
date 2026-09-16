@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="TribeVisualData" format=3 uid="uid://cjenkvqyfxx7a"]
+
+[ext_resource type="Script" uid="uid://c086vvo2h2jat" path="res://scripts/TribeVisualData.gd" id="1_7lk5x"]
+[ext_resource type="Texture2D" uid="uid://d2is3f0glsg85" path="res://assets/environment/KAMOTE/KAMOTE_LVL1CITY.png" id="1_30ww1"]
+[ext_resource type="Texture2D" uid="uid://bvju5ye18qwdr" path="res://assets/environment/KAMOTE/KAMOTE_FOREST.png" id="2_mhsbf"]
+[ext_resource type="Texture2D" uid="uid://bsvc8g8mkyl03" path="res://assets/environment/KAMOTE/KAMOTE_FRUIT.png" id="3_els66"]
+[ext_resource type="Texture2D" uid="uid://claktc82t48mr" path="res://assets/environment/KAMOTE/KAMOTE_ANIMAL.png" id="4_0fyf0"]
+
+[resource]
+script = ExtResource("1_7lk5x")
+ground_source_id = 4
+building_textures = Dictionary[String, Texture2D]({
+"animal": ExtResource("4_0fyf0"),
+"base": ExtResource("1_30ww1"),
+"forest": ExtResource("2_mhsbf"),
+"fruit": ExtResource("3_els66")
+})
+metadata/_custom_type_script = "uid://c086vvo2h2jat"

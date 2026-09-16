@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://crabibuq7yosw"]
+
+[ext_resource type="Script" uid="uid://ugoaj7ys6drr" path="res://scripts/UnitData.gd" id="1_78uh2"]
+[ext_resource type="Texture2D" uid="uid://c6pqytwmijxs5" path="res://assets/environment/tiles/warrior.png" id="1_nqjjh"]
+
+[resource]
+script = ExtResource("1_78uh2")
+type = "Attack"
+unit_name = "Fighter"
+cost = 1
+health = 8
+walk_range = 3
+attack_damage = 2
+defence = 2
+character_texture = Dictionary[String, Texture2D]({
+"KAMOTE": ExtResource("1_nqjjh"),
+"MALAGKIT": ExtResource("1_nqjjh"),
+"SABA": ExtResource("1_nqjjh")
+})
+metadata/_custom_type_script = "uid://ugoaj7ys6drr"

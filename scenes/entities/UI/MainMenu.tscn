@@ -1,0 +1,203 @@
+[gd_scene format=3 uid="uid://c3hlwg80u3er2"]
+
+[ext_resource type="Script" uid="uid://c3mbogyqsg1t3" path="res://scripts/MainMenu.gd" id="1_gxkns"]
+[ext_resource type="Script" uid="uid://c0jfgj5tpmb7n" path="res://scripts/GameSession.gd" id="1_pxg6q"]
+[ext_resource type="Resource" uid="uid://dm3adu0qdtrhj" path="res://scripts/data/SABA.tres" id="2_emauo"]
+[ext_resource type="Resource" uid="uid://dlemgt63ajxfo" path="res://scripts/data/MALAGKIT_DATA.tres" id="3_mmvq5"]
+[ext_resource type="Resource" uid="uid://c7idhxlkcd7ue" path="res://scripts/data/KAMOTE.tres" id="4_l688p"]
+
+[node name="MainMenu" type="CanvasLayer" unique_id=791113839]
+script = ExtResource("1_gxkns")
+saba_tribe = ExtResource("2_emauo")
+malagkit_tribe = ExtResource("3_mmvq5")
+kamote_tribe = ExtResource("4_l688p")
+
+[node name="Control" type="Control" parent="." unique_id=1955145111]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="Control" unique_id=605903552]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -207.5
+offset_top = -146.93506
+offset_right = 207.5
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.52, 0.52)
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 49
+text = "START"
+
+[node name="Button2" type="Button" parent="Control" unique_id=1026801999]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 70.0
+offset_top = 55.0
+offset_right = 241.0
+offset_bottom = 201.93506
+grow_vertical = 2
+scale = Vector2(0.57, 0.57)
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 49
+text = "SABA"
+
+[node name="Button3" type="Button" parent="Control" unique_id=2098849177]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 185.99998
+offset_top = 57.0
+offset_right = 366.0
+offset_bottom = 203.93506
+grow_vertical = 2
+scale = Vector2(0.57, 0.57)
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 49
+text = "MALAG"
+
+[node name="Button4" type="Button" parent="Control" unique_id=761818918]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 321.0
+offset_top = 49.99997
+offset_right = 492.0
+offset_bottom = 196.93506
+grow_vertical = 2
+scale = Vector2(0.57, 0.57)
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 49
+text = "KAMO"
+
+[node name="Button5" type="Button" parent="Control" unique_id=1114553182]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -432.0
+offset_top = 71.0
+offset_right = -261.0
+offset_bottom = 217.93506
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.575, 0.575)
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 49
+text = "SABA"
+
+[node name="Button6" type="Button" parent="Control" unique_id=209647541]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -312.99994
+offset_top = 71.00003
+offset_right = -132.99994
+offset_bottom = 217.93506
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.575, 0.575)
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 49
+text = "MALAG"
+
+[node name="Button7" type="Button" parent="Control" unique_id=675752287]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -190.33752
+offset_top = 66.776306
+offset_right = -19.337524
+offset_bottom = 213.71136
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.575, 0.575)
+pivot_offset_ratio = Vector2(0.5, 0.5)
+theme_override_font_sizes/font_size = 49
+text = "KAMO"
+
+[node name="Label" type="Label" parent="Control" unique_id=1862962481]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 105
+text = "SWEETSPIRE"
+
+[node name="Label2" type="Label" parent="Control" unique_id=701156793]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 168.0
+offset_top = 39.0
+offset_right = 369.0
+offset_bottom = 83.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 30
+text = "Player 1 tribe"
+
+[node name="Label3" type="Label" parent="Control" unique_id=152913968]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -308.0
+offset_top = 39.0
+offset_right = -115.0
+offset_bottom = 81.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 30
+text = "Player 2 tribe"
+
+[node name="LineEdit" type="LineEdit" parent="Control" unique_id=1248415981]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.48100004
+anchor_top = 0.22500001
+anchor_right = 0.57600003
+anchor_bottom = 0.317
+offset_left = 15.887939
+offset_top = 11.199997
+offset_right = 15.680847
+offset_bottom = 0.09199524
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label2" type="Label" parent="Control/LineEdit" unique_id=266216940]
+layout_mode = 0
+offset_left = -159.0
+offset_right = -13.0
+offset_bottom = 46.0
+theme_override_font_sizes/font_size = 33
+text = "PLAYERS:"
+
+[node name="GameSession" type="Node2D" parent="." unique_id=1021879679]
+script = ExtResource("1_pxg6q")

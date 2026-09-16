@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://kyhenfdpjtn"]
+
+[ext_resource type="PackedScene" uid="uid://drp4uvfmpfata" path="res://scenes/entities/player/UnitBase.tscn" id="1_yp2mh"]
+[ext_resource type="Resource" uid="uid://crabibuq7yosw" path="res://scripts/data/warrior.tres" id="2_v28el"]
+
+[node name="Fighter" unique_id=119288819 instance=ExtResource("1_yp2mh")]
+data = ExtResource("2_v28el")

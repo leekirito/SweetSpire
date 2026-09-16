@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://cn0l4lxtniasf"]
+
+[ext_resource type="Script" uid="uid://r7kav4gxrdr2" path="res://scripts/Unit.gd" id="1_4beuo"]
+[ext_resource type="Texture2D" uid="uid://ck4lfmmupa75i" path="res://assets/sprites/player/Male_3_Idle0.png" id="1_8g6vq"]
+
+[node name="UnitBase" type="CharacterBody2D" unique_id=1922843240]
+z_index = 999
+script = ExtResource("1_4beuo")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1770982642]
+texture = ExtResource("1_8g6vq")
+offset = Vector2(0, -202.165)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1370861738]
+polygon = PackedVector2Array(0, -64, 128, 0, 0, 64, -128, 0)

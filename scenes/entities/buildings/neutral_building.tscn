@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://bvul4fwqp5aid"]
+
+[ext_resource type="PackedScene" uid="uid://6qbxb7g4rfvd" path="res://scenes/entities/buildings/Building.tscn" id="1_f6m0f"]
+[ext_resource type="Resource" uid="uid://dbnnnxobohm3w" path="res://scripts/data/Neutral_Building.tres" id="2_jmlll"]
+
+[node name="Neutral_Building" unique_id=1724933800 instance=ExtResource("1_f6m0f")]
+data = ExtResource("2_jmlll")

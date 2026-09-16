@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://6qbxb7g4rfvd"]
+
+[ext_resource type="Script" uid="uid://ei0gxp5wkx6r" path="res://scripts/Building.gd" id="1_m7le1"]
+[ext_resource type="Texture2D" uid="uid://c8jfv7pqvqkhy" path="res://assets/environment/SABA/SABA_LVL1CITY.png" id="2_26pjj"]
+
+[node name="Building" type="Area2D" unique_id=1724933800 groups=["buildings"]]
+z_index = 2
+script = ExtResource("1_m7le1")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2053883131]
+texture = ExtResource("2_26pjj")
+offset = Vector2(0, -162.1)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1872197678]
+polygon = PackedVector2Array(0, -64, 128, 0, 0, 64, -128, 0)

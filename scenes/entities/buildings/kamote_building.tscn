@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://b0tswqw5k8gf0"]
+
+[ext_resource type="PackedScene" uid="uid://6qbxb7g4rfvd" path="res://scenes/entities/buildings/Building.tscn" id="1_ns3f8"]
+[ext_resource type="Resource" uid="uid://dbx3k30j6fl1j" path="res://scripts/data/KAMOTE_Building.tres" id="2_3o6wh"]
+
+[node name="KAMOTE_Building" unique_id=1724933800 instance=ExtResource("1_ns3f8")]
+data = ExtResource("2_3o6wh")

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://covc57vvse0x3"]
+
+[ext_resource type="PackedScene" uid="uid://6qbxb7g4rfvd" path="res://scenes/entities/buildings/Building.tscn" id="1_b4ilj"]
+[ext_resource type="Resource" uid="uid://cagew0unj1b3w" path="res://scripts/data/SABA_Building.tres" id="2_pf3wg"]
+
+[node name="SABA_Building" unique_id=1724933800 instance=ExtResource("1_b4ilj")]
+data = ExtResource("2_pf3wg")

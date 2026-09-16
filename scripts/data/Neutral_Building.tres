@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="BuildingData" format=3 uid="uid://dbnnnxobohm3w"]
+
+[ext_resource type="Script" uid="uid://drulo6yh64gow" path="res://scripts/Building_Data.gd" id="1_asr60"]
+[ext_resource type="Texture2D" uid="uid://l8f2ylelo6tb" path="res://assets/environment/MISCELLANEOUS/NORMAL_CAMP.png" id="1_to1ps"]
+
+[resource]
+script = ExtResource("1_asr60")
+neutral_texture = ExtResource("1_to1ps")
+metadata/_custom_type_script = "uid://drulo6yh64gow"

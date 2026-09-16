@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TribeVisualData" format=3 uid="uid://b3d7h23k2udxu"]
+
+[ext_resource type="Texture2D" uid="uid://c8jfv7pqvqkhy" path="res://assets/environment/SABA/SABA_LVL1CITY.png" id="1_7ia5l"]
+[ext_resource type="Script" uid="uid://c086vvo2h2jat" path="res://scripts/TribeVisualData.gd" id="1_12d8c"]
+[ext_resource type="Texture2D" uid="uid://cw8quhd1ldmrk" path="res://assets/environment/SABA/SABA_FOREST.png" id="2_q51mn"]
+[ext_resource type="Texture2D" uid="uid://bjvc0fren40ah" path="res://assets/environment/SABA/SABA_FRUIT.png" id="3_vbeb1"]
+[ext_resource type="Texture2D" uid="uid://cvqx2mwakbsms" path="res://assets/environment/SABA/SABA_ANIMAL.png" id="4_s53tx"]
+
+[resource]
+script = ExtResource("1_12d8c")
+ground_source_id = 39
+ground_atlas_coordinate = Vector2i(4, 0)
+building_textures = Dictionary[String, Texture2D]({
+"animal": ExtResource("4_s53tx"),
+"base": ExtResource("1_7ia5l"),
+"forest": ExtResource("2_q51mn"),
+"fruit": ExtResource("3_vbeb1")
+})
+metadata/_custom_type_script = "uid://c086vvo2h2jat"

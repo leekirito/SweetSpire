@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="TribeVisualData" format=3 uid="uid://esb223mujkn4"]
+
+[ext_resource type="Texture2D" uid="uid://bt5oec7rk4dw0" path="res://assets/environment/MALAGKIT/MALAGKIT_LVL1CITY.png" id="1_xl83k"]
+[ext_resource type="Script" uid="uid://c086vvo2h2jat" path="res://scripts/TribeVisualData.gd" id="1_xvtai"]
+[ext_resource type="Texture2D" uid="uid://chr5kx7f4r2vx" path="res://assets/environment/MALAGKIT/MALAGKIT_FOREST.png" id="2_6xf5r"]
+[ext_resource type="Texture2D" uid="uid://cvyitgovacyf2" path="res://assets/environment/MALAGKIT/MALAGKIT_ANIMAL.png" id="3_kelll"]
+[ext_resource type="Texture2D" uid="uid://blk4it4qnuof" path="res://assets/environment/MALAGKIT/MALAGKIT_FRUIT.png" id="4_os624"]
+
+[resource]
+script = ExtResource("1_xvtai")
+ground_source_id = 3
+building_textures = Dictionary[String, Texture2D]({
+"animal": ExtResource("3_kelll"),
+"base": ExtResource("1_xl83k"),
+"forest": ExtResource("2_6xf5r"),
+"fruit": ExtResource("4_os624")
+})
+metadata/_custom_type_script = "uid://c086vvo2h2jat"
