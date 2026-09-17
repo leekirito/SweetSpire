@@ -1011,7 +1011,7 @@ func _end_turn() -> void:
 
 
 	if active_player_index >= players.size():
-
+		unit_conquer_building()
 		active_player_index = 0
 
 		current_round += 1
@@ -1089,3 +1089,10 @@ func update_ui() -> void:
 func _on_button_button_down() -> void:
 
 	request_end_turn()
+
+
+func unit_conquer_building():
+	for tile in board_manager.occupied_cells:
+		if board_manager.building_occupied_cells.has(tile):
+			if get_building(board_manager.building_occupied_cells[tile]).owner_id != get_unit(board_manager.occupied_cells[tile]).owner_id:
+				conquer_building(board_manager.building_occupied_cells[tile], get_unit(board_manager.occupied_cells[tile]).owner_id)

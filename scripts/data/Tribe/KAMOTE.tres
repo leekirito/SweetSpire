@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d3qj65j0welet" path="res://scripts/TribeData.gd" id="1_nexqt"]
 [ext_resource type="PackedScene" uid="uid://dw8n2deqnba4p" path="res://scenes/entities/player/Ranger.tscn" id="2_asb50"]
-[ext_resource type="Resource" uid="uid://cjenkvqyfxx7a" path="res://scripts/data/KAMOTE_Visuals.tres" id="3_moeyl"]
+[ext_resource type="Resource" uid="uid://cjenkvqyfxx7a" path="res://scripts/data/Tribe/KAMOTE_Visuals.tres" id="3_moeyl"]
 
 [resource]
 script = ExtResource("1_nexqt")

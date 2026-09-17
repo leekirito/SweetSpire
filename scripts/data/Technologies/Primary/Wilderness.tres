@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://b310c6dosht7h"]
+
+[ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_74j8n"]
+
+[resource]
+script = ExtResource("1_74j8n")
+technology_id = "wilderness"
+technology_name = "Wilderness"
+description = "Allows the tribe to hunt animals and gain 1 Sugar."
+metadata/_custom_type_script = "uid://c5gq5kd0befx6"

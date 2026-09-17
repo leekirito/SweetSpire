@@ -342,3 +342,5 @@ func deselect_unit() -> void:
 	clear_highlights()
 
 	selected_unit_id = -1
+	
+	

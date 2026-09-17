@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://swer47ietx14"]
+
+[ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_jrgj7"]
+
+[resource]
+script = ExtResource("1_jrgj7")
+technology_id = "pathways"
+technology_name = "Pathways"
+description = "Allows the construction of Pathways within controlled territories."
+metadata/_custom_type_script = "uid://c5gq5kd0befx6"

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://dkvyrjox2bjll"]
+
+[ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_2uylp"]
+
+[resource]
+script = ExtResource("1_2uylp")
+technology_id = "sailing"
+technology_name = "Sailing"
+description = "Allows the construction of Fishing Docks."
+metadata/_custom_type_script = "uid://c5gq5kd0befx6"

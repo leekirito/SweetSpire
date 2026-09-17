@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://cwocgtpay2hma"]
+
+[ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_mf778"]
+
+[resource]
+script = ExtResource("1_mf778")
+technology_id = "harvesting"
+technology_name = "Harvesting"
+description = "Allows the tribe to harvest fruits and gain 1 Sugar."
+metadata/_custom_type_script = "uid://c5gq5kd0befx6"

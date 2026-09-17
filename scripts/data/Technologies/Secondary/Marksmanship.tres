@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://d0sxofts5nt2k"]
+
+[ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_m6pxp"]
+
+[resource]
+script = ExtResource("1_m6pxp")
+technology_id = "marksmanship"
+technology_name = "Marksmanship"
+description = "Unlocks the Ranger unit."
+metadata/_custom_type_script = "uid://c5gq5kd0befx6"

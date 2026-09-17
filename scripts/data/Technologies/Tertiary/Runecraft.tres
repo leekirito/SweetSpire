@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://b7n8rdyxitpap"]
+
+[ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_x26oi"]
+
+[resource]
+script = ExtResource("1_x26oi")
+technology_id = "runecraft"
+technology_name = "Runecraft"
+description = "Unlocks the Caster unit, a ranged unit capable of using magical attacks."
+metadata/_custom_type_script = "uid://c5gq5kd0befx6"

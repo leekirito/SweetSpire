@@ -1,15 +1,38 @@
 [gd_scene format=3 uid="uid://cn0l4lxtniasf"]
 
 [ext_resource type="Script" uid="uid://r7kav4gxrdr2" path="res://scripts/Unit.gd" id="1_4beuo"]
-[ext_resource type="Texture2D" uid="uid://ck4lfmmupa75i" path="res://assets/sprites/player/Male_3_Idle0.png" id="1_8g6vq"]
+[ext_resource type="Texture2D" uid="uid://d3i02py6xh8u3" path="res://assets/environment/tiles/archer.png" id="2_4beuo"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4beuo"]
+bg_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ue1wv"]
+bg_color = Color(0, 0.17379987, 0.8865132, 1)
 
 [node name="UnitBase" type="CharacterBody2D" unique_id=1922843240]
 z_index = 999
 script = ExtResource("1_4beuo")
+pixels_per_second = 700.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1770982642]
-texture = ExtResource("1_8g6vq")
+texture = ExtResource("2_4beuo")
 offset = Vector2(0, -202.165)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1370861738]
 polygon = PackedVector2Array(0, -64, 128, 0, 0, 64, -128, 0)
+
+[node name="Health" type="ProgressBar" parent="." unique_id=271927386]
+offset_left = -74.0
+offset_top = -172.0
+offset_right = 76.0
+offset_bottom = -142.0
+theme_override_styles/fill = SubResource("StyleBoxFlat_4beuo")
+show_percentage = false
+
+[node name="Defence" type="ProgressBar" parent="." unique_id=368266656]
+offset_left = -74.0
+offset_top = -172.0
+offset_right = 76.0
+offset_bottom = -141.0
+theme_override_styles/fill = SubResource("StyleBoxFlat_ue1wv")
+show_percentage = false

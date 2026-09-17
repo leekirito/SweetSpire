@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://c7v8jt7u2uh06"]
+
+[ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_msmdf"]
+
+[resource]
+script = ExtResource("1_msmdf")
+technology_id = "restoration"
+technology_name = "Restoration"
+description = "Allows the tribe to construct Restoration Towers within controlled territories."
+metadata/_custom_type_script = "uid://c5gq5kd0befx6"

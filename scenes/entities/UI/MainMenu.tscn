@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://c3mbogyqsg1t3" path="res://scripts/MainMenu.gd" id="1_gxkns"]
 [ext_resource type="Script" uid="uid://c0jfgj5tpmb7n" path="res://scripts/GameSession.gd" id="1_pxg6q"]
-[ext_resource type="Resource" uid="uid://dm3adu0qdtrhj" path="res://scripts/data/SABA.tres" id="2_emauo"]
-[ext_resource type="Resource" uid="uid://dlemgt63ajxfo" path="res://scripts/data/MALAGKIT_DATA.tres" id="3_mmvq5"]
-[ext_resource type="Resource" uid="uid://c7idhxlkcd7ue" path="res://scripts/data/KAMOTE.tres" id="4_l688p"]
+[ext_resource type="Resource" uid="uid://dm3adu0qdtrhj" path="res://scripts/data/Tribe/SABA.tres" id="2_emauo"]
+[ext_resource type="Resource" uid="uid://dlemgt63ajxfo" path="res://scripts/data/Tribe/MALAGKIT_DATA.tres" id="3_mmvq5"]
+[ext_resource type="Resource" uid="uid://c7idhxlkcd7ue" path="res://scripts/data/Tribe/KAMOTE.tres" id="4_l688p"]
 
 [node name="MainMenu" type="CanvasLayer" unique_id=791113839]
 script = ExtResource("1_gxkns")

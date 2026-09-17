@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d3qj65j0welet" path="res://scripts/TribeData.gd" id="1_k1q5t"]
 [ext_resource type="PackedScene" uid="uid://kyhenfdpjtn" path="res://scenes/entities/player/Fighter.tscn" id="2_e6tai"]
-[ext_resource type="Resource" uid="uid://esb223mujkn4" path="res://scripts/data/MALAGKIT_Visuals.tres" id="3_i46s5"]
+[ext_resource type="Resource" uid="uid://esb223mujkn4" path="res://scripts/data/Tribe/MALAGKIT_Visuals.tres" id="3_i46s5"]
 
 [resource]
 script = ExtResource("1_k1q5t")

@@ -5,6 +5,7 @@ extends CharacterBody2D
 @export var data: UnitData
 @export var owner_id: int
 @export var pixels_per_second: float = 300.0
+
 var player_state: PlayerState
 # Identity
 
@@ -37,6 +38,8 @@ var target_cell: Vector2i
 # Visuals
 
 @onready var sprite: Sprite2D = $Sprite2D
+@onready var health_ui: ProgressBar = $Health
+@onready var defence_ui: ProgressBar = $Defence
 
 
 func _ready() -> void:
@@ -49,6 +52,11 @@ func _ready() -> void:
 		return
 
 	_load_data()
+	
+	health_ui.max_value = unit_health
+	health_ui.value = unit_health
+	defence_ui.max_value = defence
+	defence_ui.value = defence
 
 
 func _load_data() -> void:
@@ -86,6 +94,7 @@ func take_damage(damage: int) -> void:
 	)
 
 	unit_health -= remaining_damage
+	update_ui()
 
 
 func get_attack_damage() -> int:
@@ -95,5 +104,7 @@ func get_attack_damage() -> int:
 func is_dead() -> bool:
 	return unit_health <= 0
 	
-func is_under_a_town():
-	pass
+func update_ui()->void:
+	health_ui.value = unit_health
+	defence_ui.value = defence
+	
