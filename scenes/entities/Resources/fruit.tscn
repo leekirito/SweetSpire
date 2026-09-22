@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://duightme6upym"]
+
+[ext_resource type="PackedScene" uid="uid://14itgc23aurn" path="res://scenes/entities/Resources/resources.tscn" id="1_jsmbu"]
+[ext_resource type="Resource" uid="uid://b8fl7v47xcvpy" path="res://scripts/data/Resources/FruitData.tres" id="2_q8nv6"]
+[ext_resource type="Texture2D" uid="uid://bjvc0fren40ah" path="res://assets/environment/SABA/SABA_FRUIT.png" id="3_6ly23"]
+
+[node name="Fruit" unique_id=1096901791 instance=ExtResource("1_jsmbu")]
+data = ExtResource("2_q8nv6")
+base_sprite = ExtResource("3_6ly23")

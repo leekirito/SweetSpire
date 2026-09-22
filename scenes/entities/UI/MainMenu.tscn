@@ -5,6 +5,14 @@
 [ext_resource type="Resource" uid="uid://dm3adu0qdtrhj" path="res://scripts/data/Tribe/SABA.tres" id="2_emauo"]
 [ext_resource type="Resource" uid="uid://dlemgt63ajxfo" path="res://scripts/data/Tribe/MALAGKIT_DATA.tres" id="3_mmvq5"]
 [ext_resource type="Resource" uid="uid://c7idhxlkcd7ue" path="res://scripts/data/Tribe/KAMOTE.tres" id="4_l688p"]
+[ext_resource type="Shader" uid="uid://b7rsnnslwqg2t" path="res://assets/Shader/chroma_key.gdshader" id="6_l688p"]
+[ext_resource type="VideoStream" uid="uid://bw8tqn0qamusg" path="res://assets/video/InShot_20260919_140634175.ogv" id="6_mmvq5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ue1wv"]
+shader = ExtResource("6_l688p")
+shader_parameter/chroma_key_color = Color(0.003921569, 0.6862745, 0.25882354, 1)
+shader_parameter/threshold = 0.3
+shader_parameter/fade = 0.1
 
 [node name="MainMenu" type="CanvasLayer" unique_id=791113839]
 script = ExtResource("1_gxkns")
@@ -12,7 +20,7 @@ saba_tribe = ExtResource("2_emauo")
 malagkit_tribe = ExtResource("3_mmvq5")
 kamote_tribe = ExtResource("4_l688p")
 
-[node name="Control" type="Control" parent="." unique_id=1955145111]
+[node name="Second" type="Control" parent="." unique_id=1955145111]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,7 +28,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Button" type="Button" parent="Control" unique_id=605903552]
+[node name="Button" type="Button" parent="Second" unique_id=605903552]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -37,7 +45,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "START"
 
-[node name="Button2" type="Button" parent="Control" unique_id=1026801999]
+[node name="Button2" type="Button" parent="Second" unique_id=1026801999]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -52,7 +60,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "SABA"
 
-[node name="Button3" type="Button" parent="Control" unique_id=2098849177]
+[node name="Button3" type="Button" parent="Second" unique_id=2098849177]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -67,7 +75,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "MALAG"
 
-[node name="Button4" type="Button" parent="Control" unique_id=761818918]
+[node name="Button4" type="Button" parent="Second" unique_id=761818918]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -82,7 +90,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "KAMO"
 
-[node name="Button5" type="Button" parent="Control" unique_id=1114553182]
+[node name="Button5" type="Button" parent="Second" unique_id=1114553182]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -100,7 +108,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "SABA"
 
-[node name="Button6" type="Button" parent="Control" unique_id=209647541]
+[node name="Button6" type="Button" parent="Second" unique_id=209647541]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -118,7 +126,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "MALAG"
 
-[node name="Button7" type="Button" parent="Control" unique_id=675752287]
+[node name="Button7" type="Button" parent="Second" unique_id=675752287]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -136,7 +144,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "KAMO"
 
-[node name="Label" type="Label" parent="Control" unique_id=1862962481]
+[node name="Label" type="Label" parent="Second" unique_id=1862962481]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -148,7 +156,7 @@ grow_horizontal = 2
 theme_override_font_sizes/font_size = 105
 text = "SWEETSPIRE"
 
-[node name="Label2" type="Label" parent="Control" unique_id=701156793]
+[node name="Label2" type="Label" parent="Second" unique_id=701156793]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -161,7 +169,7 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 30
 text = "Player 1 tribe"
 
-[node name="Label3" type="Label" parent="Control" unique_id=152913968]
+[node name="Label3" type="Label" parent="Second" unique_id=152913968]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -177,7 +185,7 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 30
 text = "Player 2 tribe"
 
-[node name="LineEdit" type="LineEdit" parent="Control" unique_id=1248415981]
+[node name="LineEdit" type="LineEdit" parent="Second" unique_id=1248415981]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.48100004
@@ -191,7 +199,7 @@ offset_bottom = 0.09199524
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label2" type="Label" parent="Control/LineEdit" unique_id=266216940]
+[node name="Label2" type="Label" parent="Second/LineEdit" unique_id=266216940]
 layout_mode = 0
 offset_left = -159.0
 offset_right = -13.0
@@ -201,3 +209,34 @@ text = "PLAYERS:"
 
 [node name="GameSession" type="Node2D" parent="." unique_id=1021879679]
 script = ExtResource("1_pxg6q")
+
+[node name="Main" type="Control" parent="." unique_id=616465581]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="Main" unique_id=441831070]
+material = SubResource("ShaderMaterial_ue1wv")
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -684.0
+offset_top = -324.0
+offset_right = 396.0
+offset_bottom = 1026.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(0.62, 0.62)
+mouse_filter = 2
+stream = ExtResource("6_mmvq5")
+speed_scale = 2.31
+autoplay = true
+loop = true

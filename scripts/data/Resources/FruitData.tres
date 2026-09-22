@@ -4,4 +4,8 @@
 
 [resource]
 script = ExtResource("1_8iwrx")
+resource_id = 3
+resource_alias = "fruit"
+collect_technology_id = "harvesting"
+can_upgrade = false
 metadata/_custom_type_script = "uid://b3dglxtibtwod"

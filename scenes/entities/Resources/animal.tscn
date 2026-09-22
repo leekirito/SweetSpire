@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://c02cd6uqhdnd7"]
+
+[ext_resource type="PackedScene" uid="uid://14itgc23aurn" path="res://scenes/entities/Resources/resources.tscn" id="1_4nf4r"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4nf4r"]
+load_path = "res://.godot/imported/SABA_ANIMAL.png-a05299bdcc9d61b9bceb25077bc25d30.ctex"
+
+[node name="Animal" unique_id=1096901791 instance=ExtResource("1_4nf4r")]
+base_sprite = SubResource("CompressedTexture2D_4nf4r")

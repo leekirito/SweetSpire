@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://chlfjp68hnya1"]
+
+[ext_resource type="Script" uid="uid://px3g6x20nc6j" path="res://scripts/UI/resource_choices.gd" id="1_c4rad"]
+
+[node name="ResourceChoices" type="Control" unique_id=1368592316]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_c4rad")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1794134508]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -576.0
+offset_top = -136.0
+offset_right = 576.0
+offset_bottom = -5.869995
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 36
+alignment = 1
+
+[node name="Collect" type="Button" parent="HBoxContainer" unique_id=2011003545]
+custom_minimum_size = Vector2(132.01, 0)
+layout_mode = 2
+text = "Collect"
+
+[node name="Upgrade" type="Button" parent="HBoxContainer" unique_id=1393011532]
+visible = false
+custom_minimum_size = Vector2(132.01, 0)
+layout_mode = 2
+text = "Upgrade"

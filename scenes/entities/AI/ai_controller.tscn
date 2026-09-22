@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://c65rljph32rtg"]
+
+[ext_resource type="Script" uid="uid://bsso85wqjgw8x" path="res://scripts/AI/ai_controller.gd" id="1_dbf8x"]
+[ext_resource type="Script" uid="uid://bcuom2dltdjhx" path="res://scripts/AI/ai_state_machine.gd" id="2_0mw0q"]
+[ext_resource type="Script" uid="uid://c6uywsyofsq15" path="res://scripts/AI/idle_base_state.gd" id="3_0ucsj"]
+[ext_resource type="Script" uid="uid://bgofu37kouxqw" path="res://scripts/AI/choose_unit_base_state.gd" id="4_3ngqk"]
+[ext_resource type="Script" uid="uid://bmovacg822g7m" path="res://scripts/AI/attack_base_state.gd" id="5_xk5vb"]
+[ext_resource type="Script" uid="uid://dpwcck5rjrkjj" path="res://scripts/AI/move_base_state.gd" id="6_0mw0q"]
+[ext_resource type="Script" uid="uid://dlvbecgte3knq" path="res://scripts/AI/end_turn_base_state.gd" id="7_0ucsj"]
+
+[node name="AIController" type="Node2D" unique_id=1835665327]
+script = ExtResource("1_dbf8x")
+
+[node name="AIStateMachine" type="Node" parent="." unique_id=1033318984 node_paths=PackedStringArray("current_state")]
+script = ExtResource("2_0mw0q")
+current_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="AIStateMachine" unique_id=2126534854]
+script = ExtResource("3_0ucsj")
+
+[node name="ChooseUnit" type="Node" parent="AIStateMachine" unique_id=1738879314]
+script = ExtResource("4_3ngqk")
+
+[node name="Attack" type="Node" parent="AIStateMachine" unique_id=2011933939]
+script = ExtResource("5_xk5vb")
+
+[node name="Move" type="Node" parent="AIStateMachine" unique_id=2082240675]
+script = ExtResource("6_0mw0q")
+
+[node name="EndTurn" type="Node" parent="AIStateMachine" unique_id=379240558]
+script = ExtResource("7_0ucsj")

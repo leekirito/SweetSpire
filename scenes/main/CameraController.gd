@@ -9,6 +9,7 @@ func _ready() -> void:
 	target_zoom = zoom
 
 
+## Smoothly zooms with the wheel and pans while the middle mouse button is held.
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 

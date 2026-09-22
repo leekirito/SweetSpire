@@ -4,4 +4,6 @@
 
 [resource]
 script = ExtResource("1_itjit")
+resource_id = 4
+resource_alias = "mountain"
 metadata/_custom_type_script = "uid://b3dglxtibtwod"

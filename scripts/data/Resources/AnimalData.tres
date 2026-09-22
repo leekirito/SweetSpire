@@ -4,4 +4,8 @@
 
 [resource]
 script = ExtResource("1_4xmu7")
+resource_id = 2
+resource_alias = "animal"
+collect_technology_id = "wilderness"
+can_upgrade = false
 metadata/_custom_type_script = "uid://b3dglxtibtwod"

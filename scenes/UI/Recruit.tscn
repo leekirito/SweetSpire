@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cybja0bqnm471"]
 
-[ext_resource type="Script" uid="uid://dt2340s88cfh1" path="res://scenes/UI/recruitment_ui.gd" id="1_uhxda"]
+[ext_resource type="Script" uid="uid://dt2340s88cfh1" path="res://scripts/recruitment_ui.gd" id="1_uhxda"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0iy8c"]
 
@@ -197,6 +197,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.025, 0.025)
 pivot_offset_ratio = Vector2(0.5, 0.5)
+text = "Fighter"
 
 [node name="Button2" type="Button" parent="Panel" unique_id=55740825]
 layout_mode = 1
@@ -213,6 +214,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.025, 0.025)
 pivot_offset_ratio = Vector2(0.5, 0.5)
+text = "Ranger"
 
 [node name="Button3" type="Button" parent="Panel" unique_id=226228186]
 layout_mode = 1
@@ -223,17 +225,14 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -84.49768
 offset_top = -81.49982
-offset_right = 84.49759
+offset_right = 84.49756
 offset_bottom = 81.49982
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.025, 0.025)
 pivot_offset_ratio = Vector2(0.5, 0.5)
 offset_transform_position = Vector2(0.595, 0)
+text = "Pathfinder"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1815380293]
 libraries/ = SubResource("AnimationLibrary_w11cc")
-
-[connection signal="pressed" from="Panel/Button" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="Panel/Button2" to="." method="_on_button_2_pressed"]
-[connection signal="pressed" from="Panel/Button3" to="." method="_on_button_3_pressed"]

@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://bxhaaf333bqu7" path="res://scripts/player_controller.gd" id="5_3km4f"]
 [ext_resource type="Script" uid="uid://knej6iu7wf0i" path="res://scripts/match_manager.gd" id="6_qkm1d"]
 [ext_resource type="Script" uid="uid://gcvoh7f7l63m" path="res://scripts/TerritoryManager.gd" id="6_sjxhf"]
+[ext_resource type="PackedScene" uid="uid://c02cd6uqhdnd7" path="res://scenes/entities/Resources/animal.tscn" id="8_ostsq"]
+[ext_resource type="PackedScene" uid="uid://duightme6upym" path="res://scenes/entities/Resources/fruit.tscn" id="9_3km4f"]
 [ext_resource type="PackedScene" uid="uid://bvul4fwqp5aid" path="res://scenes/entities/buildings/neutral_building.tscn" id="11_jsdfw"]
 
 [sub_resource type="Gradient" id="Gradient_ostsq"]
@@ -128,6 +130,19 @@ theme_override_font_sizes/font_size = 11
 text = "ROUND 1"
 horizontal_alignment = 1
 
+[node name="Sugar" type="Label" parent="CanvasLayer/Control" unique_id=2861636]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -93.025024
+offset_right = -32.025024
+offset_bottom = 23.0
+grow_horizontal = 0
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 23
+text = "Sugars: "
+
 [node name="BG" type="Sprite2D" parent="." unique_id=1939085151]
 z_index = -9
 position = Vector2(2768, -850)
@@ -152,7 +167,7 @@ position = Vector2(3687, -1009)
 allowed_starting_tribe_ids = Array[String](["kamote"])
 
 [node name="Neutral_Building5" parent="." unique_id=1724933800 instance=ExtResource("11_jsdfw")]
-position = Vector2(1256, 322)
+position = Vector2(1635, -166)
 allowed_starting_tribe_ids = Array[String](["saba"])
 
 [node name="Neutral_Building6" parent="." unique_id=1571213260 instance=ExtResource("11_jsdfw")]
@@ -160,5 +175,11 @@ position = Vector2(2379, -554)
 
 [node name="Neutral_Building7" parent="." unique_id=316480221 instance=ExtResource("11_jsdfw")]
 position = Vector2(3678, -1413)
+
+[node name="Animal" parent="." unique_id=1096901791 instance=ExtResource("8_ostsq")]
+position = Vector2(1751, 111)
+
+[node name="Fruit" parent="." unique_id=606895385 instance=ExtResource("9_3km4f")]
+position = Vector2(1493, -233)
 
 [connection signal="button_down" from="CanvasLayer/Control/Button" to="MatchManager" method="_on_button_button_down"]

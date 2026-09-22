@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="TribeData" format=3 uid="uid://dlemgt63ajxfo"]
 
 [ext_resource type="Script" uid="uid://d3qj65j0welet" path="res://scripts/TribeData.gd" id="1_k1q5t"]
+[ext_resource type="Resource" uid="uid://b310c6dosht7h" path="res://scripts/data/Technologies/Primary/Wilderness.tres" id="2_bsrac"]
 [ext_resource type="PackedScene" uid="uid://kyhenfdpjtn" path="res://scenes/entities/player/Fighter.tscn" id="2_e6tai"]
 [ext_resource type="Resource" uid="uid://esb223mujkn4" path="res://scripts/data/Tribe/MALAGKIT_Visuals.tres" id="3_i46s5"]
 
@@ -8,7 +9,7 @@
 script = ExtResource("1_k1q5t")
 tribe_id = "malagkit"
 tribe_name = "MALAGKIT"
-starting_technology = "Hunting"
+starting_technology = ExtResource("2_bsrac")
 starting_unit_scene = ExtResource("2_e6tai")
 visuals = ExtResource("3_i46s5")
 territory_color = Color(0.59607846, 0.75686276, 0.7176471, 1)

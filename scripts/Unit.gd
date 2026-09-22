@@ -59,6 +59,7 @@ func _ready() -> void:
 	defence_ui.value = defence
 
 
+## Copies immutable design data into mutable per-match combat stats.
 func _load_data() -> void:
 	unit_walk_range = data.walk_range
 	unit_name = data.unit_name
@@ -68,6 +69,7 @@ func _load_data() -> void:
 	defence = data.defence
 	type = data.type
 	
+## Assigns runtime ownership and selects the texture for the player's tribe.
 func setup_player(
 	player: PlayerState
 ) -> void:
@@ -81,6 +83,7 @@ func setup_player(
 		]
 
 
+## Consumes defence before health, then refreshes the unit bars.
 func take_damage(damage: int) -> void:
 	var absorbed_damage: int = mini(
 		defence,

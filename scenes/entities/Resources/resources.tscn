@@ -2,9 +2,15 @@
 
 [ext_resource type="Texture2D" uid="uid://bjvc0fren40ah" path="res://assets/environment/SABA/SABA_FRUIT.png" id="1_bml6o"]
 [ext_resource type="Script" uid="uid://ceewgnjyjpeox" path="res://scripts/Resources.gd" id="1_dgnji"]
+[ext_resource type="Resource" uid="uid://dq6thu4r1ix8x" path="res://scripts/data/Resources/AnimalData.tres" id="2_5ldna"]
+[ext_resource type="Texture2D" uid="uid://cvqx2mwakbsms" path="res://assets/environment/SABA/SABA_ANIMAL.png" id="3_ssyye"]
+[ext_resource type="PackedScene" uid="uid://chlfjp68hnya1" path="res://scenes/UI/resource_choices.tscn" id="4_itpds"]
 
 [node name="Resources" type="Area2D" unique_id=1096901791 groups=["resources"]]
 script = ExtResource("1_dgnji")
+data = ExtResource("2_5ldna")
+base_sprite = ExtResource("3_ssyye")
+resource_choices_scene = ExtResource("4_itpds")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=891014490]
 texture = ExtResource("1_bml6o")

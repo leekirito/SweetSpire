@@ -8,51 +8,52 @@ var selected_tribes: Dictionary[int, TribeData] = {}
 
 
 func _ready() -> void:
-	$Control/Button2.pressed.connect(
+	$Second/Button2.pressed.connect(
 		select_tribe.bind(
 			1,
 			saba_tribe
 		)
 	)
 
-	$Control/Button3.pressed.connect(
+	$Second/Button3.pressed.connect(
 		select_tribe.bind(
 			1,
 			malagkit_tribe
 		)
 	)
 
-	$Control/Button4.pressed.connect(
+	$Second/Button4.pressed.connect(
 		select_tribe.bind(
 			1,
 			kamote_tribe
 		)
 	)
 
-	$Control/Button5.pressed.connect(
+	$Second/Button5.pressed.connect(
 		select_tribe.bind(
 			2,
 			saba_tribe
 		)
 	)
 
-	$Control/Button6.pressed.connect(
+	$Second/Button6.pressed.connect(
 		select_tribe.bind(
 			2,
 			malagkit_tribe
 		)
 	)
 
-	$Control/Button7.pressed.connect(
+	$Second/Button7.pressed.connect(
 		select_tribe.bind(
 			2,
 			kamote_tribe
 		)
 	)
 	
-	$Control/Button.pressed.connect(
+	$Second/Button.pressed.connect(
 		start_game
 	)
+## Records a player's pending tribe choice without creating match state yet.
 func select_tribe(
 	player_id: int,
 	tribe: TribeData
@@ -67,6 +68,7 @@ func select_tribe(
 		tribe.tribe_name
 	)
 	
+## Creates the hotseat player state and hands it to the persistent GameSession.
 func start_game() -> void:
 	if not selected_tribes.has(1):
 		print("Player 1 has not selected a tribe.")
@@ -85,7 +87,7 @@ func start_game() -> void:
 	player_1.sugars = 5
 
 	player_1.unlocked_technologies.append(
-		player_1.tribe.starting_technology
+		player_1.tribe.starting_technology.technology_id
 	)
 
 	GameSession.add_player(
@@ -100,7 +102,7 @@ func start_game() -> void:
 	player_2.sugars = 5
 
 	player_2.unlocked_technologies.append(
-		player_2.tribe.starting_technology
+		player_2.tribe.starting_technology.technology_id
 	)
 
 	GameSession.add_player(

@@ -85,6 +85,7 @@ func _ready() -> void:
 	queue_redraw()
 
 
+## Mirrors the authored TileMap into the runtime navigation and collision grid.
 func _setup_grid() -> void:
 	if tile_map_layer == null:
 		push_error("BoardManager has no TileMapLayer.")
@@ -142,6 +143,7 @@ func _cell_shape_from_tileset(
 			return AStarGrid2D.CELL_SHAPE_ISOMETRIC_RIGHT
 
 
+## Combines tile metadata, obstacle layers, and manual overrides into one blocked-cell map.
 func _refresh_solid_cells() -> void:
 	var rect: Rect2i = astar_grid.region
 
@@ -253,6 +255,7 @@ func _has_custom_data_layer(
 
 # COORDINATES
 
+## Converts scene-space positions to the single board coordinate system used by gameplay.
 func cell_from_world(
 	world_position: Vector2
 ) -> Vector2i:
@@ -302,6 +305,7 @@ func get_resource_id_at_world(
 		-1
 	)
 
+## Snaps a unit to its cell and records exclusive occupancy.
 func register_unit(unit: Unit) -> void:
 	var cell: Vector2i = cell_from_world(
 		unit.global_position
@@ -421,6 +425,7 @@ func is_cell_blocked(
 
 # RANGE
 
+## Returns cells inside square range that are not blocked by terrain or line of sight.
 func get_square_tiles(
 	tile_range: int,
 	center: Vector2i
@@ -459,8 +464,27 @@ func get_square_tiles(
 			)
 
 	return tiles
+func unregister_resource(
+	resource: Resources
+) -> void:
+
+	if resource == null:
+		return
 
 
+	if (
+		resources_occupied_cells.get(
+			resource.current_cell,
+			-1
+		)
+		== resource.resource_instance_id
+	):
+
+		resources_occupied_cells.erase(
+			resource.current_cell
+		)
+
+## Samples the straight line between cells and prevents passing through blocked corners.
 func has_clear_path(
 	start: Vector2i,
 	target: Vector2i
@@ -537,6 +561,7 @@ func has_clear_path(
 	return true
 
 
+## Filters geometric range to destinations not currently occupied by another unit.
 func get_movement_tiles(
 	unit: Unit
 ) -> Array[Vector2i]:
@@ -595,6 +620,7 @@ func can_move_to(
 
 # AUTHORITATIVE BOARD CHANGE
 
+## Updates occupancy immediately; visual movement is deliberately handled separately.
 func commit_unit_move(
 	unit: Unit,
 	target_cell: Vector2i
@@ -613,6 +639,7 @@ func commit_unit_move(
 
 # VISUAL MOVEMENT
 
+## Tweens a committed move and exposes start/finish signals for UI and turn safety.
 func animate_unit_move(
 	unit: Unit,
 	start_world_position: Vector2,
@@ -667,7 +694,6 @@ func animate_unit_move(
 
 	move_finished.emit(
 		unit.unit_id,
-		target_cell
 	)
 
 # OVERLAY
@@ -733,6 +759,7 @@ func _input(event: InputEvent) -> void:
 
 # DEBUG
 
+## Draws development-only cell coordinates and collision overlays.
 func _draw() -> void:
 	if not debug_draw:
 		return

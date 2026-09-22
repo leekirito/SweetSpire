@@ -21,11 +21,16 @@ config/features=PackedStringArray("4.7", "Mobile")
 [autoload]
 
 GameSession="*uid://c0jfgj5tpmb7n"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [editor]
 
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")
 
 [global_group]
 

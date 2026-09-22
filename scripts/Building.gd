@@ -8,8 +8,13 @@ extends Area2D
 
 var building_id: int = -1
 var current_cell: Vector2i
-
-
+var current_exp: int = 0
+const EXP_REQUIREMENTS := {
+	1: 2,
+	2: 3,
+	3: 4,
+	4: 5
+}
 # ============================================================
 # OWNERSHIP
 # ============================================================
@@ -82,8 +87,9 @@ signal level_changed(
 # READY
 # ============================================================
 
+## Maps town level to the sugar paid at each round boundary.
 func _update_building_income():
-	
+
 	#territory_radius = building_level
 	match building_level:
 		1, 2:
@@ -95,6 +101,7 @@ func _update_building_income():
 		5:
 			by_turn_sugar = 8
 
+## Applies all level-dependent effects before notifying territory systems.
 func increase_level() -> void:
 
 	if building_level >= 5:
@@ -108,7 +115,39 @@ func increase_level() -> void:
 	level_changed.emit(
 		self
 	)
+
+
+
+func get_exp_required() -> int:
+	if building_level >= 5:
+		return 0
+
+	return EXP_REQUIREMENTS.get(
+		building_level,
+		0
+	)
 	
+func add_exp(amount: int) -> void:
+	if building_level >= 5:
+		return
+
+	current_exp += amount
+
+	check_level_up()
+
+## Supports gaining enough EXP for multiple levels in one reward.
+func check_level_up() -> void:
+	while building_level < 5:
+
+		var required_exp: int = get_exp_required()
+
+		if current_exp < required_exp:
+			break
+
+		current_exp -= required_exp
+
+		increase_level()
+
 	
 func _update_territory_radius() -> void:
 
@@ -144,6 +183,7 @@ func _ready() -> void:
 # STARTING TOWN CHECK
 # ============================================================
 
+## Keeps authored starting-location restrictions in the town data.
 func can_be_starting_base_for(
 	tribe: TribeData
 ) -> bool:
@@ -187,6 +227,7 @@ func set_player_owner(
 # VISUALS
 # ============================================================
 
+## Swaps only this town's art to the owning tribe's building texture.
 func apply_visual_theme(
 	tribe: TribeData
 ) -> void:
@@ -254,6 +295,7 @@ func conquer(
 # RECRUITMENT
 # ============================================================
 
+## Spawns the town-specific recruitment popup near the selected building.
 func open_recruitment_ui() -> void:
 
 	var new_ui = (

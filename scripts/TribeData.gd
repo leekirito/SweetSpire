@@ -10,7 +10,7 @@ extends Resource
 
 @export_group("Starting Data")
 
-@export var starting_technology: String = ""
+@export var starting_technology: TechnologyData
 @export var starting_unit_scene: PackedScene
 
 

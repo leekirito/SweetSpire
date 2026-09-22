@@ -2,18 +2,13 @@ class_name TerritoryManager
 extends Node2D
 
 
-# ============================================================
-# REFERENCES
-# ============================================================
+
 
 @onready var board_manager: BoardManager = (
 	$"../BoardManager"
 )
 
 
-# ============================================================
-# DEBUG VISUALS
-# ============================================================
 
 @export_group("Territory Visuals")
 
@@ -40,9 +35,6 @@ extends Node2D
 
 @export var territory_fill_alpha: float = 0.15
 
-# ============================================================
-# TERRITORY DATA
-# ============================================================
 
 # Cell -> Building ID
 var cell_to_building_id: Dictionary[Vector2i,int] = {}
@@ -52,12 +44,11 @@ var cell_to_building_id: Dictionary[Vector2i,int] = {}
 var buildings_by_id: Dictionary[int,Building] = {}
 
 
-# ============================================================
-# TERRITORY SETUP
-# ============================================================
+
 func _ready() -> void:
 	z_index = 1
 	queue_redraw()
+## Recalculates cell ownership after setup or any town radius change.
 func rebuild_territories(
 	buildings: Array[Building]
 ) -> void:
@@ -90,6 +81,7 @@ func rebuild_territories(
 	queue_redraw()
 
 
+## Claims a town's cells without silently replacing an earlier overlapping claim.
 func _register_building_territory(
 	building: Building
 ) -> void:
@@ -141,9 +133,7 @@ func _register_building_territory(
 		)
 
 
-# ============================================================
-# TERRITORY CELLS
-# ============================================================
+
 
 func get_territory_cells(
 	center: Vector2i,
@@ -183,10 +173,8 @@ func get_territory_cells(
 	return cells
 
 
-# ============================================================
-# RESOURCE TERRITORIES
-# ============================================================
 
+## Associates each resource with the town and player controlling its current cell.
 func bind_resources_to_territories(
 	resources: Array[Resources]
 ) -> void:
@@ -237,6 +225,7 @@ func bind_resources_to_territories(
 		)
 
 
+## Propagates a captured town's new owner to resources already bound to it.
 func update_resources_for_building(
 	building: Building,
 	resources: Array[Resources]
@@ -263,9 +252,6 @@ func update_resources_for_building(
 	queue_redraw()
 
 
-# ============================================================
-# LOOKUP
-# ============================================================
 
 func get_building_id_at_cell(
 	cell: Vector2i
@@ -277,9 +263,6 @@ func get_building_id_at_cell(
 	)
 
 
-# ============================================================
-# DRAW TERRITORY BORDERS
-# ============================================================
 
 func _draw() -> void:
 
@@ -353,6 +336,7 @@ func _draw_territory_line(
 		true
 	)
 
+## Draws only exposed diamond edges so adjacent territory cells share no internal border.
 func _draw_building_border(
 	building: Building,
 	half_size: Vector2,

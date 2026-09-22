@@ -2,13 +2,14 @@
 
 [ext_resource type="Script" uid="uid://d3qj65j0welet" path="res://scripts/TribeData.gd" id="1_nv6be"]
 [ext_resource type="PackedScene" uid="uid://bxt5sabvny8r7" path="res://scenes/entities/player/Pathfinder.tscn" id="2_iocdk"]
+[ext_resource type="Resource" uid="uid://dp2oxyukiq1ax" path="res://scripts/data/Technologies/Primary/Pathfinding.tres" id="2_owd06"]
 [ext_resource type="Resource" uid="uid://b3d7h23k2udxu" path="res://scripts/data/Tribe/SABA_Visuals.tres" id="3_065ih"]
 
 [resource]
 script = ExtResource("1_nv6be")
 tribe_id = "saba"
 tribe_name = "SABA"
-starting_technology = "Pathfinding"
+starting_technology = ExtResource("2_owd06")
 starting_unit_scene = ExtResource("2_iocdk")
 visuals = ExtResource("3_065ih")
 territory_color = Color(0.96862745, 0.63529414, 0.16470589, 1)

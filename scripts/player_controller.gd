@@ -37,6 +37,7 @@ func _ready() -> void:
 
 # INPUT
 
+## Routes a click by priority: selected-unit action, unit selection, town UI, then resource UI.
 func _unhandled_input(event: InputEvent) -> void:
 	if not (
 		event is InputEventMouseButton
@@ -92,9 +93,39 @@ func _unhandled_input(event: InputEvent) -> void:
 			building.open_recruitment_ui()
 
 		return
+	var resource_id: int = (
+	board_manager.get_resource_id_at_world(
+		mouse_position
+	)
+	)
+	print(
+	"Clicked resource ID: ",
+	resource_id
+	)
+	if resource_id != -1:
+
+		var resource: Resources = (
+			match_manager.get_resource(
+				resource_id
+			)
+		)
+
+		print(
+			"Resource found: ",
+			resource
+		)
+
+		if resource != null:
+
+			resource.open_resource_choices(
+				match_manager
+			)
+
+			return
 
 # SELECTED UNIT INPUT
 
+## Interprets a selected unit's next click as an attack, move, or deselection.
 func _handle_selected_unit_click(
 	mouse_position: Vector2
 ) -> void:
@@ -180,6 +211,7 @@ func _handle_selected_unit_click(
 
 # SELECT UNIT
 
+## Selects only an actionable unit belonging to the active player.
 func _try_select_unit(
 	mouse_position: Vector2
 ) -> void:
@@ -246,6 +278,7 @@ func _show_unit_options(
 		)
 
 
+## Highlights only attack cells that contain an enemy rather than every cell in range.
 func _show_attack_options(
 	unit: Unit
 ) -> void:
@@ -286,9 +319,9 @@ func _show_attack_options(
 
 # MOVEMENT FINISHED
 
+## Refreshes attack options after the unit reaches its authoritative destination.
 func _on_move_finished(
 	unit_id: int,
-	final_cell: Vector2i
 ) -> void:
 
 	if selected_unit_id != unit_id:
