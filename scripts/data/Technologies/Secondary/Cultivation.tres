@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://chqdrxoe6twqm"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_f1ucv"]
+[ext_resource type="Resource" uid="uid://cwocgtpay2hma" path="res://scripts/data/Technologies/Primary/Harvesting.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_f1ucv")
 technology_id = "cultivation"
 technology_name = "Cultivation"
 description = "Allows the tribe to construct Farms within controlled territories."
+unlock_effects = Array[String](["Construct Farms in controlled territory", "Farms provide renewable resources"])
+cost = 5
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

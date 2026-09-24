@@ -2,6 +2,17 @@
 
 [ext_resource type="Script" uid="uid://ugoaj7ys6drr" path="res://scripts/UnitData.gd" id="1_78uh2"]
 [ext_resource type="Texture2D" uid="uid://c6pqytwmijxs5" path="res://assets/environment/tiles/warrior.png" id="1_nqjjh"]
+[ext_resource type="Script" uid="uid://bawcf75unqena" path="res://scripts/RangePattern.gd" id="2_gnmde"]
+
+[sub_resource type="Resource" id="Resource_4qk3i"]
+script = ExtResource("2_gnmde")
+base_dimensions = Vector2i(3, 3)
+metadata/_custom_type_script = "uid://bawcf75unqena"
+
+[sub_resource type="Resource" id="Resource_qlxqp"]
+script = ExtResource("2_gnmde")
+base_dimensions = Vector2i(3, 3)
+metadata/_custom_type_script = "uid://bawcf75unqena"
 
 [resource]
 script = ExtResource("1_78uh2")
@@ -12,6 +23,8 @@ health = 8
 walk_range = 3
 attack_damage = 2
 defence = 2
+movement_pattern = SubResource("Resource_qlxqp")
+attack_pattern = SubResource("Resource_4qk3i")
 character_texture = Dictionary[String, Texture2D]({
 "KAMOTE": ExtResource("1_nqjjh"),
 "MALAGKIT": ExtResource("1_nqjjh"),

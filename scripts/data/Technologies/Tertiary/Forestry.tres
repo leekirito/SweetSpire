@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://bcmi0gfavphhj"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_ahd3f"]
+[ext_resource type="Resource" uid="uid://d0sxofts5nt2k" path="res://scripts/data/Technologies/Secondary/Marksmanship.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_ahd3f")
 technology_id = "forestry"
 technology_name = "Forestry"
-description = "Allows the tribe to cut trees and gain 1 Sugar.Alternatively, players may construct a Lumber Factory within their territory."
+description = "Allows the tribe to develop forests for immediate Sugar or production."
+unlock_effects = Array[String](["Cut trees and gain 1 Sugar", "Construct a Lumber Factory within controlled territory"])
+cost = 8
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

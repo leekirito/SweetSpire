@@ -2,16 +2,32 @@
 
 [ext_resource type="Texture2D" uid="uid://clybfvtrbblca" path="res://assets/environment/tiles/horse.png" id="1_sw5ks"]
 [ext_resource type="Script" uid="uid://ugoaj7ys6drr" path="res://scripts/UnitData.gd" id="2_jr1q0"]
+[ext_resource type="Script" uid="uid://bawcf75unqena" path="res://scripts/RangePattern.gd" id="2_qlxqp"]
+
+[sub_resource type="Resource" id="Resource_tq13b"]
+script = ExtResource("2_qlxqp")
+shape = 2
+base_dimensions = Vector2i(3, 3)
+metadata/_custom_type_script = "uid://bawcf75unqena"
+
+[sub_resource type="Resource" id="Resource_dep64"]
+script = ExtResource("2_qlxqp")
+shape = 2
+base_dimensions = Vector2i(3, 3)
+metadata/_custom_type_script = "uid://bawcf75unqena"
 
 [resource]
 script = ExtResource("2_jr1q0")
 type = "Explorer / Attack"
 unit_name = "Pathfinder"
 cost = 2
+required_technology_id = "pathfinding"
 health = 10
 walk_range = 2
 attack_damage = 2
 defence = 1
+movement_pattern = SubResource("Resource_dep64")
+attack_pattern = SubResource("Resource_tq13b")
 character_texture = Dictionary[String, Texture2D]({
 "KAMOTE": ExtResource("1_sw5ks"),
 "MALAGKIT": ExtResource("1_sw5ks"),

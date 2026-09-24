@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://c6jcpfaqifntx"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_84wf7"]
+[ext_resource type="Resource" uid="uid://swer47ietx14" path="res://scripts/data/Technologies/Secondary/Pathways.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_84wf7")
 technology_id = "expedition"
 technology_name = "Expedition"
 description = "Allows tribes to explore Ancient Ruins."
+unlock_effects = Array[String](["Explore Ancient Ruins", "Ruins provide resources and other potential rewards"])
+cost = 8
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

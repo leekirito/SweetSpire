@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://d0sxofts5nt2k"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_m6pxp"]
+[ext_resource type="Resource" uid="uid://b310c6dosht7h" path="res://scripts/data/Technologies/Primary/Wilderness.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_m6pxp")
 technology_id = "marksmanship"
 technology_name = "Marksmanship"
 description = "Unlocks the Ranger unit."
+unlock_effects = Array[String](["Unlock the Ranger unit"])
+cost = 5
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

@@ -70,6 +70,8 @@ var territory_cells: Array[Vector2i] = []
 # ============================================================
 
 @onready var sprite: Sprite2D = $Sprite2D
+@onready var exp_backdrop: Panel = $ExpBackdrop
+@onready var exp_segments: HBoxContainer = $ExpBackdrop/ExpSegments
 
 
 var recruitment_ui: PackedScene = preload(
@@ -134,6 +136,51 @@ func add_exp(amount: int) -> void:
 	current_exp += amount
 
 	check_level_up()
+	_refresh_exp_bar(true)
+
+
+## Shows this town's round income as rising world-space feedback.
+func show_sugar_gain(amount: int) -> void:
+	if amount <= 0:
+		return
+
+	var sugar_label := Label.new()
+	sugar_label.text = "+" + str(amount) + " SUGAR"
+	sugar_label.z_index = 2000
+	sugar_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	sugar_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sugar_label.custom_minimum_size = Vector2(180.0, 52.0)
+	sugar_label.position = global_position + Vector2(-90.0, -245.0)
+	sugar_label.pivot_offset = Vector2(90.0, 26.0)
+	sugar_label.add_theme_font_size_override("font_size", 34)
+	sugar_label.add_theme_color_override("font_color", Color("ffd166"))
+	sugar_label.add_theme_color_override("font_outline_color", Color("4a2a0b"))
+	sugar_label.add_theme_constant_override("outline_size", 8)
+
+	get_tree().current_scene.add_child(sugar_label)
+	sugar_label.scale = Vector2(0.72, 0.72)
+
+	var tween := sugar_label.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(
+		sugar_label,
+		"position",
+		sugar_label.position + Vector2(0.0, -90.0),
+		1.0
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(
+		sugar_label,
+		"scale",
+		Vector2.ONE,
+		0.18
+	).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(
+		sugar_label,
+		"modulate:a",
+		0.0,
+		0.42
+	).set_delay(0.58).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.chain().tween_callback(sugar_label.queue_free)
 
 ## Supports gaining enough EXP for multiple levels in one reward.
 func check_level_up() -> void:
@@ -177,6 +224,50 @@ func _ready() -> void:
 	_update_territory_radius()
 	_update_building_income()
 	make_neutral()
+	_refresh_exp_bar()
+
+
+## Rebuilds the meter so one segment always represents one required EXP.
+func _refresh_exp_bar(animate_fill: bool = false) -> void:
+	if exp_segments == null:
+		return
+
+	for child: Node in exp_segments.get_children():
+		exp_segments.remove_child(child)
+		child.queue_free()
+
+	var required_exp: int = get_exp_required()
+	var segment_count: int = required_exp if required_exp > 0 else 5
+	var filled_count: int = mini(current_exp, required_exp)
+
+	if building_level >= 5:
+		filled_count = segment_count
+
+	var available_width := 124.0 - float((segment_count - 1) * 4)
+	var segment_width := available_width / float(segment_count)
+
+	for index: int in range(segment_count):
+		var segment := ColorRect.new()
+		segment.custom_minimum_size = Vector2(segment_width, 12.0)
+		segment.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		segment.color = (
+			Color("ffd166")
+			if index < filled_count
+			else Color("303747")
+		)
+
+		exp_segments.add_child(segment)
+
+		if animate_fill and index < filled_count:
+			segment.modulate = Color(1.35, 1.35, 1.35, 1.0)
+			segment.scale = Vector2(0.75, 1.0)
+			segment.pivot_offset = segment.custom_minimum_size * 0.5
+			var tween := segment.create_tween()
+			tween.set_parallel(true)
+			tween.tween_property(segment, "modulate", Color.WHITE, 0.22)
+			tween.tween_property(segment, "scale", Vector2.ONE, 0.22).set_trans(
+				Tween.TRANS_BACK
+			).set_ease(Tween.EASE_OUT)
 
 
 # ============================================================
@@ -211,6 +302,9 @@ func make_neutral() -> void:
 	if sprite != null:
 		sprite.texture = data.neutral_texture
 
+	if exp_backdrop != null:
+		exp_backdrop.hide()
+
 
 # ============================================================
 # OWNERSHIP
@@ -221,6 +315,9 @@ func set_player_owner(
 ) -> void:
 
 	owner_id = new_owner_id
+
+	if exp_backdrop != null:
+		exp_backdrop.visible = owner_id != -1
 
 
 # ============================================================

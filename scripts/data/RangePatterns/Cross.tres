@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="RangePattern" format=3 uid="uid://bul4v4a8kw6em"]
+
+[ext_resource type="Script" uid="uid://bawcf75unqena" path="res://scripts/RangePattern.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+shape = 1

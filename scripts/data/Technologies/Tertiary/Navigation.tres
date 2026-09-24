@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://b6s1b2u4p7a5"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_02ex6"]
+[ext_resource type="Resource" uid="uid://dkvyrjox2bjll" path="res://scripts/data/Technologies/Secondary/Sailing.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_02ex6")
 technology_id = "navigation"
 technology_name = "Navigation"
 description = "Unlocks the Warship unit, which can be upgraded from a Boat."
+unlock_effects = Array[String](["Upgrade Boats into Warships", "Naval units can travel farther beyond tribe territory"])
+cost = 8
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

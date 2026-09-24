@@ -3,6 +3,20 @@
 [ext_resource type="Script" uid="uid://ei0gxp5wkx6r" path="res://scripts/Building.gd" id="1_m7le1"]
 [ext_resource type="Texture2D" uid="uid://c8jfv7pqvqkhy" path="res://assets/environment/SABA/SABA_LVL1CITY.png" id="2_26pjj"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_exp_back"]
+bg_color = Color(0.0352941, 0.0431373, 0.0627451, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.741176, 0.572549, 0.27451, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 4
+
 [node name="Building" type="Area2D" unique_id=1724933800 groups=["buildings"]]
 z_index = 2
 script = ExtResource("1_m7le1")
@@ -13,3 +27,26 @@ offset = Vector2(0, -162.1)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1872197678]
 polygon = PackedVector2Array(0, -64, 128, 0, 0, 64, -128, 0)
+
+[node name="ExpBackdrop" type="Panel" parent="."]
+z_index = 10
+offset_left = -68.0
+offset_top = 18.0
+offset_right = 68.0
+offset_bottom = 42.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_exp_back")
+
+[node name="ExpSegments" type="HBoxContainer" parent="ExpBackdrop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 4

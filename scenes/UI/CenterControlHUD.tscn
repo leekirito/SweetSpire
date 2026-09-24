@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://cr0xoutbkqlxq"]
+
+[ext_resource type="Script" uid="uid://d00x8dyxluxo2" path="res://scripts/UI/center_control_hud.gd" id="1_hud"]
+[ext_resource type="StyleBox" uid="uid://bidqr7ho3fehm" path="res://assets/ui/elements/fantasy_hud_panel.tres" id="2_panel"]
+
+[node name="CenterControlHUD" type="Control" unique_id=93766310]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hud")
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=849450546]
+layout_mode = 0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 45.38
+offset_top = -153.0
+offset_right = 307.38
+offset_bottom = -16.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("2_panel")
+
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=256992351]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="Panel/Margin" unique_id=1259295199]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Title" type="Label" parent="Panel/Margin/Content" unique_id=1804926445]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.819608, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.08, 0.04, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 11
+text = "SWEETSPIRE CENTER"
+horizontal_alignment = 1
+
+[node name="Owner" type="Label" parent="Panel/Margin/Content" unique_id=1716594257]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.05, 0.06, 0.09, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "PLAYER CONTROLS CENTER"
+horizontal_alignment = 1
+
+[node name="Segments" type="HBoxContainer" parent="Panel/Margin/Content" unique_id=1769666681]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Progress" type="Label" parent="Panel/Margin/Content" unique_id=343934315]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.89, 0.94, 1)
+theme_override_font_sizes/font_size = 11
+text = "0 / 3 ROUNDS"
+horizontal_alignment = 1

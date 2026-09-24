@@ -6,6 +6,7 @@ extends Resource
 @export var technology_id: String = ""
 @export var technology_name: String = ""
 @export var description: String = ""
+@export_multiline var unlock_effects: Array[String] = []
 
 
 @export_group("Requirements")

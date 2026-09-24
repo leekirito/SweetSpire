@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://c7woqwcg4lg4y"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_o1bm4"]
+[ext_resource type="Resource" uid="uid://w1332naywf8p" path="res://scripts/data/Technologies/Primary/Climbing.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_o1bm4")
 technology_id = "mining"
 technology_name = "Mining"
 description = "Allows the tribe to construct Mining Dens within controlled territories."
+unlock_effects = Array[String](["Construct Mining Dens in controlled territory", "Gain access to minerals used for advanced development"])
+cost = 5
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

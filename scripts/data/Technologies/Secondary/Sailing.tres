@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://dkvyrjox2bjll"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_2uylp"]
+[ext_resource type="Resource" uid="uid://bf5glpcv8sdde" path="res://scripts/data/Technologies/Primary/Fishing.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_2uylp")
 technology_id = "sailing"
 technology_name = "Sailing"
 description = "Allows the construction of Fishing Docks."
+unlock_effects = Array[String](["Construct Fishing Docks", "Unlock the Boat unit for naval travel and combat"])
+cost = 5
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

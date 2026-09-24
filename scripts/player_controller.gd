@@ -245,10 +245,18 @@ func _try_select_unit(
 		return
 
 	selected_unit_id = unit_id
+	if not unit.range_configuration_changed.is_connected(_on_unit_range_configuration_changed):
+		unit.range_configuration_changed.connect(_on_unit_range_configuration_changed)
 
 	_show_unit_options(
 		unit
 	)
+
+
+func _on_unit_range_configuration_changed(unit: Unit) -> void:
+	if unit == null or unit.unit_id != selected_unit_id:
+		return
+	_show_unit_options(unit)
 
 
 # SHOW OPTIONS

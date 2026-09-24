@@ -9,6 +9,9 @@ extends Control
 @onready var upgrade: Button = (
 	$HBoxContainer/Upgrade
 )
+@onready var backdrop: Panel = $Backdrop
+@onready var title: Label = $Backdrop/Title
+@onready var subtitle: Label = $Backdrop/Subtitle
 
 
 var resource: Resources
@@ -42,6 +45,13 @@ func setup(
 		queue_free()
 		return
 
+	_apply_biome_theme(resource.biome_name)
+	title.text = resource.data.resource_alias.to_upper()
+	subtitle.text = (
+		resource.biome_name + " BIOME  •  +"
+		+ str(resource.data.exp) + " TOWN EXP"
+	)
+
 
 	var player: PlayerState = (
 		match_manager.get_player(
@@ -67,6 +77,7 @@ func setup(
 
 
 	collect.disabled = not can_collect
+	collect.text = "COLLECT" if can_collect else "TECH REQUIRED"
 
 
 	# -----------------------------
@@ -85,6 +96,23 @@ func setup(
 		and not resource.is_upgraded
 		and has_upgrade_technology
 	)
+
+
+## Colors the action card to echo the ground biome under the selected resource.
+func _apply_biome_theme(biome: String) -> void:
+	var tint := Color.WHITE
+
+	match biome:
+		"KAMOTE":
+			tint = Color("ffe1c2")
+		"MALAGKIT":
+			tint = Color("fff4d1")
+		"SWEETSPIRE":
+			tint = Color("f3dcff")
+		"SABA":
+			tint = Color("dcf2c5")
+
+	backdrop.modulate = tint
 
 
 ## Requests collection by stable resource and owner IDs rather than mutating the node directly.

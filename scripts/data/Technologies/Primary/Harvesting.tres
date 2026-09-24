@@ -7,4 +7,6 @@ script = ExtResource("1_mf778")
 technology_id = "harvesting"
 technology_name = "Harvesting"
 description = "Allows the tribe to harvest fruits and gain 1 Sugar."
+unlock_effects = Array[String](["Harvest Fruit resources and gain 1 Sugar"])
+cost = 3
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

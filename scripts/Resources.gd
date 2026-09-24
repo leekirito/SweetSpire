@@ -20,6 +20,9 @@ var is_upgraded: bool = false
 
 
 @onready var sprite: Sprite2D = $Sprite2D
+@onready var collectible_outline: Sprite2D = $CollectibleOutline
+
+var biome_name: String = "NEUTRAL"
 
 
 func _ready() -> void:
@@ -48,6 +51,55 @@ func make_neutral() -> void:
 
 	if sprite != null:
 		sprite.texture = base_sprite
+
+	if collectible_outline != null:
+		collectible_outline.hide()
+
+
+## Selects resource art from the biome tile underneath this resource.
+func set_biome_from_source_id(source_id: int) -> void:
+	match source_id:
+		4, 23:
+			biome_name = "KAMOTE"
+		3, 24:
+			biome_name = "MALAGKIT"
+		26:
+			biome_name = "SWEETSPIRE"
+		39:
+			biome_name = "SABA"
+		25:
+			biome_name = "WATER"
+		_:
+			biome_name = "NEUTRAL"
+
+	var texture: Texture2D = data.biome_textures.get(
+		biome_name,
+		base_sprite
+	) as Texture2D
+
+	sprite.texture = texture
+	collectible_outline.texture = texture
+	collectible_outline.offset = sprite.offset
+
+
+## Shows the blue outline only when collection is currently authoritative and unlocked.
+func refresh_collectible_outline(match_manager: MatchManager) -> void:
+	var can_collect := false
+
+	if (
+		match_manager != null
+		and owner_id != -1
+		and owner_id == match_manager.active_player_id
+		and controlling_building_id != -1
+	):
+		var player: PlayerState = match_manager.get_player(owner_id)
+		can_collect = (
+			player != null
+			and player.has_technology(data.collect_technology_id)
+			and match_manager.can_interact_with_resource(self, owner_id)
+		)
+
+	collectible_outline.visible = can_collect
 
 
 func set_controlling_building(

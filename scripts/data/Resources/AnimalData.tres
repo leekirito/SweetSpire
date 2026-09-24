@@ -1,6 +1,10 @@
 [gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://dq6thu4r1ix8x"]
 
 [ext_resource type="Script" uid="uid://b3dglxtibtwod" path="res://scripts/ResourceData.gd" id="1_4xmu7"]
+[ext_resource type="Texture2D" uid="uid://cvqx2mwakbsms" path="res://assets/environment/SABA/SABA_ANIMAL.png" id="2_saba"]
+[ext_resource type="Texture2D" uid="uid://claktc82t48mr" path="res://assets/environment/KAMOTE/KAMOTE_ANIMAL.png" id="3_kamote"]
+[ext_resource type="Texture2D" uid="uid://cvyitgovacyf2" path="res://assets/environment/MALAGKIT/MALAGKIT_ANIMAL.png" id="4_malagkit"]
+[ext_resource type="Texture2D" uid="uid://jbri8s0v2ewo" path="res://assets/environment/SWEETSPIRE/SWEETSPIRE_FOREST.png" id="5_sweetspire"]
 
 [resource]
 script = ExtResource("1_4xmu7")
@@ -8,4 +12,10 @@ resource_id = 2
 resource_alias = "animal"
 collect_technology_id = "wilderness"
 can_upgrade = false
+biome_textures = Dictionary[String, Texture2D]({
+"KAMOTE": ExtResource("3_kamote"),
+"MALAGKIT": ExtResource("4_malagkit"),
+"SABA": ExtResource("2_saba"),
+"SWEETSPIRE": ExtResource("5_sweetspire")
+})
 metadata/_custom_type_script = "uid://b3dglxtibtwod"

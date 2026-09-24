@@ -75,6 +75,8 @@ var last_cursor_cell := Vector2i(
 	999999
 )
 
+var default_range_pattern := RangePattern.new()
+
 @onready var cursor: TileMapLayer = %Cursor
 
 # SETUP
@@ -343,6 +345,9 @@ func register_resource(
 
 
 	resource.current_cell = cell
+	resource.set_biome_from_source_id(
+		tile_map_layer.get_cell_source_id(cell)
+	)
 
 
 	resource.global_position = cell_to_world(
@@ -353,6 +358,23 @@ func register_resource(
 	resources_occupied_cells[
 		cell
 	] = resource.resource_instance_id
+
+
+## Maps authored ground sources to the four visual land biomes.
+func get_biome_name(cell: Vector2i) -> String:
+	match tile_map_layer.get_cell_source_id(cell):
+		4, 23:
+			return "KAMOTE"
+		3, 24:
+			return "MALAGKIT"
+		26:
+			return "SWEETSPIRE"
+		39:
+			return "SABA"
+		25:
+			return "WATER"
+		_:
+			return "NEUTRAL"
 
 func unregister_unit(unit: Unit) -> void:
 	if occupied_cells.get(
@@ -566,8 +588,11 @@ func get_movement_tiles(
 	unit: Unit
 ) -> Array[Vector2i]:
 
-	var tiles: Array[Vector2i] = get_square_tiles(
+	var tiles: Array[Vector2i] = get_pattern_tiles(
+		unit.movement_pattern,
 		unit.unit_walk_range,
+		unit.walk_base_dimensions_override,
+		unit.walk_exact_dimensions_override,
 		unit.current_cell
 	)
 
@@ -589,10 +614,39 @@ func get_attack_tiles(
 	unit: Unit
 ) -> Array[Vector2i]:
 
-	return get_square_tiles(
+	return get_pattern_tiles(
+		unit.attack_pattern,
 		unit.attack_range,
+		unit.attack_base_dimensions_override,
+		unit.attack_exact_dimensions_override,
 		unit.current_cell
 	)
+
+
+## Converts a reusable shape resource into legal board cells.
+func get_pattern_tiles(
+	pattern: RangePattern,
+	expansion: int,
+	base_dimensions_override: Vector2i,
+	exact_dimensions_override: Vector2i,
+	center: Vector2i
+) -> Array[Vector2i]:
+	var selected_pattern: RangePattern = pattern if pattern != null else default_range_pattern
+	var tiles: Array[Vector2i] = []
+
+	for offset: Vector2i in selected_pattern.get_offsets(
+		expansion,
+		base_dimensions_override,
+		exact_dimensions_override
+	):
+		var cell: Vector2i = center + offset
+		if is_cell_blocked(cell):
+			continue
+		if not has_clear_path(center, cell):
+			continue
+		tiles.append(cell)
+
+	return tiles
 # MOVEMENT VALIDATION
 
 func can_move_to(

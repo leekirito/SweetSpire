@@ -1,168 +1,67 @@
 [gd_scene format=3 uid="uid://cybja0bqnm471"]
 
 [ext_resource type="Script" uid="uid://dt2340s88cfh1" path="res://scripts/recruitment_ui.gd" id="1_uhxda"]
+[ext_resource type="StyleBox" uid="uid://duwuvfpmkraq6" path="res://assets/ui/elements/fantasy_parchment_panel.tres" id="2_parchment"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0iy8c"]
 
-[sub_resource type="Animation" id="Animation_uhxda"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Panel/Button:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0.025, 0.025)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Panel/Button2:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0.025, 0.025)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Panel/Button3:scale")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0.025, 0.025)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Panel/Button:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-84.499084, -81.50012)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Panel/Button2:position")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-84.50018, -81.50189)]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("Panel/Button3:position")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-84.49768, -81.49982)]
-}
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice"]
+bg_color = Color(0.0705882, 0.0823529, 0.117647, 0.97)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.827451, 0.631373, 0.270588, 1)
+corner_radius_top_left = 84
+corner_radius_top_right = 84
+corner_radius_bottom_right = 84
+corner_radius_bottom_left = 84
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 10
 
-[sub_resource type="Animation" id="Animation_ye1p5"]
-resource_name = "open"
-length = 0.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Panel/Button:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0.025, 0.025), Vector2(1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Panel/Button2:scale")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0.025, 0.025), Vector2(1, 1)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Panel/Button3:scale")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0.025, 0.025), Vector2(1, 1)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Panel/Button:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(-84.499084, -81.50012), Vector2(-283, -142)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Panel/Button2:position")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(-84.50018, -81.50189), Vector2(-87, -250)]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("Panel/Button3:position")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(-84.49768, -81.49982), Vector2(120, -142)]
-}
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice_pressed"]
+bg_color = Color(0.0470588, 0.054902, 0.0784314, 1)
+border_width_left = 7
+border_width_top = 9
+border_width_right = 7
+border_width_bottom = 5
+border_color = Color(0.929412, 0.635294, 0.239216, 1)
+corner_radius_top_left = 84
+corner_radius_top_right = 84
+corner_radius_bottom_right = 84
+corner_radius_bottom_left = 84
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_w11cc"]
-_data = {
-&"RESET": SubResource("Animation_uhxda"),
-&"open": SubResource("Animation_ye1p5")
-}
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice_hover"]
+bg_color = Color(0.117647, 0.141176, 0.2, 1)
+border_width_left = 7
+border_width_top = 7
+border_width_right = 7
+border_width_bottom = 7
+border_color = Color(1, 0.815686, 0.384314, 1)
+corner_radius_top_left = 84
+corner_radius_top_right = 84
+corner_radius_bottom_right = 84
+corner_radius_bottom_left = 84
+shadow_color = Color(1, 0.643137, 0.180392, 0.3)
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_price"]
+bg_color = Color(0.807843, 0.298039, 0.141176, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.8, 0.337255, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 5
 
 [node name="Control" type="Control" unique_id=1859366704]
-z_index = 3
+z_index = 4096
+z_as_relative = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -197,7 +96,51 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.025, 0.025)
 pivot_offset_ratio = Vector2(0.5, 0.5)
-text = "Fighter"
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_choice_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+
+[node name="Portrait" type="TextureRect" parent="Panel/Button" unique_id=1270316454]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 22.0
+offset_top = 20.0
+offset_right = -22.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PriceBadge" type="PanelContainer" parent="Panel/Button" unique_id=499410913]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -39.0
+offset_top = -18.0
+offset_right = 39.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_price")
+
+[node name="Price" type="Label" parent="Panel/Button/PriceBadge" unique_id=1521141785]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.964706, 0.823529, 1)
+theme_override_colors/font_outline_color = Color(0.258824, 0.0745098, 0.027451, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "1 S"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Button2" type="Button" parent="Panel" unique_id=55740825]
 layout_mode = 1
@@ -214,7 +157,51 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.025, 0.025)
 pivot_offset_ratio = Vector2(0.5, 0.5)
-text = "Ranger"
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_choice_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
+
+[node name="Portrait" type="TextureRect" parent="Panel/Button2" unique_id=1282244202]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 22.0
+offset_top = 20.0
+offset_right = -22.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PriceBadge" type="PanelContainer" parent="Panel/Button2" unique_id=1433281928]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -39.0
+offset_top = -18.0
+offset_right = 39.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_price")
+
+[node name="Price" type="Label" parent="Panel/Button2/PriceBadge" unique_id=1963813033]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.964706, 0.823529, 1)
+theme_override_colors/font_outline_color = Color(0.258824, 0.0745098, 0.027451, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "2 S"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Button3" type="Button" parent="Panel" unique_id=226228186]
 layout_mode = 1
@@ -232,7 +219,104 @@ grow_vertical = 2
 scale = Vector2(0.025, 0.025)
 pivot_offset_ratio = Vector2(0.5, 0.5)
 offset_transform_position = Vector2(0.595, 0)
-text = "Pathfinder"
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_choice")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_choice_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_choice_hover")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1815380293]
-libraries/ = SubResource("AnimationLibrary_w11cc")
+[node name="Portrait" type="TextureRect" parent="Panel/Button3" unique_id=1847033920]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 22.0
+offset_top = 20.0
+offset_right = -22.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PriceBadge" type="PanelContainer" parent="Panel/Button3" unique_id=1384166331]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -39.0
+offset_top = -18.0
+offset_right = 39.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_price")
+
+[node name="Price" type="Label" parent="Panel/Button3/PriceBadge" unique_id=937427528]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.964706, 0.823529, 1)
+theme_override_colors/font_outline_color = Color(0.258824, 0.0745098, 0.027451, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "2 S"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PreviewPanel" type="PanelContainer" parent="Panel" unique_id=2124117431]
+visible = false
+layout_mode = 0
+offset_left = -210.0
+offset_top = 28.0
+offset_right = 210.0
+offset_bottom = 214.0
+pivot_offset = Vector2(210, 0)
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("2_parchment")
+
+[node name="Margin" type="MarginContainer" parent="Panel/PreviewPanel" unique_id=1525934459]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel/PreviewPanel/Margin" unique_id=912438008]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(0, -11.845)
+theme_override_constants/separation = 5
+
+[node name="UnitName" type="Label" parent="Panel/PreviewPanel/Margin/VBox" unique_id=844391979]
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(0, -32.405)
+theme_override_colors/font_color = Color(0.321569, 0.180392, 0.0431373, 1)
+theme_override_colors/font_outline_color = Color(1, 0.921569, 0.670588, 0.55)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
+text = "FIGHTER"
+horizontal_alignment = 1
+
+[node name="UnitType" type="Label" parent="Panel/PreviewPanel/Margin/VBox" unique_id=1542295400]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.423529, 0.305882, 0.156863, 1)
+theme_override_font_sizes/font_size = 14
+text = "Attack"
+horizontal_alignment = 1
+
+[node name="Stats" type="Label" parent="Panel/PreviewPanel/Margin/VBox" unique_id=360531274]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.239216, 0.168627, 0.0823529, 1)
+theme_override_font_sizes/font_size = 17
+text = "HEALTH  8     ATTACK  2
+DEFENCE  2     MOVE  3
+RANGE  1"
+horizontal_alignment = 1
+
+[node name="Cost" type="Label" parent="Panel/PreviewPanel/Margin/VBox" unique_id=648315628]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.254902, 0.423529, 0.0862745, 1)
+theme_override_colors/font_outline_color = Color(0.168627, 0.0823529, 0.0196078, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
+text = "RECRUIT FOR  1  SUGAR"
+horizontal_alignment = 1

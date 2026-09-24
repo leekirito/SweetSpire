@@ -1,0 +1,14 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://duwuvfpmkraq6"]
+
+[ext_resource type="Texture2D" uid="uid://dg5pqos2wtsw2" path="res://assets/ui/source/free_fantasy_gui/png/Windows.png" id="1"]
+
+[sub_resource type="AtlasTexture" id="Atlas"]
+atlas = ExtResource("1")
+region = Rect2(3481, 956, 617, 472)
+
+[resource]
+texture = SubResource("Atlas")
+texture_margin_left = 72.0
+texture_margin_top = 68.0
+texture_margin_right = 72.0
+texture_margin_bottom = 68.0

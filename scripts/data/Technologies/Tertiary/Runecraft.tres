@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://b7n8rdyxitpap"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_x26oi"]
+[ext_resource type="Resource" uid="uid://c7woqwcg4lg4y" path="res://scripts/data/Technologies/Secondary/Mining.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_x26oi")
 technology_id = "runecraft"
 technology_name = "Runecraft"
 description = "Unlocks the Caster unit, a ranged unit capable of using magical attacks."
+unlock_effects = Array[String](["Harness ancient magical energy from mined resources", "Unlock the ranged Caster unit and magical attacks"])
+cost = 8
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

@@ -5,6 +5,10 @@
 [ext_resource type="Resource" uid="uid://dq6thu4r1ix8x" path="res://scripts/data/Resources/AnimalData.tres" id="2_5ldna"]
 [ext_resource type="Texture2D" uid="uid://cvqx2mwakbsms" path="res://assets/environment/SABA/SABA_ANIMAL.png" id="3_ssyye"]
 [ext_resource type="PackedScene" uid="uid://chlfjp68hnya1" path="res://scenes/UI/resource_choices.tscn" id="4_itpds"]
+[ext_resource type="Shader" path="res://assets/Shader/resource_outline.gdshader" id="5_outline"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_outline"]
+shader = ExtResource("5_outline")
 
 [node name="Resources" type="Area2D" unique_id=1096901791 groups=["resources"]]
 script = ExtResource("1_dgnji")
@@ -13,6 +17,13 @@ base_sprite = ExtResource("3_ssyye")
 resource_choices_scene = ExtResource("4_itpds")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=891014490]
+texture = ExtResource("1_bml6o")
+offset = Vector2(0, -163.195)
+
+[node name="CollectibleOutline" type="Sprite2D" parent="."]
+visible = false
+z_index = 1
+material = SubResource("ShaderMaterial_outline")
 texture = ExtResource("1_bml6o")
 offset = Vector2(0, -163.195)
 

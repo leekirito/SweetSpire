@@ -24,3 +24,4 @@ extends Resource
 @export_group("Visuals")
 
 @export var upgrade_texture: Texture2D
+@export var biome_textures: Dictionary[String, Texture2D]

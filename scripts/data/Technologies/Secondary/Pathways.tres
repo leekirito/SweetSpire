@@ -1,10 +1,14 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://swer47ietx14"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_jrgj7"]
+[ext_resource type="Resource" uid="uid://dp2oxyukiq1ax" path="res://scripts/data/Technologies/Primary/Pathfinding.tres" id="2_prereq"]
 
 [resource]
 script = ExtResource("1_jrgj7")
 technology_id = "pathways"
 technology_name = "Pathways"
 description = "Allows the construction of Pathways within controlled territories."
+unlock_effects = Array[String](["Construct Pathways in controlled territory", "Land units travel farther on connected Pathways", "Connected cities can share and upgrade Population"])
+cost = 5
+prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

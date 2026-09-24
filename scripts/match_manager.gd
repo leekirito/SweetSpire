@@ -13,6 +13,19 @@ signal turn_started(
 signal unit_removed(
 	unit_id: int
 )
+
+signal technology_purchased(
+	player_id: int,
+	technology_id: String
+)
+
+signal player_eliminated(player_id: int)
+signal match_ended(winner_id: int, victory_reason: String)
+
+@export_category("Victory Conditions")
+@export_range(1, 99, 1) var center_control_rounds: int = 3
+## Exact board cell that represents the Sweetspire center.
+@export var sweetspire_center_cell: Vector2i = Vector2i.ZERO
 @onready var sugar_text: Label = $"../CanvasLayer/Control/Sugar"
 
 @onready var board_manager: BoardManager = (
@@ -53,6 +66,9 @@ var players: Array[PlayerState] = []
 var active_player_index: int = 0
 var active_player_id: int = -1
 
+var eliminated_player_ids: Dictionary[int, bool] = {}
+var winner_id: int = -1
+
 
 
 
@@ -66,6 +82,15 @@ var resources: Dictionary[int,Resources] = {}
 
 
 var next_resource_instance_id: int = 1
+
+## Internal rule systems. MatchManager remains the sole authoritative façade.
+var combat_resolver := CombatResolver.new()
+var capture_manager := CaptureManager.new()
+var economy_manager := EconomyManager.new()
+var technology_manager := TechnologyManager.new()
+var turn_manager := TurnManager.new()
+var unit_registry := UnitRegistry.new()
+var victory_manager := VictoryManager.new()
 # ============================================================
 # START
 # ============================================================
@@ -154,6 +179,7 @@ func _initialize_match() -> void:
 
 
 	update_ui()
+	_refresh_resource_collectibility()
 
 
 	match_started.emit()
@@ -245,6 +271,11 @@ func _get_all_resources() -> Array[Resources]:
 
 
 	return result
+
+
+## Internal-system accessors. State remains owned by this authoritative façade.
+func get_all_resources_authoritative() -> Array[Resources]:
+	return _get_all_resources()
 func get_player(
 	player_id: int
 ) -> PlayerState:
@@ -433,193 +464,12 @@ func _spawn_starting_unit(
 
 
 ## Creates and registers a unit at a free board cell; all spawning should pass through here.
-func spawn_unit(
-	unit_scene: PackedScene,
-	player: PlayerState,
-	cell: Vector2i
-) -> Unit:
-
-	if unit_scene == null:
-
-		push_error(
-			"Unit scene is null."
-		)
-
-		return null
-
-
-	if player == null:
-
-		push_error(
-			"PlayerState is null."
-		)
-
-		return null
-
-
-	# Prevent two units occupying the same cell.
-
-	if (
-		board_manager.get_unit_id_at_cell(
-			cell
-		)
-		!= -1
-	):
-
-		push_warning(
-			"Cannot spawn unit. Cell is already occupied: "
-			+ str(cell)
-		)
-
-		return null
-
-
-	var unit: Unit = (
-		unit_scene.instantiate()
-		as Unit
-	)
-
-
-	if unit == null:
-
-		push_error(
-			"Unit scene root is not a Unit."
-		)
-
-		return null
-
-
-	# Add to the game world.
-
-	get_tree().current_scene.add_child(
-		unit
-	)
-
-
-	# Give the unit its owning PlayerState.
-	# This also handles owner_id and tribe visuals.
-
-	unit.setup_player(
-		player
-	)
-
-
-	# Place the unit exactly on the requested cell.
-
-	unit.global_position = (
-		board_manager.cell_to_world(
-			cell
-		)
-	)
-
-
-	# Register ID and board occupancy.
-
-	register_new_unit(
-		unit
-	)
-
-
-	return unit
-
-## Applies ownership through the match authority, then propagates it to controlled resources.
-func conquer_building(
-	building_id: int,
-	player_id: int
-) -> bool:
-
-	var building: Building = (
-		get_building(
-			building_id
-		)
-	)
-
-
-	var player: PlayerState = (
-		get_player(
-			player_id
-		)
-	)
-
-
-	if building == null:
-		return false
-
-
-	if player == null:
-		return false
-
-
-	# Change town owner + town appearance.
-
-	building.conquer(
-		player
-	)
-
-
-	# Every resource controlled by that town
-	# changes owner too.
-
-	territory_manager.update_resources_for_building(
-		building,
-		_get_all_resources()
-	)
-
-
-	return true
-
-## Gives a unit its match ID and synchronizes the board occupancy registry.
-func register_new_unit(
-	unit: Unit
-) -> void:
-
-	if unit == null:
-		return
-
-
-	# This also lets your OLD recruitment UI
-	# continue working for now.
-	#
-	# If the unit was manually given owner_id,
-	# resolve its PlayerState automatically.
-
-	if unit.player_state == null:
-
-		var player: PlayerState = (
-			get_player(
-				unit.owner_id
-			)
-		)
-
-
-		if player == null:
-
-			push_error(
-				"No PlayerState for unit owner: "
-				+ str(unit.owner_id)
-			)
-
-			return
-
-
-		unit.setup_player(
-			player
-		)
-
-
-	unit.unit_id = next_unit_id
-
-	next_unit_id += 1
-
-
-	units[
-		unit.unit_id
-	] = unit
-
-
-	board_manager.register_unit(
-		unit
-	)
+func spawn_unit(unit_scene: PackedScene, player: PlayerState, cell: Vector2i) -> Unit:
+	return unit_registry.spawn_unit(self, unit_scene, player, cell)
+func conquer_building(building_id: int, player_id: int) -> bool:
+	return capture_manager.conquer_building(self, building_id, player_id)
+func register_new_unit(unit: Unit) -> void:
+	unit_registry.register_unit(self, unit)
 
 
 func _register_buildings() -> void:
@@ -743,180 +593,81 @@ func get_building(
 
 
 ## Validates a player's move request before committing authoritative state and animation.
-func request_move(
-	unit_id: int,
-	target_cell: Vector2i
-) -> bool:
-
+func request_move(unit_id: int, target_cell: Vector2i) -> bool:
 	if current_phase != Phase.PLAYER_TURN:
 		return false
-
-
-	var unit: Unit = get_unit(
-		unit_id
-	)
-
-
-	if unit == null:
-		return false
-
-
-	if unit.owner_id != active_player_id:
-		return false
-
-
-	if unit.has_moved:
-		return false
-
-
-	if unit.is_animating:
-		return false
-
-
-	if not board_manager.can_move_to(
-		unit,
-		target_cell
-	):
-		return false
-
-
-	var old_world_position: Vector2 = (
-		unit.global_position
-	)
-
-
-	# Authoritative state update.
-
-	unit.has_moved = true
-
-
-	board_manager.commit_unit_move(
-		unit,
-		target_cell
-	)
-
-
-	# Visual animation.
-
-	board_manager.animate_unit_move(
-		unit,
-		old_world_position,
-		target_cell
-	)
-
-
-	return true
-
-
-
-## Resolves a validated attack and removes defeated units from every registry.
-func request_attack(
-	attacker_id: int,
-	target_id: int
-) -> bool:
-
+	return combat_resolver.request_move(self, unit_id, target_cell)
+func request_attack(attacker_id: int, target_id: int) -> bool:
 	if current_phase != Phase.PLAYER_TURN:
 		return false
+	return combat_resolver.request_attack(self, attacker_id, target_id)
 
 
-	var attacker: Unit = get_unit(
-		attacker_id
-	)
-
-	var target: Unit = get_unit(
-		target_id
-	)
+func remove_unit_authoritative(unit: Unit) -> void:
+	unit_registry.remove_unit(self, unit)
+func evaluate_eliminations() -> void:
+	victory_manager.evaluate_eliminations(self)
 
 
-	if attacker == null:
-		return false
 
 
-	if target == null:
-		return false
 
 
-	if attacker.owner_id != active_player_id:
-		return false
+func _evaluate_center_control() -> void:
+	victory_manager.evaluate_center_control(self)
 
 
-	if target.owner_id == active_player_id:
-		return false
 
 
-	if attacker.has_attacked:
-		return false
 
 
-	if attacker.is_animating:
-		return false
+func get_center_controller() -> PlayerState:
+	return victory_manager.get_center_controller(self)
 
 
-	if target.is_animating:
-		return false
+func get_center_control_target() -> int:
+	return center_control_rounds
 
 
-	var attack_tiles: Array[Vector2i] = (
-		board_manager.get_attack_tiles(
-			attacker
-		)
-	)
-
-
-	if target.current_cell not in attack_tiles:
-		return false
-
-
-	# Authoritative combat.
-
-	target.take_damage(
-		attacker.get_attack_damage()
-	)
-
-
-	attacker.has_attacked = true
-	attacker.has_moved = true
-
-
-	if target.is_dead():
-
-		_remove_unit(
-			target
-		)
-
-
-	return true
-
-
-func _remove_unit(
-	unit: Unit
-) -> void:
-
-	if unit == null:
+func finish_match_authoritative(victor_id: int, victory_reason: String) -> void:
+	if current_phase == Phase.GAME_OVER:
 		return
 
-
-	var removed_id: int = (
-		unit.unit_id
-	)
-
-
-	board_manager.unregister_unit(
-		unit
-	)
+	winner_id = victor_id
+	current_phase = Phase.GAME_OVER
+	active_player_id = -1
+	_refresh_resource_collectibility()
+	_show_match_result(victor_id, victory_reason)
+	match_ended.emit(victor_id, victory_reason)
 
 
-	units.erase(
-		removed_id
-	)
+func _show_match_result(victor_id: int, victory_reason: String) -> void:
+	var victor: PlayerState = get_player(victor_id)
+	var victor_name: String = victor.player_name if victor != null else "PLAYER %d" % victor_id
 
+	var result_layer := CanvasLayer.new()
+	result_layer.name = "MatchResultLayer"
+	result_layer.layer = 100
+	get_tree().current_scene.add_child(result_layer)
 
-	unit_removed.emit(
-		removed_id
-	)
+	var backdrop := ColorRect.new()
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0.02, 0.025, 0.04, 0.88)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	result_layer.add_child(backdrop)
 
-
-	unit.queue_free()
+	var result := Label.new()
+	result.set_anchors_preset(Control.PRESET_CENTER)
+	result.position = Vector2(-300.0, -90.0)
+	result.size = Vector2(600.0, 180.0)
+	result.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	result.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	result.text = "%s WINS!\n%s" % [victor_name.to_upper(), victory_reason]
+	result.add_theme_font_size_override("font_size", 38)
+	result.add_theme_color_override("font_color", Color("ffd166"))
+	result.add_theme_color_override("font_outline_color", Color("351b12"))
+	result.add_theme_constant_override("outline_size", 10)
+	backdrop.add_child(result)
 
 
 # TURN SYSTEM
@@ -924,254 +675,20 @@ func _remove_unit(
 
 ## Rejects turn completion while unit animations could leave clients visually out of sync.
 func request_end_turn() -> bool:
-
-	if current_phase != Phase.PLAYER_TURN:
-		return false
-
-
-	if _any_unit_animating():
-		return false
-
-
-	_end_turn()
-
-
-	return true
-
-## Converts an eligible resource upgrade into town EXP without removing the resource.
-func request_upgrade_resource(
-	resource_instance_id: int,
-	player_id: int
-) -> bool:
-
-	var resource: Resources = get_resource(
-		resource_instance_id
-	)
-
-
-	if not can_interact_with_resource(
-		resource,
-		player_id
-	):
-		return false
-
-
-	if resource.is_upgraded:
-		return false
-
-
-	if not resource.data.can_upgrade:
-		return false
-
-
-	var player: PlayerState = get_player(
-		player_id
-	)
-
-
-	if player == null:
-		return false
-
-
-	if not player.has_technology(
-		resource.data.upgrade_technology_id
-	):
-		return false
-
-
-	var building: Building = get_building(
-		resource.controlling_building_id
-	)
-
-
-	if building == null:
-		return false
-
-
-	building.add_exp(
-		resource.data.exp
-	)
-
-
-	resource.upgrade_resource()
-
-
-	return true
-
-## Pays town income once after every player has completed the round.
+	return turn_manager.request_end_turn(self)
+func request_upgrade_resource(resource_instance_id: int, player_id: int) -> bool:
+	return economy_manager.request_upgrade_resource(self, resource_instance_id, player_id)
 func collect_sugars() -> void:
-
-	for building: Building in buildings.values():
-
-		# Neutral towns generate nothing for a player.
-		if building.owner_id == -1:
-			continue
-
-
-		var player: PlayerState = get_player(
-			building.owner_id
-		)
-
-
-		if player == null:
-			push_warning(
-				"No player found for building owner: "
-				+ str(building.owner_id)
-			)
-			continue
-
-
-		player.sugars += building.by_turn_sugar
-
-
-		print(
-			player.player_name,
-			" received ",
-			building.by_turn_sugar,
-			" sugar from ",
-			building.name
-		)
-## Awards town EXP and consumes a resource after ownership and technology checks pass.
-func request_collect_resource(
-	resource_instance_id: int,
-	player_id: int
-) -> bool:
-
-	var resource: Resources = get_resource(
-		resource_instance_id
-	)
-
-
-	if not can_interact_with_resource(
-		resource,
-		player_id
-	):
-		return false
-
-
-	var player: PlayerState = get_player(
-		player_id
-	)
-
-
-	if player == null:
-		return false
-
-
-	if not player.has_technology(
-		resource.data.collect_technology_id
-	):
-		return false
-
-
-	var building: Building = get_building(
-		resource.controlling_building_id
-	)
-
-
-	if building == null:
-		return false
-
-
-	# Give EXP to the town controlling this resource.
-	building.add_exp(
-		resource.data.exp
-	)
-
-
-	board_manager.unregister_resource(
-		resource
-	)
-
-
-	resources.erase(
-		resource.resource_instance_id
-	)
-
-
-	resource.collect_resource()
-
-
-	return true
-## Advances the active player and performs round-boundary capture and income resolution.
+	economy_manager.collect_sugars(self)
+func request_collect_resource(resource_instance_id: int, player_id: int) -> bool:
+	return economy_manager.request_collect_resource(self, resource_instance_id, player_id)
 func _end_turn() -> void:
-
-	active_player_index += 1
-
-
-	if active_player_index >= players.size():
-		unit_conquer_building()
-		active_player_index = 0
-
-		current_round += 1
-		collect_sugars()
-		
-
-
-	active_player_id = players[
-		active_player_index
-	].player_id
-
-
-	_start_player_turn()
-## Centralizes resource authorization so UI code never decides ownership on its own.
-func can_interact_with_resource(
-	resource: Resources,
-	player_id: int
-) -> bool:
-
-	if current_phase != Phase.PLAYER_TURN:
-		return false
-
-
-	if active_player_id != player_id:
-		return false
-
-
-	if resource == null:
-		return false
-
-
-	if resource.owner_id != player_id:
-		return false
-
-
-	if resource.controlling_building_id == -1:
-		return false
-
-
-	var building: Building = get_building(
-		resource.controlling_building_id
-	)
-
-
-	if building == null:
-		return false
-
-
-	if building.owner_id != player_id:
-		return false
-
-
-	return true
+	turn_manager.end_turn(self)
+func can_interact_with_resource(resource: Resources, player_id: int) -> bool:
+	return economy_manager.can_interact_with_resource(self, resource, player_id)
 
 func _start_player_turn() -> void:
-
-	current_phase = Phase.PLAYER_TURN
-
-
-	_reset_player_units(
-		active_player_id
-	)
-
-
-	update_ui()
-
-
-	turn_started.emit(
-		active_player_id,
-		current_round
-	)
+	turn_manager.start_player_turn(self)
 func get_resource(
 	resource_instance_id: int
 ) -> Resources:
@@ -1185,137 +702,51 @@ func get_resource(
 	return resources[
 		resource_instance_id
 	]
-## Purchases and spawns a unit only from an owned, unoccupied town.
-func request_recruit_unit(
-	building_id: int,
-	unit_scene: PackedScene
-) -> Unit:
 
+
+## Keeps resource affordances synchronized with turn, ownership, and technology rules.
+func _refresh_resource_collectibility() -> void:
+	for resource: Resources in resources.values():
+		if is_instance_valid(resource):
+			resource.refresh_collectible_outline(self)
+
+
+func refresh_resource_collectibility_authoritative() -> void:
+	_refresh_resource_collectibility()
+## Purchases and spawns a unit only from an owned, unoccupied town.
+func request_recruit_unit(building_id: int, unit_scene: PackedScene) -> Unit:
 	if current_phase != Phase.PLAYER_TURN:
 		return null
 
-
-	var building: Building = get_building(
-		building_id
-	)
-
-	if building == null:
-		return null
-
-
-	# Only the active player can recruit.
-	if building.owner_id != active_player_id:
-		return null
-
-
-	var player: PlayerState = get_active_player()
-
-	if player == null:
-		return null
-
-
-	# Town already has a unit on it.
-	if (
-		board_manager.get_unit_id_at_cell(
-			building.current_cell
-		)
-		!= -1
-	):
-		return null
-
-
-	# Instantiate once so we can read UnitData.
-	var unit: Unit = (
-		unit_scene.instantiate()
-		as Unit
-	)
-
-	if unit == null:
-		return null
-
-
-	if unit.data == null:
-		unit.queue_free()
-		return null
-
-
-	var cost: int = unit.data.cost
-
-
-	if player.sugars < cost:
-		print(
-			"Not enough sugar. Need ",
-			cost,
-			", player has ",
-			player.sugars
-		)
-
-		unit.queue_free()
-		return null
-
-
-	# Player can afford it.
-	player.sugars -= cost
-
-
-	# Add the already-created unit.
-	get_tree().current_scene.add_child(
-		unit
-	)
-
-
-	unit.setup_player(
-		player
-	)
-
-
-	unit.global_position = (
-		board_manager.cell_to_world(
-			building.current_cell
-		)
-	)
-
-
-	register_new_unit(
-		unit
-	)
-
-
-	# Refresh HUD immediately.
-	update_ui()
-
-
+	var unit: Unit = economy_manager.request_recruit_unit(self, building_id, unit_scene)
+	if unit != null:
+		update_ui()
 	return unit
-func _reset_player_units(
-	player_id: int
-) -> void:
-
-	for unit: Unit in units.values():
-
-		if unit.owner_id != player_id:
-			continue
+func can_purchase_technology(player_id: int, technology: TechnologyData) -> bool:
+	return technology_manager.can_purchase(self, player_id, technology)
 
 
-		unit.has_moved = false
-		unit.has_attacked = false
+func request_purchase_technology(player_id: int, technology: TechnologyData) -> bool:
+	if not technology_manager.purchase(self, player_id, technology):
+		return false
+
+	update_ui()
+	_refresh_resource_collectibility()
+	technology_purchased.emit(player_id, technology.technology_id)
+	return true
+func _reset_player_units(player_id: int) -> void:
+	turn_manager.reset_player_units(self, player_id)
 
 
 func _any_unit_animating() -> bool:
-
-	for unit: Unit in units.values():
-
-		if unit.is_animating:
-			return true
-
-
-	return false
-
-# UI
+	return turn_manager.any_unit_animating(self)
 func update_ui() -> void:
+	var active_player: PlayerState = get_active_player()
 
 	player_turn.text = (
-		"Player: "
-		+ str(active_player_id)
+		active_player.player_name.to_upper()
+		if active_player != null
+		else "PLAYER " + str(active_player_id)
 	)
 
 	round_text.text = (
@@ -1323,12 +754,10 @@ func update_ui() -> void:
 		+ str(current_round)
 	)
 
-	var active_player: PlayerState = get_active_player()
-
 	if active_player != null:
 		sugar_text.text = (
-			"Sugar: "
-			+ str(active_player.sugars)
+			str(active_player.sugars)
+			+ "  SUGAR"
 		)
 
 
@@ -1338,8 +767,5 @@ func _on_button_button_down() -> void:
 
 
 ## Captures towns occupied by enemy units when the round finishes.
-func unit_conquer_building():
-	for tile in board_manager.occupied_cells:
-		if board_manager.building_occupied_cells.has(tile):
-			if get_building(board_manager.building_occupied_cells[tile]).owner_id != get_unit(board_manager.occupied_cells[tile]).owner_id:
-				conquer_building(board_manager.building_occupied_cells[tile], get_unit(board_manager.occupied_cells[tile]).owner_id)
+func unit_conquer_building() -> void:
+	capture_manager.capture_occupied_buildings(self)

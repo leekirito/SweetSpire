@@ -7,4 +7,6 @@ script = ExtResource("1_3lu0m")
 technology_id = "climbing"
 technology_name = "Climbing"
 description = "Allows land units to traverse Mountain terrain."
+unlock_effects = Array[String](["Land units can traverse Mountain terrain"])
+cost = 3
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

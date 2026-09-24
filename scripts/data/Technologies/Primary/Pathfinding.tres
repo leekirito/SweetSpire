@@ -7,4 +7,6 @@ script = ExtResource("1_v3adn")
 technology_id = "pathfinding"
 technology_name = "Pathfinding"
 description = "Unlocks the Pathfinder unit."
+unlock_effects = Array[String](["Unlock the Pathfinder unit"])
+cost = 3
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

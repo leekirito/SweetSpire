@@ -9,6 +9,12 @@
 [ext_resource type="PackedScene" uid="uid://c02cd6uqhdnd7" path="res://scenes/entities/Resources/animal.tscn" id="8_ostsq"]
 [ext_resource type="PackedScene" uid="uid://duightme6upym" path="res://scenes/entities/Resources/fruit.tscn" id="9_3km4f"]
 [ext_resource type="PackedScene" uid="uid://bvul4fwqp5aid" path="res://scenes/entities/buildings/neutral_building.tscn" id="11_jsdfw"]
+[ext_resource type="PackedScene" uid="uid://0hvxmsqbkxdm" path="res://scenes/UI/TurnNavbar.tscn" id="12_turn_nav"]
+[ext_resource type="StyleBox" uid="uid://bidqr7ho3fehm" path="res://assets/ui/elements/fantasy_hud_panel.tres" id="13_hud_panel"]
+[ext_resource type="StyleBox" uid="uid://bkn0hah8dik7u" path="res://assets/ui/buttons/fantasy_normal.tres" id="14_btn_normal"]
+[ext_resource type="StyleBox" uid="uid://bdtqlvukggody" path="res://assets/ui/buttons/fantasy_hover.tres" id="15_btn_hover"]
+[ext_resource type="StyleBox" uid="uid://bqgajd6an5lnj" path="res://assets/ui/buttons/fantasy_pressed.tres" id="16_btn_pressed"]
+[ext_resource type="PackedScene" uid="uid://cr0xoutbkqlxq" path="res://scenes/UI/CenterControlHUD.tscn" id="17_center_hud"]
 
 [sub_resource type="Gradient" id="Gradient_ostsq"]
 offsets = PackedFloat32Array(1)
@@ -64,12 +70,18 @@ script = ExtResource("5_3km4f")
 
 [node name="MatchManager" type="Node2D" parent="." unique_id=840785694]
 script = ExtResource("6_qkm1d")
+center_control_rounds = 10
+sweetspire_center_cell = Vector2i(14, 14)
 
 [node name="TerritoryManager" type="Node2D" parent="." unique_id=1925162669]
 position = Vector2(1929, 153)
 script = ExtResource("6_sjxhf")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1828352389 groups=["ui_layer"]]
+
+[node name="TurnNavbar" parent="CanvasLayer" unique_id=1026065903 instance=ExtResource("12_turn_nav")]
+
+[node name="CenterControlHUD" parent="CanvasLayer" unique_id=220559679 instance=ExtResource("17_center_hud")]
 
 [node name="Control" type="Control" parent="CanvasLayer" unique_id=451844635]
 layout_mode = 3
@@ -82,32 +94,56 @@ mouse_filter = 2
 
 [node name="Button" type="Button" parent="CanvasLayer/Control" unique_id=1321951799]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.734
-anchor_top = 0.8880001
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -0.2800293
-offset_top = -0.040100098
+offset_left = -277.0
+offset_top = -152.0
+offset_right = -24.0
+offset_bottom = -24.0
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_font_sizes/font_size = 45
-text = "END TURN"
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.156863, 0.258824, 0.0470588, 1)
+theme_override_colors/font_pressed_color = Color(0.101961, 0.180392, 0.0235294, 1)
+theme_override_colors/font_hover_color = Color(0.117647, 0.219608, 0.027451, 1)
+theme_override_colors/font_outline_color = Color(0.85098, 1, 0.568627, 0.75)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 23
+theme_override_styles/normal = ExtResource("14_btn_normal")
+theme_override_styles/pressed = ExtResource("16_btn_pressed")
+theme_override_styles/hover = ExtResource("15_btn_hover")
+text = "  END TURN  ›"
+
+[node name="TurnPanel" type="Panel" parent="CanvasLayer/Control" unique_id=1505685877]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -144.0
+offset_top = 16.0
+offset_right = 144.0
+offset_bottom = 91.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("13_hud_panel")
 
 [node name="Player" type="Label" parent="CanvasLayer/Control" unique_id=1113730757]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -65.5
-offset_right = 65.5
-offset_bottom = 23.0
+offset_left = -134.0
+offset_top = 27.0
+offset_right = 134.0
+offset_bottom = 59.0
 grow_horizontal = 2
-scale = Vector2(1.640031, 1.4840465)
-pivot_offset = Vector2(65.69, 0)
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
+theme_override_colors/font_color = Color(0.945098, 0.945098, 0.839216, 1)
+theme_override_colors/font_outline_color = Color(0.160784, 0.0862745, 0.0313725, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 22
 text = "PLAYER 1"
 horizontal_alignment = 1
 
@@ -116,36 +152,51 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -65.99994
-offset_top = 29.0
-offset_right = 65.0
-offset_bottom = 52.0
+offset_left = -124.0
+offset_top = 59.0
+offset_right = 124.0
+offset_bottom = 83.0
 grow_horizontal = 2
-scale = Vector2(1.640031, 1.4840465)
-pivot_offset = Vector2(65.69, 0)
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.709804, 0.760784, 0.827451, 1)
+theme_override_colors/font_outline_color = Color(0.0352941, 0.0431373, 0.0627451, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
 text = "ROUND 1"
 horizontal_alignment = 1
+
+[node name="SugarPanel" type="Panel" parent="CanvasLayer/Control" unique_id=1059392110]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -214.0
+offset_top = 18.0
+offset_right = -24.0
+offset_bottom = 73.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("13_hud_panel")
 
 [node name="Sugar" type="Label" parent="CanvasLayer/Control" unique_id=2861636]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -93.025024
-offset_right = -32.025024
-offset_bottom = 23.0
+offset_left = -202.0
+offset_top = 28.0
+offset_right = -36.0
+offset_bottom = 64.0
 grow_horizontal = 0
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 23
-text = "Sugars: "
+theme_override_colors/font_color = Color(1, 0.827451, 0.321569, 1)
+theme_override_colors/font_outline_color = Color(0.160784, 0.0980392, 0.027451, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 19
+text = "0  SUGAR"
+horizontal_alignment = 1
 
 [node name="BG" type="Sprite2D" parent="." unique_id=1939085151]
 z_index = -9
-position = Vector2(2768, -850)
+position = Vector2(2789, -864.00006)
 scale = Vector2(15.897001, 201.81252)
 texture = SubResource("GradientTexture2D_ue1wv")
 
@@ -181,5 +232,44 @@ position = Vector2(1751, 111)
 
 [node name="Fruit" parent="." unique_id=606895385 instance=ExtResource("9_3km4f")]
 position = Vector2(1493, -233)
+
+[node name="Town1Fruit" parent="." unique_id=2083983518 instance=ExtResource("9_3km4f")]
+position = Vector2(2057, 217)
+
+[node name="Town1Animal" parent="." unique_id=557373951 instance=ExtResource("8_ostsq")]
+position = Vector2(1801, 217)
+
+[node name="Town2Fruit" parent="." unique_id=1852596890 instance=ExtResource("9_3km4f")]
+position = Vector2(2509, 461)
+
+[node name="Town2Animal" parent="." unique_id=2028690741 instance=ExtResource("8_ostsq")]
+position = Vector2(2765, 461)
+
+[node name="Town3Animal" parent="." unique_id=1293003385 instance=ExtResource("8_ostsq")]
+position = Vector2(2537, -747)
+
+[node name="Town3Fruit" parent="." unique_id=1822300631 instance=ExtResource("9_3km4f")]
+position = Vector2(2793, -747)
+
+[node name="Town4Fruit" parent="." unique_id=1636619407 instance=ExtResource("9_3km4f")]
+position = Vector2(3559, -945)
+
+[node name="Town4Animal" parent="." unique_id=609229551 instance=ExtResource("8_ostsq")]
+position = Vector2(3815, -945)
+
+[node name="Town5Animal" parent="." unique_id=1610572593 instance=ExtResource("8_ostsq")]
+position = Vector2(1763, -102)
+
+[node name="Town6Fruit" parent="." unique_id=302956384 instance=ExtResource("9_3km4f")]
+position = Vector2(2251, -490)
+
+[node name="Town6Animal" parent="." unique_id=2097688486 instance=ExtResource("8_ostsq")]
+position = Vector2(2507, -490)
+
+[node name="Town7Animal" parent="." unique_id=2071238263 instance=ExtResource("8_ostsq")]
+position = Vector2(3550, -1349)
+
+[node name="Town7Fruit" parent="." unique_id=2546432 instance=ExtResource("9_3km4f")]
+position = Vector2(3806, -1349)
 
 [connection signal="button_down" from="CanvasLayer/Control/Button" to="MatchManager" method="_on_button_button_down"]
