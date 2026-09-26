@@ -3,6 +3,8 @@ extends CharacterBody2D
 
 signal range_configuration_changed(unit: Unit)
 
+const HIT_BURST: PackedScene = preload("res://scenes/effects/HitBurst.tscn")
+
 @export var data: UnitData
 @export var owner_id: int
 @export var pixels_per_second: float = 300.0
@@ -47,10 +49,21 @@ var target_cell: Vector2i
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var health_ui: ProgressBar = $Health
 @onready var defence_ui: ProgressBar = $Defence
+@onready var audio: AudioStreamPlayer2D = $AudioStreamPlayer2D
+@onready var walk_trail: GPUParticles2D = $GPUParticles2D
 
+#vfx
+@export var shake_strength: float = 0.0
+@export var shake_decay: float = 5.0
+@export_group("Walk Trail")
+@export var walk_trail_enabled: bool = true
+var _sprite_rest_position: Vector2
+var _health_rest_position: Vector2
+var _defence_rest_position: Vector2
 
 func _ready() -> void:
 	add_to_group("units")
+	walk_trail.emitting = false
 
 	if data == null:
 		push_error(
@@ -62,12 +75,38 @@ func _ready() -> void:
 	if not data.changed.is_connected(_on_unit_data_changed):
 		data.changed.connect(_on_unit_data_changed)
 	_connect_pattern_change_signals()
-	
+
 	health_ui.max_value = unit_health
 	health_ui.value = unit_health
 	defence_ui.max_value = defence
 	defence_ui.value = defence
+	_sprite_rest_position = sprite.position
+	_health_rest_position = health_ui.position
+	_defence_rest_position = defence_ui.position
 
+func _process(delta: float) -> void:
+	if walk_trail != null:
+		walk_trail.emitting = walk_trail_enabled and is_animating
+
+	if shake_strength > 0.0:
+		# Reduce shake strength over time
+		shake_strength = move_toward(shake_strength, 0.0, shake_decay * delta)
+
+		# Shake presentation children only. The root position is authoritative board state.
+		var shake_offset := Vector2(
+			randf_range(-shake_strength, shake_strength),
+			randf_range(-shake_strength, shake_strength)
+		)
+		sprite.position = _sprite_rest_position + shake_offset
+		health_ui.position = _health_rest_position + shake_offset
+		defence_ui.position = _defence_rest_position + shake_offset
+	else:
+		sprite.position = _sprite_rest_position
+		health_ui.position = _health_rest_position
+		defence_ui.position = _defence_rest_position
+
+func apply_shake(strength: float = 10.0) -> void:
+	shake_strength = strength
 
 ## Copies immutable design data into mutable per-match combat stats.
 func _load_data() -> void:
@@ -134,6 +173,7 @@ func setup_player(
 ## Consumes defence before health, then refreshes the unit bars.
 ## Applies damage and spawns readable combat feedback at the unit's world position.
 func take_damage(damage: int) -> int:
+	audio.play()
 	var durability_before: int = defence + unit_health
 
 	var absorbed_damage: int = mini(
@@ -154,8 +194,12 @@ func take_damage(damage: int) -> int:
 		damage,
 		durability_before
 	)
-
+	apply_shake()
 	_show_damage_number(applied_damage)
+	if applied_damage > 0:
+		var burst := HIT_BURST.instantiate() as Node2D
+		get_tree().current_scene.add_child(burst)
+		burst.global_position = global_position
 	return applied_damage
 
 

@@ -14,6 +14,7 @@
 [ext_resource type="StyleBox" uid="uid://bkn0hah8dik7u" path="res://assets/ui/buttons/fantasy_normal.tres" id="14_btn_normal"]
 [ext_resource type="StyleBox" uid="uid://bdtqlvukggody" path="res://assets/ui/buttons/fantasy_hover.tres" id="15_btn_hover"]
 [ext_resource type="StyleBox" uid="uid://bqgajd6an5lnj" path="res://assets/ui/buttons/fantasy_pressed.tres" id="16_btn_pressed"]
+[ext_resource type="AudioStream" uid="uid://cgo73r67edq4l" path="res://assets/audio/music/Main_Theme.mp3" id="16_u8lgh"]
 [ext_resource type="PackedScene" uid="uid://cr0xoutbkqlxq" path="res://scenes/UI/CenterControlHUD.tscn" id="17_center_hud"]
 
 [sub_resource type="Gradient" id="Gradient_ostsq"]
@@ -115,7 +116,7 @@ theme_override_font_sizes/font_size = 23
 theme_override_styles/normal = ExtResource("14_btn_normal")
 theme_override_styles/pressed = ExtResource("16_btn_pressed")
 theme_override_styles/hover = ExtResource("15_btn_hover")
-text = "  END TURN  ›"
+text = "END TURN"
 
 [node name="TurnPanel" type="Panel" parent="CanvasLayer/Control" unique_id=1505685877]
 layout_mode = 1
@@ -271,5 +272,11 @@ position = Vector2(3550, -1349)
 
 [node name="Town7Fruit" parent="." unique_id=2546432 instance=ExtResource("9_3km4f")]
 position = Vector2(3806, -1349)
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=254671292]
+stream = ExtResource("16_u8lgh")
+volume_db = -15.294
+autoplay = true
+parameters/looping = true
 
 [connection signal="button_down" from="CanvasLayer/Control/Button" to="MatchManager" method="_on_button_button_down"]

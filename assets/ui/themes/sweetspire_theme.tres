@@ -1,0 +1,22 @@
+[gd_resource type="Theme" load_steps=5 format=3]
+
+[ext_resource type="FontFile" path="res://assets/ui/fonts/Cocogoose-Pro-Regular-trial.ttf" id="1_regular"]
+[ext_resource type="FontFile" path="res://assets/ui/fonts/Cocogoose-Pro-Bold-trial.ttf" id="2_bold"]
+[ext_resource type="FontFile" path="res://assets/ui/fonts/Cocogoose-Pro-Light-trial.ttf" id="3_light"]
+[ext_resource type="FontFile" path="res://assets/ui/fonts/Cocogoose-Pro-Thin-trial.ttf" id="4_thin"]
+
+[resource]
+default_font = ExtResource("1_regular")
+Button/fonts/font = ExtResource("2_bold")
+CheckButton/fonts/font = ExtResource("2_bold")
+MenuButton/fonts/font = ExtResource("2_bold")
+OptionButton/fonts/font = ExtResource("2_bold")
+LineEdit/fonts/font = ExtResource("3_light")
+TextEdit/fonts/font = ExtResource("3_light")
+RichTextLabel/fonts/normal_font = ExtResource("3_light")
+HeaderLabel/base_type = &"Label"
+HeaderLabel/fonts/font = ExtResource("2_bold")
+BodyLabel/base_type = &"Label"
+BodyLabel/fonts/font = ExtResource("3_light")
+SubtleLabel/base_type = &"Label"
+SubtleLabel/fonts/font = ExtResource("4_thin")

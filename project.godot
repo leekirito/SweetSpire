@@ -22,6 +22,8 @@ config/features=PackedStringArray("4.7", "Mobile")
 
 GameSession="*uid://c0jfgj5tpmb7n"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
+Fx="*uid://u6sqyh22tpu3"
+NumericFontManager="*res://scripts/UI/numeric_font_manager.gd"
 
 [editor]
 
@@ -38,6 +40,11 @@ units=""
 buildings=""
 ui_layer=""
 resources=""
+
+[gui]
+
+theme/custom="res://assets/ui/themes/sweetspire_theme.tres"
+theme/custom_font="res://assets/ui/fonts/Cocogoose-Pro-Regular-trial.ttf"
 
 [input]
 

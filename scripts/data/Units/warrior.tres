@@ -6,12 +6,10 @@
 
 [sub_resource type="Resource" id="Resource_4qk3i"]
 script = ExtResource("2_gnmde")
-base_dimensions = Vector2i(3, 3)
 metadata/_custom_type_script = "uid://bawcf75unqena"
 
 [sub_resource type="Resource" id="Resource_qlxqp"]
 script = ExtResource("2_gnmde")
-base_dimensions = Vector2i(3, 3)
 metadata/_custom_type_script = "uid://bawcf75unqena"
 
 [resource]
@@ -20,8 +18,8 @@ type = "Attack"
 unit_name = "Fighter"
 cost = 1
 health = 8
-walk_range = 3
 attack_damage = 2
+attack_range = 2
 defence = 2
 movement_pattern = SubResource("Resource_qlxqp")
 attack_pattern = SubResource("Resource_4qk3i")

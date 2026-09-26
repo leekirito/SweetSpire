@@ -22,7 +22,7 @@ extends Node2D
 	1.0
 )
 
-@export var border_width: float = 8.0
+@export_range(1.0, 16.0, 0.5) var border_width: float = 4.0
 
 @export var border_shadow_color: Color = Color(
 	0.0,
@@ -31,9 +31,10 @@ extends Node2D
 	0.8
 )
 
-@export var border_shadow_extra_width: float = 5.0
+@export_range(0.0, 12.0, 0.5) var border_shadow_extra_width: float = 2.5
 
-@export var territory_fill_alpha: float = 0.15
+@export_range(0.0, 0.5, 0.01) var territory_fill_alpha: float = 0.10
+@export_range(0.0, 1.0, 0.05) var border_highlight_alpha: float = 0.45
 
 
 # Cell -> Building ID
@@ -291,6 +292,17 @@ func _draw() -> void:
 	)
 
 
+	# Paint every territory first so borders stay crisp on top.
+	if show_territory_fill:
+		for building: Building in buildings_by_id.values():
+			if building.owner_id == -1 or building.visual_tribe == null:
+				continue
+			_draw_building_fill(
+				building,
+				half_size,
+				building.visual_tribe.territory_color
+			)
+
 	for building: Building in buildings_by_id.values():
 
 		# Neutral towns do not draw territory borders.
@@ -312,6 +324,26 @@ func _draw() -> void:
 			half_size,
 			border_color
 		)
+
+
+## Gives controlled ground a quiet tribe-colored wash without extra nodes or textures.
+func _draw_building_fill(
+	building: Building,
+	half_size: Vector2,
+	territory_color: Color
+) -> void:
+	var fill_color := territory_color
+	fill_color.a = territory_fill_alpha
+
+	for cell: Vector2i in building.territory_cells:
+		var center: Vector2 = to_local(board_manager.cell_to_world(cell))
+		var diamond := PackedVector2Array([
+			center + Vector2(0.0, -half_size.y),
+			center + Vector2(half_size.x, 0.0),
+			center + Vector2(0.0, half_size.y),
+			center + Vector2(-half_size.x, 0.0)
+		])
+		draw_colored_polygon(diamond, fill_color)
 func _draw_territory_line(
 	from: Vector2,
 	to: Vector2,
@@ -333,6 +365,17 @@ func _draw_territory_line(
 		to,
 		color,
 		border_width,
+		true
+	)
+
+	# Fine highlight keeps the border readable over bright biome tiles.
+	var highlight := color.lightened(0.35)
+	highlight.a = border_highlight_alpha
+	draw_line(
+		from,
+		to,
+		highlight,
+		maxf(1.0, border_width * 0.3),
 		true
 	)
 

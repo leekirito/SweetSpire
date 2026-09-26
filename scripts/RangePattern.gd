@@ -1,3 +1,4 @@
+@tool
 class_name RangePattern
 extends Resource
 
@@ -15,11 +16,26 @@ enum LineAxis {
 	VERTICAL
 }
 
-@export var shape: Shape = Shape.SQUARE
+@export var shape: Shape = Shape.SQUARE:
+	set(value):
+		if shape == value:
+			return
+		shape = value
+		emit_changed()
 ## The numeric walk/attack range is added to both dimensions.
 ## With the default (2, 2), range 1 produces a 3x3 footprint.
-@export var base_dimensions: Vector2i = Vector2i(2, 2)
-@export var line_axis: LineAxis = LineAxis.HORIZONTAL
+@export var base_dimensions: Vector2i = Vector2i(2, 2):
+	set(value):
+		if base_dimensions == value:
+			return
+		base_dimensions = value
+		emit_changed()
+@export var line_axis: LineAxis = LineAxis.HORIZONTAL:
+	set(value):
+		if line_axis == value:
+			return
+		line_axis = value
+		emit_changed()
 
 
 func get_offsets(
@@ -37,6 +53,7 @@ func get_offsets(
 	dimensions.x = maxi(dimensions.x, 1)
 	dimensions.y = maxi(dimensions.y, 1)
 
+	# Even dimensions have their extra column/row on the positive (right/down) side.
 	var minimum := Vector2i(
 		-floori(float(dimensions.x - 1) / 2.0),
 		-floori(float(dimensions.y - 1) / 2.0)
@@ -63,8 +80,9 @@ func _includes_offset(offset: Vector2i, dimensions: Vector2i) -> bool:
 		Shape.LINE:
 			return offset.y == 0 if line_axis == LineAxis.HORIZONTAL else offset.x == 0
 		Shape.AREA:
-			var radius_x := maxf(float(dimensions.x - 1) / 2.0, 1.0)
-			var radius_y := maxf(float(dimensions.y - 1) / 2.0, 1.0)
+			# Match the actual bounds, including the extra cell of even-sized areas.
+			var radius_x := maxf(float(floori(float(dimensions.x) / 2.0) if offset.x >= 0 else floori(float(dimensions.x - 1) / 2.0)), 1.0)
+			var radius_y := maxf(float(floori(float(dimensions.y) / 2.0) if offset.y >= 0 else floori(float(dimensions.y - 1) / 2.0)), 1.0)
 			return absf(float(offset.x)) / radius_x + absf(float(offset.y)) / radius_y <= 1.0
 		_:
 			return true

@@ -154,6 +154,8 @@ func _initialize_match() -> void:
 		all_resources
 	)
 
+	_refresh_resource_collectibility()
+
 
 	# Now assign player starting towns.
 
@@ -557,10 +559,9 @@ func _on_building_level_changed(
 		all_resources
 	)
 
+	_refresh_resource_collectibility()
 
-	# Refresh visual borders.
-
-	territory_manager.queue_redraw()
+	# rebuild_territories already queues the updated fill and border redraw.
 
 func get_unit(
 	unit_id: int

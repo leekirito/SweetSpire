@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://i7roxh716670"]
+
+[ext_resource type="Script" uid="uid://by5meouepp4ba" path="res://scripts/effects/hit_burst.gd" id="1"]
+
+[node name="HitBurst" type="Node2D" unique_id=247379162]
+z_index = 1000
+z_as_relative = false
+script = ExtResource("1")
+chunk_count = 10
+scatter_radius = 99.0
+min_chunk_size = 15.5
+max_chunk_size = 30.0
+chunk_colors = Array[Color]([])
+gravity = 900.0

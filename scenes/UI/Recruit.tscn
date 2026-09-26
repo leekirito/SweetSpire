@@ -286,6 +286,7 @@ offset_transform_position = Vector2(0, -11.845)
 theme_override_constants/separation = 5
 
 [node name="UnitName" type="Label" parent="Panel/PreviewPanel/Margin/VBox" unique_id=844391979]
+theme_type_variation = &"HeaderLabel"
 layout_mode = 2
 offset_transform_enabled = true
 offset_transform_position = Vector2(0, -32.405)
@@ -297,6 +298,7 @@ text = "FIGHTER"
 horizontal_alignment = 1
 
 [node name="UnitType" type="Label" parent="Panel/PreviewPanel/Margin/VBox" unique_id=1542295400]
+theme_type_variation = &"SubtleLabel"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.423529, 0.305882, 0.156863, 1)
 theme_override_font_sizes/font_size = 14
@@ -304,6 +306,7 @@ text = "Attack"
 horizontal_alignment = 1
 
 [node name="Stats" type="Label" parent="Panel/PreviewPanel/Margin/VBox" unique_id=360531274]
+theme_type_variation = &"BodyLabel"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.239216, 0.168627, 0.0823529, 1)
 theme_override_font_sizes/font_size = 17
@@ -313,6 +316,7 @@ RANGE  1"
 horizontal_alignment = 1
 
 [node name="Cost" type="Label" parent="Panel/PreviewPanel/Margin/VBox" unique_id=648315628]
+theme_type_variation = &"HeaderLabel"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.254902, 0.423529, 0.0862745, 1)
 theme_override_colors/font_outline_color = Color(0.168627, 0.0823529, 0.0196078, 1)

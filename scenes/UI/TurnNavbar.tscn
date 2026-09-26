@@ -3,11 +3,6 @@
 [ext_resource type="Script" uid="uid://85cpa52yob2f" path="res://scripts/UI/turn_navbar.gd" id="1_nav"]
 [ext_resource type="Script" uid="uid://sc7mnxd2j8gd" path="res://scripts/UI/technology_tree_ui.gd" id="2_tree"]
 [ext_resource type="StyleBox" uid="uid://bidqr7ho3fehm" path="res://assets/ui/elements/fantasy_hud_panel.tres" id="3_hud"]
-[ext_resource type="StyleBox" uid="uid://duwuvfpmkraq6" path="res://assets/ui/elements/fantasy_parchment_panel.tres" id="4_parchment"]
-[ext_resource type="StyleBox" uid="uid://bkn0hah8dik7u" path="res://assets/ui/buttons/fantasy_normal.tres" id="5_btn_normal"]
-[ext_resource type="StyleBox" uid="uid://bdtqlvukggody" path="res://assets/ui/buttons/fantasy_hover.tres" id="6_btn_hover"]
-[ext_resource type="StyleBox" uid="uid://bqgajd6an5lnj" path="res://assets/ui/buttons/fantasy_pressed.tres" id="7_btn_pressed"]
-[ext_resource type="StyleBox" uid="uid://cahr4dhf1nhcb" path="res://assets/ui/buttons/fantasy_disabled.tres" id="8_btn_disabled"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_placeholder"]
 bg_color = Color(0.0784314, 0.0941176, 0.133333, 0.94)
@@ -224,6 +219,7 @@ grow_vertical = 2
 color = Color(0.025, 0.031, 0.047, 0.985)
 
 [node name="Title" type="Label" parent="TechnologyTree" unique_id=2088830556]
+theme_type_variation = &"HeaderLabel"
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -236,6 +232,7 @@ text = "TECHNOLOGY TREE"
 horizontal_alignment = 1
 
 [node name="Hint" type="Label" parent="TechnologyTree" unique_id=344834796]
+theme_type_variation = &"SubtleLabel"
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -339,12 +336,14 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
 [node name="Name" type="Label" parent="TechnologyTree/TechCard/CardMargin/CardContent/Header/Identity" unique_id=2001393217]
+theme_type_variation = &"HeaderLabel"
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.819608, 0.4, 1)
 theme_override_font_sizes/font_size = 25
 text = "TECHNOLOGY"
 
 [node name="Description" type="Label" parent="TechnologyTree/TechCard/CardMargin/CardContent/Header/Identity" unique_id=1429866530]
+theme_type_variation = &"BodyLabel"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.721569, 0.756863, 0.831373, 1)
 theme_override_font_sizes/font_size = 15
@@ -352,12 +351,14 @@ text = "Technology description"
 autowrap_mode = 2
 
 [node name="UnlocksTitle" type="Label" parent="TechnologyTree/TechCard/CardMargin/CardContent" unique_id=484890768]
+theme_type_variation = &"HeaderLabel"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.407843, 0.823529, 0.635294, 1)
 theme_override_font_sizes/font_size = 15
 text = "UNLOCKS"
 
 [node name="Effects" type="Label" parent="TechnologyTree/TechCard/CardMargin/CardContent" unique_id=2025578122]
+theme_type_variation = &"BodyLabel"
 custom_minimum_size = Vector2(0, 78)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.898039, 0.913725, 0.94902, 1)
@@ -366,6 +367,7 @@ text = "• Technology effect"
 autowrap_mode = 2
 
 [node name="Requirement" type="Label" parent="TechnologyTree/TechCard/CardMargin/CardContent" unique_id=1323282454]
+theme_type_variation = &"SubtleLabel"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.721569, 0.756863, 0.831373, 1)
 theme_override_font_sizes/font_size = 14

@@ -7,6 +7,11 @@
 [ext_resource type="Resource" uid="uid://c7idhxlkcd7ue" path="res://scripts/data/Tribe/KAMOTE.tres" id="4_l688p"]
 [ext_resource type="Shader" uid="uid://b7rsnnslwqg2t" path="res://assets/Shader/chroma_key.gdshader" id="6_l688p"]
 [ext_resource type="VideoStream" uid="uid://bw8tqn0qamusg" path="res://assets/video/InShot_20260919_140634175.ogv" id="6_mmvq5"]
+[ext_resource type="Texture2D" uid="uid://dac55vylfawn5" path="res://assets/ui/source/BG_MainMenu1.png" id="8_e2h84"]
+[ext_resource type="AudioStream" uid="uid://dqf2ao60tr6rx" path="res://assets/audio/music/BASE_OST.mp3" id="8_hg2b1"]
+[ext_resource type="Texture2D" uid="uid://q1i4xu2gj1h" path="res://assets/ui/source/BG_MainMenu2.png" id="9_lvq1y"]
+[ext_resource type="Texture2D" uid="uid://cplq2a03vypkm" path="res://assets/ui/source/main_menuASSET.png" id="11_0nsne"]
+[ext_resource type="Texture2D" uid="uid://dqjo7wdmmjmrv" path="res://assets/ui/source/GAME_logo2.png" id="11_fiy3y"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ue1wv"]
 shader = ExtResource("6_l688p")
@@ -14,13 +19,194 @@ shader_parameter/chroma_key_color = Color(0.003921569, 0.6862745, 0.25882354, 1)
 shader_parameter/threshold = 0.3
 shader_parameter/fade = 0.1
 
+[sub_resource type="Gradient" id="Gradient_hg2b1"]
+offsets = PackedFloat32Array(0, 0.15558912)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ue1wv"]
+gradient = SubResource("Gradient_hg2b1")
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ue1wv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_e2h84")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_lvq1y")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_0nsne"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DesignCanvas/AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-275, 322)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DesignCanvas/MainMenuAsset:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(414.74994, 322.50003)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("DesignCanvas/GameLogo:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(303.49994, 125.25)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DesignCanvas/MenuButtons:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(180, 300)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DesignCanvas/MenuButtons:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("DesignCanvas/VideoStreamPlayer:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_fiy3y"]
+resource_name = "main_menu_anim"
+length = 1.5892857
+step = 0.017857144
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DesignCanvas/AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.875),
+"transitions": PackedFloat32Array(0.35, 1),
+"update": 0,
+"values": [Vector2(-275, 322), Vector2(576, 324)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DesignCanvas/MainMenuAsset:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.49),
+"transitions": PackedFloat32Array(0.35, 1),
+"update": 0,
+"values": [Vector2(414.74994, 322.50003), Vector2(1538.75, 322.50003)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("DesignCanvas/GameLogo:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1.5),
+"transitions": PackedFloat32Array(0.35, 1),
+"update": 0,
+"values": [Vector2(303.49994, 125.25), Vector2(1427.5, 125.25)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DesignCanvas/MenuButtons:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.89285713),
+"transitions": PackedFloat32Array(0.35, 1),
+"update": 0,
+"values": [Vector2(180, 300), Vector2(1304, 300)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DesignCanvas/MenuButtons:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.55),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("DesignCanvas/VideoStreamPlayer:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.65),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qwd58"]
+_data = {
+&"RESET": SubResource("Animation_0nsne"),
+&"main_menu_anim": SubResource("Animation_fiy3y")
+}
+
 [node name="MainMenu" type="CanvasLayer" unique_id=791113839]
 script = ExtResource("1_gxkns")
 saba_tribe = ExtResource("2_emauo")
 malagkit_tribe = ExtResource("3_mmvq5")
 kamote_tribe = ExtResource("4_l688p")
 
-[node name="Second" type="Control" parent="." unique_id=1955145111]
+[node name="HotseatSetup" type="Control" parent="." unique_id=1955145111]
+visible = false
+z_index = 10
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,7 +214,26 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Button" type="Button" parent="Second" unique_id=605903552]
+[node name="HotseatBackdrop" type="ColorRect" parent="HotseatSetup" unique_id=745632113]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.023529412, 0.03529412, 0.06666667, 0.5882353)
+
+[node name="BackButton" type="Button" parent="HotseatSetup" unique_id=1134290519]
+layout_mode = 1
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 154.0
+offset_bottom = 72.0
+theme_override_font_sizes/font_size = 22
+text = "‹ BACK"
+
+[node name="Button" type="Button" parent="HotseatSetup" unique_id=605903552]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -45,7 +250,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "START"
 
-[node name="Button2" type="Button" parent="Second" unique_id=1026801999]
+[node name="Button2" type="Button" parent="HotseatSetup" unique_id=1026801999]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -60,7 +265,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "SABA"
 
-[node name="Button3" type="Button" parent="Second" unique_id=2098849177]
+[node name="Button3" type="Button" parent="HotseatSetup" unique_id=2098849177]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -75,7 +280,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "MALAG"
 
-[node name="Button4" type="Button" parent="Second" unique_id=761818918]
+[node name="Button4" type="Button" parent="HotseatSetup" unique_id=761818918]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -90,7 +295,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "KAMO"
 
-[node name="Button5" type="Button" parent="Second" unique_id=1114553182]
+[node name="Button5" type="Button" parent="HotseatSetup" unique_id=1114553182]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -108,7 +313,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "SABA"
 
-[node name="Button6" type="Button" parent="Second" unique_id=209647541]
+[node name="Button6" type="Button" parent="HotseatSetup" unique_id=209647541]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -126,7 +331,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "MALAG"
 
-[node name="Button7" type="Button" parent="Second" unique_id=675752287]
+[node name="Button7" type="Button" parent="HotseatSetup" unique_id=675752287]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -144,7 +349,7 @@ pivot_offset_ratio = Vector2(0.5, 0.5)
 theme_override_font_sizes/font_size = 49
 text = "KAMO"
 
-[node name="Label" type="Label" parent="Second" unique_id=1862962481]
+[node name="Label" type="Label" parent="HotseatSetup" unique_id=1862962481]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -153,10 +358,11 @@ offset_left = -20.0
 offset_right = 20.0
 offset_bottom = 23.0
 grow_horizontal = 2
+theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 105
-text = "SWEETSPIRE"
+text = "SETUP"
 
-[node name="Label2" type="Label" parent="Second" unique_id=701156793]
+[node name="Label2" type="Label" parent="HotseatSetup" unique_id=701156793]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -166,10 +372,11 @@ offset_top = 39.0
 offset_right = 369.0
 offset_bottom = 83.0
 grow_vertical = 2
+theme_type_variation = &"BodyLabel"
 theme_override_font_sizes/font_size = 30
 text = "Player 1 tribe"
 
-[node name="Label3" type="Label" parent="Second" unique_id=152913968]
+[node name="Label3" type="Label" parent="HotseatSetup" unique_id=152913968]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -182,10 +389,11 @@ offset_right = -115.0
 offset_bottom = 81.0
 grow_horizontal = 0
 grow_vertical = 2
+theme_type_variation = &"BodyLabel"
 theme_override_font_sizes/font_size = 30
 text = "Player 2 tribe"
 
-[node name="LineEdit" type="LineEdit" parent="Second" unique_id=1248415981]
+[node name="LineEdit" type="LineEdit" parent="HotseatSetup" unique_id=1248415981]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.48100004
@@ -199,19 +407,295 @@ offset_bottom = 0.09199524
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label2" type="Label" parent="Second/LineEdit" unique_id=266216940]
+[node name="Label2" type="Label" parent="HotseatSetup/LineEdit" unique_id=266216940]
 layout_mode = 0
 offset_left = -159.0
 offset_right = -13.0
 offset_bottom = 46.0
+theme_type_variation = &"HeaderLabel"
 theme_override_font_sizes/font_size = 33
 text = "PLAYERS:"
+
+[node name="ModeSelection" type="Control" parent="." unique_id=465053932]
+visible = false
+z_index = 10
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="ModeSelection" unique_id=674001334]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.010544314, 0.015816472, 0.032454558, 0.5882353)
+
+[node name="Panel" type="PanelContainer" parent="ModeSelection" unique_id=715950722]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -200.0
+offset_right = 240.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="ModeSelection/Panel" unique_id=819507740]
+layout_mode = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 32
+
+[node name="Content" type="VBoxContainer" parent="ModeSelection/Panel/Margin" unique_id=628189337]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="ModeSelection/Panel/Margin/Content" unique_id=1438353734]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 36
+text = "CHOOSE GAME MODE"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="ModeSelection/Panel/Margin/Content" unique_id=1572010327]
+layout_mode = 2
+theme_type_variation = &"BodyLabel"
+text = "Play on one device or prepare a local network lobby."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HotseatButton" type="Button" parent="ModeSelection/Panel/Margin/Content" unique_id=1494517742]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "HOTSEAT"
+
+[node name="LanButton" type="Button" parent="ModeSelection/Panel/Margin/Content" unique_id=651335529]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "LAN"
+
+[node name="BackButton" type="Button" parent="ModeSelection/Panel/Margin/Content" unique_id=1242800278]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+text = "BACK"
+
+[node name="LANSetup" type="Control" parent="." unique_id=1307384218]
+visible = false
+z_index = 10
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="LANSetup" unique_id=1995093693]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05490196, 0.06666667, 0.09411765, 0.5882353)
+
+[node name="Margin" type="MarginContainer" parent="LANSetup" unique_id=1845831472]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 34.0
+offset_top = 24.0
+offset_right = -34.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Page" type="VBoxContainer" parent="LANSetup/Margin" unique_id=1827644999]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Header" type="HBoxContainer" parent="LANSetup/Margin/Page" unique_id=182100811]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="LANSetup/Margin/Page/Header" unique_id=299407883]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+text = "‹ BACK"
+
+[node name="Title" type="Label" parent="LANSetup/Margin/Page/Header" unique_id=755133691]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 42
+text = "GAME SETUP"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="LANSetup/Margin/Page/Header" unique_id=1636683842]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+
+[node name="Body" type="HBoxContainer" parent="LANSetup/Margin/Page" unique_id=1693418655]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+
+[node name="Left" type="VBoxContainer" parent="LANSetup/Margin/Page/Body" unique_id=503063050]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 18
+
+[node name="SettingsPanel" type="PanelContainer" parent="LANSetup/Margin/Page/Body/Left" unique_id=1295648271]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel" unique_id=1638923548]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 22
+
+[node name="Settings" type="VBoxContainer" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel/Margin" unique_id=503653652]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Title" type="Label" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel/Margin/Settings" unique_id=1841611363]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 27
+text = "GAME SETTINGS"
+
+[node name="Mode" type="HBoxContainer" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel/Margin/Settings" unique_id=1015378867]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HostButton" type="Button" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel/Margin/Settings/Mode" unique_id=437833046]
+custom_minimum_size = Vector2(170, 48)
+layout_mode = 2
+text = "HOST GAME"
+
+[node name="JoinButton" type="Button" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel/Margin/Settings/Mode" unique_id=493870740]
+custom_minimum_size = Vector2(170, 48)
+layout_mode = 2
+text = "JOIN GAME"
+
+[node name="PlayerName" type="LineEdit" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel/Margin/Settings" unique_id=1838194657]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+placeholder_text = "Player name"
+
+[node name="Address" type="LineEdit" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel/Margin/Settings" unique_id=1162943270]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "127.0.0.1"
+placeholder_text = "IP address"
+
+[node name="Port" type="SpinBox" parent="LANSetup/Margin/Page/Body/Left/SettingsPanel/Margin/Settings" unique_id=2119438056]
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+min_value = 1024.0
+max_value = 65535.0
+value = 7000.0
+
+[node name="TribePanel" type="PanelContainer" parent="LANSetup/Margin/Page/Body/Left" unique_id=1316994664]
+custom_minimum_size = Vector2(0, 145)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="LANSetup/Margin/Page/Body/Left/TribePanel" unique_id=1004061909]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 18
+
+[node name="Content" type="VBoxContainer" parent="LANSetup/Margin/Page/Body/Left/TribePanel/Margin" unique_id=375894180]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="LANSetup/Margin/Page/Body/Left/TribePanel/Margin/Content" unique_id=736736061]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 26
+text = "TRIBE SELECTION"
+
+[node name="Tribe" type="OptionButton" parent="LANSetup/Margin/Page/Body/Left/TribePanel/Margin/Content" unique_id=167611991]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="PlayersPanel" type="PanelContainer" parent="LANSetup/Margin/Page/Body" unique_id=550553435]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="LANSetup/Margin/Page/Body/PlayersPanel" unique_id=510726871]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 22
+
+[node name="Content" type="VBoxContainer" parent="LANSetup/Margin/Page/Body/PlayersPanel/Margin" unique_id=947515494]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="LANSetup/Margin/Page/Body/PlayersPanel/Margin/Content" unique_id=1030387060]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 27
+text = "PLAYERS"
+horizontal_alignment = 1
+
+[node name="PlayerOne" type="Label" parent="LANSetup/Margin/Page/Body/PlayersPanel/Margin/Content" unique_id=857364446]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_type_variation = &"BodyLabel"
+text = "1  Player (You)"
+
+[node name="PlayerTwo" type="Label" parent="LANSetup/Margin/Page/Body/PlayersPanel/Margin/Content" unique_id=836242710]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_type_variation = &"SubtleLabel"
+text = "2  Waiting for player..."
+
+[node name="PlayerThree" type="Label" parent="LANSetup/Margin/Page/Body/PlayersPanel/Margin/Content" unique_id=2124968695]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_type_variation = &"SubtleLabel"
+text = "3  Open slot"
+
+[node name="Spacer" type="Control" parent="LANSetup/Margin/Page/Body/PlayersPanel/Margin/Content" unique_id=70103483]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Status" type="Label" parent="LANSetup/Margin/Page/Body/PlayersPanel/Margin/Content" unique_id=661426132]
+layout_mode = 2
+theme_type_variation = &"SubtleLabel"
+text = "UI PREVIEW — NETWORKING NOT CONNECTED"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="StartButton" type="Button" parent="LANSetup/Margin/Page/Body/PlayersPanel/Margin/Content" unique_id=827564980]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+disabled = true
+text = "START"
 
 [node name="GameSession" type="Node2D" parent="." unique_id=1021879679]
 script = ExtResource("1_pxg6q")
 
 [node name="Main" type="Control" parent="." unique_id=616465581]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -220,7 +704,24 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="Main" unique_id=441831070]
+[node name="DesignCanvas" type="Control" parent="Main" unique_id=2065986911]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -576.0
+offset_top = -324.0
+offset_right = 576.0
+offset_bottom = 324.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(576, 324)
+mouse_filter = 2
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="Main/DesignCanvas" unique_id=441831070]
+z_index = -1
 material = SubResource("ShaderMaterial_ue1wv")
 layout_mode = 1
 anchors_preset = 6
@@ -240,3 +741,90 @@ stream = ExtResource("6_mmvq5")
 speed_scale = 2.31
 autoplay = true
 loop = true
+
+[node name="bg" type="Sprite2D" parent="Main/DesignCanvas" unique_id=1697498995]
+z_index = -180
+position = Vector2(577, 297)
+scale = Vector2(21.15, 21.15)
+texture = SubResource("GradientTexture2D_ue1wv")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Main/DesignCanvas" unique_id=1956529109]
+position = Vector2(-275, 322)
+scale = Vector2(0.6, 0.6)
+sprite_frames = SubResource("SpriteFrames_ue1wv")
+autoplay = "default"
+frame_progress = 0.7053625
+
+[node name="MainMenuAsset" type="Sprite2D" parent="Main/DesignCanvas" unique_id=159721911]
+position = Vector2(414.74994, 322.50003)
+scale = Vector2(0.34453118, 0.5925597)
+texture = ExtResource("11_0nsne")
+
+[node name="GameLogo" type="Sprite2D" parent="Main/DesignCanvas" unique_id=940914899]
+position = Vector2(303.49994, 125.25)
+scale = Vector2(0.32150206, 0.32150206)
+texture = ExtResource("11_fiy3y")
+
+[node name="MenuButtons" type="VBoxContainer" parent="Main/DesignCanvas" unique_id=883425204]
+layout_mode = 0
+offset_left = 180.0
+offset_top = 300.0
+offset_right = 425.00037
+offset_bottom = 498.0
+theme_override_constants/separation = 14
+
+[node name="PlayButton" type="Button" parent="Main/DesignCanvas/MenuButtons" unique_id=1322406437]
+custom_minimum_size = Vector2(245, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "PLAY"
+
+[node name="OptionsButton" type="Button" parent="Main/DesignCanvas/MenuButtons" unique_id=1618510898]
+custom_minimum_size = Vector2(245, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "OPTIONS"
+
+[node name="QuitButton" type="Button" parent="Main/DesignCanvas/MenuButtons" unique_id=852889383]
+custom_minimum_size = Vector2(245, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "QUIT"
+
+[node name="OptionsPanel" type="PanelContainer" parent="Main/DesignCanvas" unique_id=2035896187]
+visible = false
+layout_mode = 0
+offset_left = 176.0
+offset_top = 285.0
+offset_right = 429.0
+offset_bottom = 465.0
+
+[node name="Options" type="VBoxContainer" parent="Main/DesignCanvas/OptionsPanel" unique_id=578475485]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Main/DesignCanvas/OptionsPanel/Options" unique_id=1548003472]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 28
+text = "OPTIONS"
+horizontal_alignment = 1
+
+[node name="Fullscreen" type="CheckButton" parent="Main/DesignCanvas/OptionsPanel/Options" unique_id=1963070139]
+custom_minimum_size = Vector2(245, 52)
+layout_mode = 2
+text = "Fullscreen"
+
+[node name="BackButton" type="Button" parent="Main/DesignCanvas/OptionsPanel/Options" unique_id=342477193]
+custom_minimum_size = Vector2(245, 52)
+layout_mode = 2
+text = "BACK"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Main/DesignCanvas" unique_id=1286999396]
+root_node = NodePath("../..")
+libraries/ = SubResource("AnimationLibrary_qwd58")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=741303028]
+stream = ExtResource("8_hg2b1")
+autoplay = true
+parameters/looping = true

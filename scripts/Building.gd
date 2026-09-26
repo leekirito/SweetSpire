@@ -200,13 +200,13 @@ func _update_territory_radius() -> void:
 
 	#territory_radius = building_level
 	match building_level:
-		1, 2:
+		1:
 			territory_radius = 1
 
-		3, 4:
+		2, 3:
 			territory_radius = 2
 
-		5:
+		4, 5:
 			territory_radius = 3
 func _ready() -> void:
 
@@ -243,18 +243,30 @@ func _refresh_exp_bar(animate_fill: bool = false) -> void:
 	if building_level >= 5:
 		filled_count = segment_count
 
-	var available_width := 124.0 - float((segment_count - 1) * 4)
+	var segment_gap: float = 5.0
+	exp_segments.add_theme_constant_override("separation", int(segment_gap))
+	var available_width := 124.0 - float((segment_count - 1)) * segment_gap
 	var segment_width := available_width / float(segment_count)
 
 	for index: int in range(segment_count):
-		var segment := ColorRect.new()
+		var segment := Panel.new()
 		segment.custom_minimum_size = Vector2(segment_width, 12.0)
 		segment.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		segment.color = (
+		var segment_color: Color = (
 			Color("ffd166")
 			if index < filled_count
-			else Color("303747")
+			else Color("202838")
 		)
+		var segment_style := StyleBoxFlat.new()
+		segment_style.bg_color = segment_color
+		segment_style.border_color = (
+			Color("fff0a8")
+			if index < filled_count
+			else Color("596579")
+		)
+		segment_style.set_border_width_all(1)
+		segment_style.set_corner_radius_all(3)
+		segment.add_theme_stylebox_override("panel", segment_style)
 
 		exp_segments.add_child(segment)
 
