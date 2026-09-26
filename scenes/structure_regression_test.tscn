@@ -1,0 +1,5 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://scenes/main/Main.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/structure_regression_test.gd" id="2"]
+[node name="StructureRegression" instance=ExtResource("1")]
+script = ExtResource("2")

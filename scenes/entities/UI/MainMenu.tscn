@@ -12,6 +12,14 @@
 [ext_resource type="Texture2D" uid="uid://q1i4xu2gj1h" path="res://assets/ui/source/BG_MainMenu2.png" id="9_lvq1y"]
 [ext_resource type="Texture2D" uid="uid://cplq2a03vypkm" path="res://assets/ui/source/main_menuASSET.png" id="11_0nsne"]
 [ext_resource type="Texture2D" uid="uid://dqjo7wdmmjmrv" path="res://assets/ui/source/GAME_logo2.png" id="11_fiy3y"]
+[ext_resource type="StyleBox" uid="uid://bkn0hah8dik7u" path="res://assets/ui/buttons/blue_normal.tres" id="12_8xopr"]
+[ext_resource type="StyleBox" uid="uid://cy2eelwkmrg23" path="res://assets/ui/buttons/pink_normal.tres" id="12_jkhrk"]
+[ext_resource type="StyleBox" uid="uid://bqgajd6an5lnj" path="res://assets/ui/buttons/blue_pressed.tres" id="13_eqrpg"]
+[ext_resource type="StyleBox" uid="uid://b6n2y87v2qtk2" path="res://assets/ui/buttons/pink_pressed.tres" id="13_jop6x"]
+[ext_resource type="StyleBox" uid="uid://bdtqlvukggody" path="res://assets/ui/buttons/blue_hover.tres" id="14_2xdvh"]
+[ext_resource type="StyleBox" uid="uid://b3q83p41m0a3q" path="res://assets/ui/buttons/pink_hover.tres" id="14_8ykkb"]
+[ext_resource type="StyleBox" uid="uid://b8e716wn111sr" path="res://assets/ui/buttons/pink_disabled.tres" id="15_l7fal"]
+[ext_resource type="StyleBox" uid="uid://cahr4dhf1nhcb" path="res://assets/ui/buttons/blue_disabled.tres" id="19_jop6x"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ue1wv"]
 shader = ExtResource("6_l688p")
@@ -769,26 +777,56 @@ texture = ExtResource("11_fiy3y")
 layout_mode = 0
 offset_left = 180.0
 offset_top = 300.0
-offset_right = 425.00037
-offset_bottom = 498.0
-theme_override_constants/separation = 14
+offset_right = 525.0
+offset_bottom = 500.0
+offset_transform_enabled = true
+theme_override_constants/separation = 16
 
-[node name="PlayButton" type="Button" parent="Main/DesignCanvas/MenuButtons" unique_id=1322406437]
+[node name="MarginContainer" type="MarginContainer" parent="Main/DesignCanvas/MenuButtons" unique_id=953927567]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="Main/DesignCanvas/MenuButtons/MarginContainer" unique_id=1322406437]
 custom_minimum_size = Vector2(245, 56)
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = ExtResource("12_jkhrk")
+theme_override_styles/pressed = ExtResource("13_jop6x")
+theme_override_styles/hover = ExtResource("14_8ykkb")
+theme_override_styles/disabled = ExtResource("15_l7fal")
 text = "PLAY"
 
-[node name="OptionsButton" type="Button" parent="Main/DesignCanvas/MenuButtons" unique_id=1618510898]
+[node name="MarginContainer2" type="MarginContainer" parent="Main/DesignCanvas/MenuButtons" unique_id=310246659]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+
+[node name="OptionsButton" type="Button" parent="Main/DesignCanvas/MenuButtons/MarginContainer2" unique_id=1618510898]
 custom_minimum_size = Vector2(245, 56)
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = ExtResource("12_jkhrk")
+theme_override_styles/pressed = ExtResource("13_jop6x")
+theme_override_styles/hover = ExtResource("14_8ykkb")
+theme_override_styles/disabled = ExtResource("15_l7fal")
 text = "OPTIONS"
 
-[node name="QuitButton" type="Button" parent="Main/DesignCanvas/MenuButtons" unique_id=852889383]
+[node name="MarginContainer3" type="MarginContainer" parent="Main/DesignCanvas/MenuButtons" unique_id=1721347480]
+layout_mode = 2
+theme_override_constants/margin_left = 100
+
+[node name="QuitButton" type="Button" parent="Main/DesignCanvas/MenuButtons/MarginContainer3" unique_id=852889383]
 custom_minimum_size = Vector2(245, 56)
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = ExtResource("12_8xopr")
+theme_override_styles/pressed = ExtResource("13_eqrpg")
+theme_override_styles/hover = ExtResource("14_2xdvh")
+theme_override_styles/disabled = ExtResource("19_jop6x")
 text = "QUIT"
 
 [node name="OptionsPanel" type="PanelContainer" parent="Main/DesignCanvas" unique_id=2035896187]

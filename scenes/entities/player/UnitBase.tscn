@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://cn0l4lxtniasf"]
 
 [ext_resource type="Script" uid="uid://r7kav4gxrdr2" path="res://scripts/Unit.gd" id="1_4beuo"]
-[ext_resource type="Texture2D" uid="uid://d3i02py6xh8u3" path="res://assets/environment/tiles/archer.png" id="2_4beuo"]
+[ext_resource type="Texture2D" uid="uid://bpobgit00pixw" path="res://assets/sprites/PATHFINDER_SABA(1).png" id="2_no6u0"]
 [ext_resource type="Texture2D" uid="uid://bohxrugshrjaw" path="res://assets/effects/kenney_particle_pack/circle_05.png" id="3_no6u0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4beuo"]
@@ -15,13 +15,33 @@ data = PackedByteArray("cW9hZgAAvwECAKxEFAAQKAAAAAAAAAAAAAAAAOAAQAAAAAAAAAAAAAAA
 format = 3
 stereo = true
 
+[sub_resource type="Curve" id="Curve_pgfi4"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_no6u0"]
+curve = SubResource("Curve_pgfi4")
+
+[sub_resource type="Curve" id="Curve_no6u0"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0.531494), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_gnmde"]
+curve = SubResource("Curve_no6u0")
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ue1wv"]
 particle_flag_disable_z = true
 emission_shape = 1
 emission_sphere_radius = 26.52
+angle_min = 1.0728835e-05
+angle_max = 1.0728835e-05
+direction = Vector3(1, -9.145, 0)
 gravity = Vector3(0, -63.295, 0)
 scale_min = 0.11
 scale_max = 0.21
+scale_curve = SubResource("CurveTexture_gnmde")
+alpha_curve = SubResource("CurveTexture_no6u0")
 
 [node name="UnitBase" type="CharacterBody2D" unique_id=1922843240]
 z_index = 999
@@ -30,25 +50,25 @@ pixels_per_second = 700.0
 shake_decay = 10.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1770982642]
-texture = ExtResource("2_4beuo")
-offset = Vector2(0, -202.165)
+texture = ExtResource("2_no6u0")
+offset = Vector2(0, -184.545)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1370861738]
 polygon = PackedVector2Array(0, -64, 128, 0, 0, 64, -128, 0)
 
 [node name="Health" type="ProgressBar" parent="." unique_id=271927386]
 offset_left = -74.0
-offset_top = -172.0
+offset_top = -309.0
 offset_right = 76.0
-offset_bottom = -142.0
+offset_bottom = -279.0
 theme_override_styles/fill = SubResource("StyleBoxFlat_4beuo")
 show_percentage = false
 
 [node name="Defence" type="ProgressBar" parent="." unique_id=368266656]
 offset_left = -74.0
-offset_top = -172.0
+offset_top = -309.0
 offset_right = 76.0
-offset_bottom = -141.0
+offset_bottom = -278.0
 theme_override_styles/fill = SubResource("StyleBoxFlat_ue1wv")
 show_percentage = false
 
@@ -56,9 +76,9 @@ show_percentage = false
 stream = SubResource("AudioStreamWAV_pgfi4")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1562490692]
-visible = false
 z_index = -1
-amount = 20
+amount = 50
 texture = ExtResource("3_no6u0")
+lifetime = 1.5
 fixed_fps = 0
 process_material = SubResource("ParticleProcessMaterial_ue1wv")

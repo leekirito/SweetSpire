@@ -1,9 +1,21 @@
 [gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://c320ci5jwoqu3"]
 
-[ext_resource type="Script" uid="uid://b3dglxtibtwod" path="res://scripts/ResourceData.gd" id="1_itjit"]
+[ext_resource type="Script" path="res://scripts/ResourceData.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/environment/SABA/SABA_MOUNTAIN.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/environment/KAMOTE/KAMOTE_MOUNTAIN.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/environment/MALAGKIT/MALAGKIT_MOUNTAIN.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/environment/SWEETSPIRE/SWEETSPIRE_MOUNTAIN.png" id="5"]
 
 [resource]
-script = ExtResource("1_itjit")
+script = ExtResource("1")
 resource_id = 4
 resource_alias = "mountain"
-metadata/_custom_type_script = "uid://b3dglxtibtwod"
+exp = 0
+can_upgrade = false
+can_collect = false
+biome_textures = Dictionary[String, Texture2D]({
+"SABA": ExtResource("2"),
+"KAMOTE": ExtResource("3"),
+"MALAGKIT": ExtResource("4"),
+"SWEETSPIRE": ExtResource("5")
+})

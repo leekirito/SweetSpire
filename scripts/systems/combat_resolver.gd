@@ -14,6 +14,7 @@ func request_move(game: MatchManager, unit_id: int, target_cell: Vector2i) -> bo
 	var old_world_position: Vector2 = unit.global_position
 	unit.has_moved = true
 	game.board_manager.commit_unit_move(unit, target_cell)
+	game.structure_manager.on_unit_arrived(unit)
 	game.board_manager.animate_unit_move(unit, old_world_position, target_cell)
 	return true
 

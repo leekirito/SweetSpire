@@ -91,6 +91,9 @@ var technology_manager := TechnologyManager.new()
 var turn_manager := TurnManager.new()
 var unit_registry := UnitRegistry.new()
 var victory_manager := VictoryManager.new()
+var structure_manager := StructureManager.new()
+@export var populate_demo_map: bool = false
+@export var demo_seed: int = 260926
 # ============================================================
 # START
 # ============================================================
@@ -108,6 +111,8 @@ func _initialize_match() -> void:
 	# Get the PlayerStates created
 	# by the Main Menu.
 
+	if populate_demo_map:
+		DemoMap.ensure_players(GameSession)
 	players = GameSession.players
 
 
@@ -125,6 +130,10 @@ func _initialize_match() -> void:
 	#
 	# They should all initially be neutral.
 
+	structure_manager.game = self
+	board_manager.structure_manager = structure_manager
+	if populate_demo_map:
+		DemoMap.populate(self, demo_seed)
 	_register_buildings()
 
 	_register_resources()

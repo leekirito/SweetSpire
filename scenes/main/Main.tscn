@@ -11,9 +11,9 @@
 [ext_resource type="PackedScene" uid="uid://bvul4fwqp5aid" path="res://scenes/entities/buildings/neutral_building.tscn" id="11_jsdfw"]
 [ext_resource type="PackedScene" uid="uid://0hvxmsqbkxdm" path="res://scenes/UI/TurnNavbar.tscn" id="12_turn_nav"]
 [ext_resource type="StyleBox" uid="uid://bidqr7ho3fehm" path="res://assets/ui/elements/fantasy_hud_panel.tres" id="13_hud_panel"]
-[ext_resource type="StyleBox" uid="uid://bkn0hah8dik7u" path="res://assets/ui/buttons/fantasy_normal.tres" id="14_btn_normal"]
-[ext_resource type="StyleBox" uid="uid://bdtqlvukggody" path="res://assets/ui/buttons/fantasy_hover.tres" id="15_btn_hover"]
-[ext_resource type="StyleBox" uid="uid://bqgajd6an5lnj" path="res://assets/ui/buttons/fantasy_pressed.tres" id="16_btn_pressed"]
+[ext_resource type="StyleBox" uid="uid://bkn0hah8dik7u" path="res://assets/ui/buttons/blue_normal.tres" id="14_btn_normal"]
+[ext_resource type="StyleBox" uid="uid://bdtqlvukggody" path="res://assets/ui/buttons/blue_hover.tres" id="15_btn_hover"]
+[ext_resource type="StyleBox" uid="uid://bqgajd6an5lnj" path="res://assets/ui/buttons/blue_pressed.tres" id="16_btn_pressed"]
 [ext_resource type="AudioStream" uid="uid://cgo73r67edq4l" path="res://assets/audio/music/Main_Theme.mp3" id="16_u8lgh"]
 [ext_resource type="PackedScene" uid="uid://cr0xoutbkqlxq" path="res://scenes/UI/CenterControlHUD.tscn" id="17_center_hud"]
 
@@ -73,6 +73,7 @@ script = ExtResource("5_3km4f")
 script = ExtResource("6_qkm1d")
 center_control_rounds = 10
 sweetspire_center_cell = Vector2i(14, 14)
+populate_demo_map = true
 
 [node name="TerritoryManager" type="Node2D" parent="." unique_id=1925162669]
 position = Vector2(1929, 153)

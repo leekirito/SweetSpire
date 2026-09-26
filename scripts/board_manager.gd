@@ -8,6 +8,7 @@ extends Node2D
 @export var buildings_tile: TileMapLayer
 
 @export var solid_custom_data_name: String = "solid"
+@export var water_custom_data_name: String = "water"
 
 
 @export_group("Obstacles")
@@ -69,6 +70,13 @@ var occupied_cells: Dictionary[Vector2i, int] = {}
 var building_occupied_cells: Dictionary[Vector2i, int] = {}
 
 var resources_occupied_cells: Dictionary[Vector2i, int] = {}
+var water_cells: Dictionary[Vector2i, bool] = {}
+var structure_manager: StructureManager
+@export var ocean_source_ids: Array[int] = [5]
+
+func is_ocean(cell: Vector2i) -> bool:
+	return tile_map_layer.get_cell_source_id(cell) in ocean_source_ids
+
 
 var last_cursor_cell := Vector2i(
 	999999,
@@ -148,10 +156,15 @@ func _cell_shape_from_tileset(
 ## Combines tile metadata, obstacle layers, and manual overrides into one blocked-cell map.
 func _refresh_solid_cells() -> void:
 	var rect: Rect2i = astar_grid.region
+	water_cells.clear()
 
 	var has_solid_data: bool = _has_custom_data_layer(
 		tile_map_layer.tile_set,
 		solid_custom_data_name
+	)
+	var has_water_data: bool = _has_custom_data_layer(
+		tile_map_layer.tile_set,
+		water_custom_data_name
 	)
 
 	# Ground
@@ -182,6 +195,16 @@ func _refresh_solid_cells() -> void:
 				continue
 
 			var solid: bool = false
+			var water: bool = false
+
+			if has_water_data:
+				water = bool(
+					tile_data.get_custom_data(
+						water_custom_data_name
+					)
+				)
+				if water:
+					water_cells[cell] = true
 
 			if has_solid_data:
 				solid = bool(
@@ -190,9 +213,11 @@ func _refresh_solid_cells() -> void:
 					)
 				)
 
+			# Water is capability-dependent, so it must not become a universal
+			# AStar obstacle. A water unit may enter it while land units cannot.
 			astar_grid.set_point_solid(
 				cell,
-				solid
+				solid and not water
 			)
 
 	# Obstacle TileMaps
@@ -445,6 +470,30 @@ func is_cell_blocked(
 		cell
 	)
 
+
+## Applies terrain capabilities without baking unit-specific rules into AStar.
+func is_cell_blocked_for_unit(cell: Vector2i, unit: Unit) -> bool:
+	if not astar_grid.is_in_boundsv(cell):
+		return true
+	if unit == null:
+		return is_cell_blocked(cell)
+	if unit.ignores_terrain_blocking:
+		return false
+	if is_cell_blocked(cell):
+		return true
+	var is_water := water_cells.has(cell)
+	if is_water:
+		if structure_manager != null and structure_manager.structures.has(cell):
+			var structure: Structure = structure_manager.structures[cell]
+			if structure.data.converts_to_boat and not structure_manager.can_use_dock(cell, unit.owner_id):
+				return true
+		if not unit.can_traverse_water and unit.can_traverse_land and structure_manager != null:
+			var delta := cell - unit.current_cell
+			if absi(delta.x) + absi(delta.y) == 1 and structure_manager.can_use_dock(cell, unit.owner_id):
+				return false
+		return not unit.can_traverse_water
+	return not unit.can_traverse_land
+
 # RANGE
 
 ## Returns cells inside square range that are not blocked by terrain or line of sight.
@@ -509,7 +558,8 @@ func unregister_resource(
 ## Samples the straight line between cells and prevents passing through blocked corners.
 func has_clear_path(
 	start: Vector2i,
-	target: Vector2i
+	target: Vector2i,
+	movement_unit: Unit = null
 ) -> bool:
 
 	var difference: Vector2i = (
@@ -554,7 +604,7 @@ func has_clear_path(
 		)
 
 		if cell != target:
-			if is_cell_blocked(cell):
+			if _is_path_cell_blocked(cell, movement_unit):
 				return false
 
 		# Prevent cutting through diagonal corners.
@@ -573,14 +623,24 @@ func has_clear_path(
 			)
 
 			if (
-				is_cell_blocked(side_x)
-				or is_cell_blocked(side_y)
+				_is_path_cell_blocked(side_x, movement_unit)
+				or _is_path_cell_blocked(side_y, movement_unit)
 			):
 				return false
 
 		previous_cell = cell
 
 	return true
+
+
+func _is_path_cell_blocked(cell: Vector2i, movement_unit: Unit) -> bool:
+	if movement_unit != null:
+		if movement_unit.is_embarked and not water_cells.has(cell):
+			return true
+		if not movement_unit.can_traverse_water and water_cells.has(cell):
+			return true
+		return is_cell_blocked_for_unit(cell, movement_unit)
+	return is_cell_blocked(cell)
 
 
 ## Filters geometric range to destinations not currently occupied by another unit.
@@ -593,7 +653,8 @@ func get_movement_tiles(
 		unit.unit_walk_range,
 		unit.walk_base_dimensions_override,
 		unit.walk_exact_dimensions_override,
-		unit.current_cell
+		unit.current_cell,
+		unit
 	)
 
 	var available_tiles: Array[Vector2i] = []
@@ -629,7 +690,8 @@ func get_pattern_tiles(
 	expansion: int,
 	base_dimensions_override: Vector2i,
 	exact_dimensions_override: Vector2i,
-	center: Vector2i
+	center: Vector2i,
+	movement_unit: Unit = null
 ) -> Array[Vector2i]:
 	var selected_pattern: RangePattern = pattern if pattern != null else default_range_pattern
 	var tiles: Array[Vector2i] = []
@@ -640,9 +702,9 @@ func get_pattern_tiles(
 		exact_dimensions_override
 	):
 		var cell: Vector2i = center + offset
-		if is_cell_blocked(cell):
+		if (is_cell_blocked_for_unit(cell, movement_unit) if movement_unit != null else is_cell_blocked(cell)):
 			continue
-		if not has_clear_path(center, cell):
+		if not has_clear_path(center, cell, movement_unit):
 			continue
 		tiles.append(cell)
 
@@ -660,7 +722,7 @@ func can_move_to(
 	if unit.current_cell == target_cell:
 		return false
 
-	if is_cell_blocked(target_cell):
+	if is_cell_blocked_for_unit(target_cell, unit):
 		return false
 
 	if occupied_cells.has(target_cell):
@@ -748,6 +810,7 @@ func animate_unit_move(
 
 	move_finished.emit(
 		unit.unit_id,
+		target_cell
 	)
 
 # OVERLAY

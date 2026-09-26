@@ -95,6 +95,7 @@ func refresh_collectible_outline(match_manager: MatchManager) -> void:
 		var player: PlayerState = match_manager.get_player(owner_id)
 		can_collect = (
 			player != null
+			and data.can_collect
 			and player.has_technology(data.collect_technology_id)
 			and match_manager.can_interact_with_resource(self, owner_id)
 		)

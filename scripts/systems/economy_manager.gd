@@ -11,6 +11,8 @@ func can_interact_with_resource(
 		return false
 	if game.active_player_id != player_id or resource == null:
 		return false
+	if game.structure_manager.structures.has(resource.current_cell):
+		return false
 	if resource.owner_id != player_id or resource.controlling_building_id == -1:
 		return false
 
@@ -50,8 +52,11 @@ func collect_sugars(game: MatchManager) -> void:
 		if player == null:
 			push_warning("No player found for building owner: " + str(building.owner_id))
 			continue
-		player.sugars += building.by_turn_sugar
-		building.show_sugar_gain(building.by_turn_sugar)
+		var income := building.by_turn_sugar + game.structure_manager.income_for(building)
+		player.sugars += income
+		building.show_sugar_gain(income)
+	for structure: Structure in game.structure_manager.structures.values():
+		structure.on_round_end(game)
 
 
 func request_collect_resource(
@@ -64,7 +69,7 @@ func request_collect_resource(
 		return false
 
 	var player: PlayerState = game.get_player(player_id)
-	if player == null or not player.has_technology(resource.data.collect_technology_id):
+	if player == null or not resource.data.can_collect or not player.has_technology(resource.data.collect_technology_id):
 		return false
 
 	var building: Building = game.get_building(resource.controlling_building_id)
@@ -72,6 +77,8 @@ func request_collect_resource(
 		return false
 
 	building.add_exp(resource.data.exp)
+	player.sugars += resource.data.collect_sugar
+	game.update_ui()
 	game.board_manager.unregister_resource(resource)
 	game.resources.erase(resource.resource_instance_id)
 	resource.collect_resource()

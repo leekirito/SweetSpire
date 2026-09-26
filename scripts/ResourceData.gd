@@ -11,6 +11,8 @@ extends Resource
 @export_group("Progression")
 
 @export var exp: int = 1
+@export var collect_sugar: int = 0
+@export var can_collect: bool = true
 
 
 @export_group("Technology")

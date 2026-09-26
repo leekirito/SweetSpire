@@ -1,0 +1,7 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://scenes/entities/Resources/resources.tscn" id="1"]
+[ext_resource type="Resource" path="res://scripts/data/Resources/MountainData.tres" id="2"]
+[ext_resource type="Texture2D" path="res://assets/environment/SABA/SABA_MOUNTAIN.png" id="3"]
+[node name="Mountain" instance=ExtResource("1")]
+data = ExtResource("2")
+base_sprite = ExtResource("3")

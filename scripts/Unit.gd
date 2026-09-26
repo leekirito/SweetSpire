@@ -31,6 +31,12 @@ var walk_base_dimensions_override: Vector2i = Vector2i.ZERO
 var attack_base_dimensions_override: Vector2i = Vector2i.ZERO
 var walk_exact_dimensions_override: Vector2i = Vector2i.ZERO
 var attack_exact_dimensions_override: Vector2i = Vector2i.ZERO
+var can_traverse_land: bool = true
+var can_traverse_water: bool = false
+var ignores_terrain_blocking: bool = false
+var is_embarked: bool = false
+var _land_form: Dictionary = {}
+var _boat_data: StructureData
 
 # Turn State
 
@@ -123,6 +129,9 @@ func _load_data() -> void:
 	attack_base_dimensions_override = data.attack_base_dimensions_override
 	walk_exact_dimensions_override = data.walk_exact_dimensions_override
 	attack_exact_dimensions_override = data.attack_exact_dimensions_override
+	can_traverse_land = data.can_traverse_land
+	can_traverse_water = data.can_traverse_water
+	ignores_terrain_blocking = data.ignores_terrain_blocking
 
 
 ## Keeps editor-time UnitData changes visible on units that already exist in a test match.
@@ -134,6 +143,8 @@ func _on_unit_data_changed() -> void:
 
 
 func _refresh_range_configuration() -> void:
+	if is_embarked:
+		return
 	unit_walk_range = data.walk_range
 	attack_range = data.attack_range
 	movement_pattern = data.movement_pattern
@@ -142,6 +153,9 @@ func _refresh_range_configuration() -> void:
 	attack_base_dimensions_override = data.attack_base_dimensions_override
 	walk_exact_dimensions_override = data.walk_exact_dimensions_override
 	attack_exact_dimensions_override = data.attack_exact_dimensions_override
+	can_traverse_land = data.can_traverse_land
+	can_traverse_water = data.can_traverse_water
+	ignores_terrain_blocking = data.ignores_terrain_blocking
 
 
 func _connect_pattern_change_signals() -> void:
@@ -258,3 +272,45 @@ func update_ui()->void:
 	health_ui.value = unit_health
 	defence_ui.value = defence
 	
+
+## Only locomotion/presentation change. Health, damage, defence, owner and action flags survive.
+func embark(boat: StructureData) -> void:
+	if is_embarked:
+		return
+	for key: String in ["unit_name", "type", "unit_walk_range", "attack_range", "movement_pattern", "attack_pattern", "walk_base_dimensions_override", "attack_base_dimensions_override", "walk_exact_dimensions_override", "attack_exact_dimensions_override", "can_traverse_land", "can_traverse_water", "ignores_terrain_blocking"]:
+		_land_form[key] = get(key)
+	_land_form["texture"] = sprite.texture
+	_land_form["offset"] = sprite.offset
+	_boat_data = boat
+	is_embarked = true
+	unit_name = "Boat"
+	type = "boat"
+	unit_walk_range = boat.boat_walk_range
+	attack_range = boat.boat_attack_range
+	movement_pattern = boat.boat_movement_pattern
+	attack_pattern = boat.boat_attack_pattern
+	# Existing RangePattern uses base + range dimensions. These bases give symmetric radii.
+	walk_base_dimensions_override = Vector2i.ONE * (unit_walk_range + 1)
+	attack_base_dimensions_override = Vector2i.ONE * (attack_range + 1)
+	walk_exact_dimensions_override = Vector2i.ZERO
+	attack_exact_dimensions_override = Vector2i.ZERO
+	can_traverse_land = true
+	can_traverse_water = true
+	ignores_terrain_blocking = false
+	if boat.boat_texture != null:
+		sprite.texture = boat.boat_texture
+		sprite.offset = Vector2(0, -60)
+	range_configuration_changed.emit(self)
+
+func disembark() -> void:
+	if not is_embarked:
+		return
+	for key: String in _land_form:
+		if key not in ["texture", "offset"]:
+			set(key, _land_form[key])
+	sprite.texture = _land_form["texture"]
+	sprite.offset = _land_form["offset"]
+	is_embarked = false
+	_boat_data = null
+	_land_form.clear()
+	range_configuration_changed.emit(self)

@@ -27,6 +27,15 @@ extends Resource
 		emit_changed()
 @export var defence: int = 0
 
+@export_group("Terrain Movement")
+## Standard ground units should leave this enabled.
+@export var can_traverse_land: bool = true
+## Enable for boats, amphibious units, or units granted water movement later.
+@export var can_traverse_water: bool = false
+## Enable for flying/ethereal units that ignore hard terrain obstacles.
+## Board bounds and occupied destination cells still apply.
+@export var ignores_terrain_blocking: bool = false
+
 @export_group("Range Patterns")
 ## Leave a pattern empty to use the default square pattern.
 @export var movement_pattern: RangePattern:

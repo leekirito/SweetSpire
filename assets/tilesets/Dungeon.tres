@@ -99,6 +99,7 @@ texture_region_size = Vector2i(256, 512)
 1:0/0/terrains_peering_bit/top_left_side = 1
 1:0/0/terrains_peering_bit/top_corner = 1
 1:0/0/terrains_peering_bit/top_right_side = 1
+1:0/0/custom_data_2 = true
 2:0/0 = 0
 2:0/0/texture_origin = Vector2i(0, 164)
 2:0/0/terrain_set = 0
@@ -111,6 +112,7 @@ texture_region_size = Vector2i(256, 512)
 2:0/0/terrains_peering_bit/top_left_side = 1
 2:0/0/terrains_peering_bit/top_corner = 1
 2:0/0/terrains_peering_bit/top_right_side = 1
+2:0/0/custom_data_2 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6jnae"]
 texture = ExtResource("7_cvvjw")
@@ -190,12 +192,14 @@ texture = ExtResource("11_3xgwd")
 texture_region_size = Vector2i(256, 512)
 0:0/0 = 0
 0:0/0/texture_origin = Vector2i(0, 164)
+0:0/0/custom_data_2 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_583hn"]
 texture = ExtResource("12_oihv4")
 texture_region_size = Vector2i(256, 512)
 0:0/0 = 0
 0:0/0/texture_origin = Vector2i(0, 164)
+0:0/0/custom_data_2 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q3xed"]
 texture = ExtResource("9_s531f")
@@ -234,6 +238,8 @@ custom_data_layer_0/name = "solid"
 custom_data_layer_0/type = 1
 custom_data_layer_1/name = "themeable"
 custom_data_layer_1/type = 1
+custom_data_layer_2/name = "water"
+custom_data_layer_2/type = 1
 sources/1 = SubResource("TileSetAtlasSource_fqe3j")
 sources/2 = SubResource("TileSetAtlasSource_arsxq")
 sources/0 = SubResource("TileSetAtlasSource_n3npn")

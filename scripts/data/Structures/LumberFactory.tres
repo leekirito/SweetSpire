@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="StructureData" format=3]
+
+[ext_resource type="Script" path="res://scripts/StructureData.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/structures/lumber_factory.svg" id="2"]
+
+[resource]
+script = ExtResource("1")
+structure_id = "lumber_factory"
+display_name = "Lumber Factory"
+placement = 2
+required_technology_id = "forestry"
+sugar_cost = 3
+construction_exp = 1
+sugar_per_round = 1
+texture = ExtResource("2")

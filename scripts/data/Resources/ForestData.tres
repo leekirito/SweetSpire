@@ -1,9 +1,22 @@
 [gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://1yqf8ui11350"]
 
-[ext_resource type="Script" uid="uid://b3dglxtibtwod" path="res://scripts/ResourceData.gd" id="1_rqrcy"]
+[ext_resource type="Script" uid="uid://b3dglxtibtwod" path="res://scripts/ResourceData.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://cw8quhd1ldmrk" path="res://assets/environment/SABA/SABA_FOREST.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://bvju5ye18qwdr" path="res://assets/environment/KAMOTE/KAMOTE_FOREST.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://chr5kx7f4r2vx" path="res://assets/environment/MALAGKIT/MALAGKIT_FOREST.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://jbri8s0v2ewo" path="res://assets/environment/SWEETSPIRE/SWEETSPIRE_FOREST.png" id="5"]
 
 [resource]
-script = ExtResource("1_rqrcy")
+script = ExtResource("1")
 resource_id = 1
 resource_alias = "forest"
-metadata/_custom_type_script = "uid://b3dglxtibtwod"
+exp = 0
+collect_sugar = 1
+collect_technology_id = "forestry"
+can_upgrade = false
+biome_textures = Dictionary[String, Texture2D]({
+"KAMOTE": ExtResource("3"),
+"MALAGKIT": ExtResource("4"),
+"SABA": ExtResource("2"),
+"SWEETSPIRE": ExtResource("5")
+})

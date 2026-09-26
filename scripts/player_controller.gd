@@ -93,6 +93,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			building.open_recruitment_ui()
 
 		return
+	var clicked_cell := board_manager.cell_from_world(mouse_position)
+	if match_manager.structure_manager.structures.has(clicked_cell) or board_manager.water_cells.has(clicked_cell):
+		ResourceChoices.open_tile(match_manager, clicked_cell)
+		return
 	var resource_id: int = (
 	board_manager.get_resource_id_at_world(
 		mouse_position
@@ -330,6 +334,7 @@ func _show_attack_options(
 ## Refreshes attack options after the unit reaches its authoritative destination.
 func _on_move_finished(
 	unit_id: int,
+	_final_cell: Vector2i,
 ) -> void:
 
 	if selected_unit_id != unit_id:

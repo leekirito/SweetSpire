@@ -1,0 +1,15 @@
+[gd_resource type="StyleBoxTexture" format=3 uid="uid://bqgajd6an5lnj"]
+
+[ext_resource type="Texture2D" uid="uid://b6aoxfpqum84d" path="res://assets/ui/source/free_fantasy_gui/png/blueBUTTONpressed.png" id="1_41ecu"]
+
+[resource]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+texture = ExtResource("1_41ecu")
+texture_margin_left = 20.0
+texture_margin_top = 16.0
+texture_margin_right = 20.0
+texture_margin_bottom = 16.0
+region_rect = Rect2(27, 24, 590, 132)
