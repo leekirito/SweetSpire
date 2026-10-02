@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://dp2oxyukiq1ax"]
 
+[ext_resource type="Texture2D" uid="uid://bpobgit00pixw" path="res://assets/sprites/PATHFINDER_SABA(1).png" id="1_kmcur"]
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_v3adn"]
 
 [resource]
@@ -9,4 +10,5 @@ technology_name = "Pathfinding"
 description = "Unlocks the Pathfinder unit."
 unlock_effects = Array[String](["Unlock the Pathfinder unit"])
 cost = 3
+icon = ExtResource("1_kmcur")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

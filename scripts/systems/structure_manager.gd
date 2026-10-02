@@ -8,6 +8,9 @@ var game: MatchManager
 
 func controlling_town(cell: Vector2i) -> Building:
 	var existing: Structure = structures.get(cell)
+	var resource := game.get_resource(game.board_manager.get_resource_id_at_cell(cell))
+	if existing == null and resource != null and resource.controlling_building_id != -1:
+		return game.get_building(resource.controlling_building_id)
 	var town_id: int = existing.controlling_building_id if existing != null else game.territory_manager.get_building_id_at_cell(cell)
 	return game.get_building(town_id)
 

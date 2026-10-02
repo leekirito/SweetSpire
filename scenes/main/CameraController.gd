@@ -3,10 +3,30 @@ extends Camera2D
 
 var zoom_tween: Tween
 var target_zoom: Vector2
+@export var focus_active_player_on_turn: bool = true
 
 
 func _ready() -> void:
 	target_zoom = zoom
+	var game := get_node_or_null("../MatchManager") as MatchManager
+	if game != null:
+		game.turn_started.connect(_focus_player)
+
+
+func _focus_player(player_id: int, _round: int) -> void:
+	if not focus_active_player_on_turn:
+		return
+	var game := get_node("../MatchManager") as MatchManager
+	if game.fog_of_war == null:
+		return
+	for unit: Unit in game.units.values():
+		if unit.owner_id == player_id:
+			global_position = game.board_manager.cell_to_world(unit.current_cell)
+			return
+	for building: Building in game.buildings.values():
+		if building.owner_id == player_id:
+			global_position = game.board_manager.cell_to_world(building.current_cell)
+			return
 
 
 ## Smoothly zooms with the wheel and pans while the middle mouse button is held.

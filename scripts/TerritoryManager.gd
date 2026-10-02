@@ -49,92 +49,27 @@ var buildings_by_id: Dictionary[int,Building] = {}
 func _ready() -> void:
 	z_index = 1
 	queue_redraw()
-## Recalculates cell ownership after setup or any town radius change.
-func rebuild_territories(
-	buildings: Array[Building]
-) -> void:
-
-	cell_to_building_id.clear()
-
+## Ranges may overlap. The lookup remembers the first active town to reach a cell.
+func rebuild_territories(buildings: Array[Building]) -> void:
 	buildings_by_id.clear()
-
-
-	# Clear previous territory data.
-
 	for building: Building in buildings:
-
 		building.territory_cells.clear()
-
-		buildings_by_id[
-			building.building_id
-		] = building
-
-
-	# Generate territory for every town.
-
-	for building: Building in buildings:
-
-		_register_building_territory(
-			building
-		)
-
-
-	queue_redraw()
-
-
-## Claims a town's cells without silently replacing an earlier overlapping claim.
-func _register_building_territory(
-	building: Building
-) -> void:
-
-	var cells: Array[Vector2i] = (
-		get_territory_cells(
-			building.current_cell,
-			building.territory_radius
-		)
-	)
-
-
-	for cell: Vector2i in cells:
-
-		# Prevent two towns controlling
-		# exactly the same tile.
-		if cell_to_building_id.has(
-			cell
-		):
-
-			var existing_id: int = (
-				cell_to_building_id[
-					cell
-				]
+		buildings_by_id[building.building_id] = building
+		if building.owner_id != -1:
+			building.territory_cells = get_territory_cells(
+				building.current_cell, building.territory_radius
 			)
 
-
-			if existing_id != building.building_id:
-
-				push_warning(
-					"Territory overlap at "
-					+ str(cell)
-					+ " between building "
-					+ str(existing_id)
-					+ " and "
-					+ str(building.building_id)
-				)
-
-				continue
-
-
-		cell_to_building_id[
-			cell
-		] = building.building_id
-
-
-		building.territory_cells.append(
-			cell
-		)
-
-
-
+	# Keep prior claims rather than recalculating priority from registry order.
+	for cell: Vector2i in cell_to_building_id.keys():
+		var building: Building = buildings_by_id.get(cell_to_building_id[cell])
+		if building == null or building.owner_id == -1 or cell not in building.territory_cells:
+			cell_to_building_id.erase(cell)
+	for building: Building in buildings:
+		for cell: Vector2i in building.territory_cells:
+			if not cell_to_building_id.has(cell):
+				cell_to_building_id[cell] = building.building_id
+	queue_redraw()
 
 func get_territory_cells(
 	center: Vector2i,
@@ -175,84 +110,29 @@ func get_territory_cells(
 
 
 
-## Associates each resource with the town and player controlling its current cell.
-func bind_resources_to_territories(
-	resources: Array[Resources]
-) -> void:
-
+## Existing resource claims belong to their town, not whichever range overlaps later.
+func bind_resources_to_territories(resources: Array[Resources]) -> void:
 	for resource: Resources in resources:
-
-		var building_id: int = (
-			cell_to_building_id.get(
-				resource.current_cell,
-				-1
-			)
-		)
-
-
-		resource.set_controlling_building(
-			building_id
-		)
+		var building: Building = buildings_by_id.get(resource.controlling_building_id)
+		if building == null or building.owner_id == -1:
+			building = buildings_by_id.get(get_building_id_at_cell(resource.current_cell))
+		if building == null or building.owner_id == -1:
+			resource.set_controlling_building(-1)
+			resource.set_player_owner(-1)
+		else:
+			resource.set_controlling_building(building.building_id)
+			resource.set_player_owner(building.owner_id)
 
 
-		# Resource belongs to no town.
-		if building_id == -1:
-
-			resource.set_player_owner(
-				-1
-			)
-
-			continue
-
-
-		var building: Building = (
-			buildings_by_id.get(
-				building_id
-			)
-		)
-
-
-		if building == null:
-
-			resource.set_player_owner(
-				-1
-			)
-
-			continue
-
-
-		resource.set_player_owner(
-			building.owner_id
-		)
-
-
-## Propagates a captured town's new owner to resources already bound to it.
-func update_resources_for_building(
-	building: Building,
-	resources: Array[Resources]
-) -> void:
-
+## Activates a newly captured town's range and transfers its existing claims.
+func update_resources_for_building(building: Building, resources: Array[Resources]) -> void:
 	if building == null:
 		return
-
-
-	for resource: Resources in resources:
-
-		if (
-			resource.controlling_building_id
-			!= building.building_id
-		):
-			continue
-
-
-		resource.set_player_owner(
-			building.owner_id
-		)
-
-
-	queue_redraw()
-
-
+	buildings_by_id[building.building_id] = building
+	var buildings: Array[Building] = []
+	buildings.assign(buildings_by_id.values())
+	rebuild_territories(buildings)
+	bind_resources_to_territories(resources)
 
 func get_building_id_at_cell(
 	cell: Vector2i

@@ -38,6 +38,7 @@ func register_unit(game: MatchManager, unit: Unit) -> void:
 	game.next_unit_id += 1
 	game.units[unit.unit_id] = unit
 	game.board_manager.register_unit(unit)
+	game.vision_sources_changed.emit()
 
 
 func remove_unit(game: MatchManager, unit: Unit) -> void:
@@ -46,5 +47,7 @@ func remove_unit(game: MatchManager, unit: Unit) -> void:
 	var removed_id: int = unit.unit_id
 	game.board_manager.unregister_unit(unit)
 	game.units.erase(removed_id)
+	unit.hide()
+	game.vision_sources_changed.emit()
 	game.unit_removed.emit(removed_id)
 	unit.queue_free()

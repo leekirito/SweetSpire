@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://4kj43i3mcsiv"]
 
-[ext_resource type="Texture2D" uid="uid://clybfvtrbblca" path="res://assets/environment/tiles/horse.png" id="1_sw5ks"]
 [ext_resource type="Script" uid="uid://ugoaj7ys6drr" path="res://scripts/UnitData.gd" id="2_jr1q0"]
+[ext_resource type="Texture2D" uid="uid://dh0pn6aat4cmn" path="res://assets/sprites/player/PATHFINDER_KAMOTE.png" id="2_otae0"]
 [ext_resource type="Script" uid="uid://bawcf75unqena" path="res://scripts/RangePattern.gd" id="2_qlxqp"]
 [ext_resource type="Texture2D" uid="uid://bpobgit00pixw" path="res://assets/sprites/PATHFINDER_SABA(1).png" id="3_tq13b"]
+[ext_resource type="Texture2D" uid="uid://cpxeuwyw1ni07" path="res://assets/sprites/player/PATHFINDER_MALAGKIT.png" id="3_vl3qg"]
 
 [sub_resource type="Resource" id="Resource_tq13b"]
 script = ExtResource("2_qlxqp")
@@ -23,13 +24,11 @@ health = 10
 walk_range = 3
 attack_damage = 2
 defence = 1
-can_traverse_water = null
-ignores_terrain_blocking = null
 movement_pattern = SubResource("Resource_dep64")
 attack_pattern = SubResource("Resource_tq13b")
 character_texture = Dictionary[String, Texture2D]({
-"KAMOTE": ExtResource("1_sw5ks"),
-"MALAGKIT": ExtResource("1_sw5ks"),
+"KAMOTE": ExtResource("2_otae0"),
+"MALAGKIT": ExtResource("3_vl3qg"),
 "SABA": ExtResource("3_tq13b")
 })
 metadata/_custom_type_script = "uid://ugoaj7ys6drr"

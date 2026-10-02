@@ -28,6 +28,8 @@ func request_attack(game: MatchManager, attacker_id: int, target_id: int) -> boo
 		return false
 	if attacker.has_attacked or attacker.is_animating or target.is_animating:
 		return false
+	if not game.is_cell_visible_to_player(target.current_cell, attacker.owner_id):
+		return false
 	if target.current_cell not in game.board_manager.get_attack_tiles(attacker):
 		return false
 

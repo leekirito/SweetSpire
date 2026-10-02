@@ -83,6 +83,8 @@ func find_enemy_in_range(
 
 		if other.owner_id == ai.controlled_player_id:
 			continue
+		if not ai.match_manager.is_cell_visible_to_player(other.current_cell, ai.controlled_player_id):
+			continue
 
 		if other.current_cell in attack_cells:
 			return other

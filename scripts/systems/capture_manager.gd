@@ -14,6 +14,7 @@ func conquer_building(game: MatchManager, building_id: int, player_id: int) -> b
 		game.get_all_resources_authoritative()
 	)
 	game.refresh_resource_collectibility_authoritative()
+	game.vision_sources_changed.emit()
 	return true
 
 

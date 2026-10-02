@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="TechnologyData" format=3 uid="uid://bf5glpcv8sdde"]
 
 [ext_resource type="Script" uid="uid://c5gq5kd0befx6" path="res://scripts/TechnologyData.gd" id="1_ehr5u"]
+[ext_resource type="Texture2D" uid="uid://c736s1fu835di" path="res://assets/environment/MISCELLANEOUS/FISH.png" id="1_rlm2s"]
 
 [resource]
 script = ExtResource("1_ehr5u")
@@ -9,4 +10,5 @@ technology_name = "Fishing"
 description = "Allows the tribe to catch fish and gain 1 Sugar."
 unlock_effects = Array[String](["Catch Fish resources and gain 1 Sugar"])
 cost = 3
+icon = ExtResource("1_rlm2s")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

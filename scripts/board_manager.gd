@@ -71,6 +71,7 @@ var building_occupied_cells: Dictionary[Vector2i, int] = {}
 
 var resources_occupied_cells: Dictionary[Vector2i, int] = {}
 var water_cells: Dictionary[Vector2i, bool] = {}
+var mountain_cells: Dictionary[Vector2i, bool] = {}
 var structure_manager: StructureManager
 @export var ocean_source_ids: Array[int] = [5]
 
@@ -383,6 +384,10 @@ func register_resource(
 	resources_occupied_cells[
 		cell
 	] = resource.resource_instance_id
+	if resource.data != null and resource.data.resource_alias == "mountain":
+		mountain_cells[cell] = true
+	else:
+		mountain_cells.erase(cell)
 
 
 ## Maps authored ground sources to the four visual land biomes.
@@ -492,7 +497,11 @@ func is_cell_blocked_for_unit(cell: Vector2i, unit: Unit) -> bool:
 			if absi(delta.x) + absi(delta.y) == 1 and structure_manager.can_use_dock(cell, unit.owner_id):
 				return false
 		return not unit.can_traverse_water
-	return not unit.can_traverse_land
+	if not unit.can_traverse_land:
+		return true
+	if mountain_cells.has(cell):
+		return unit.player_state == null or not unit.player_state.has_technology("climbing")
+	return false
 
 # RANGE
 
@@ -554,6 +563,7 @@ func unregister_resource(
 		resources_occupied_cells.erase(
 			resource.current_cell
 		)
+		mountain_cells.erase(resource.current_cell)
 
 ## Samples the straight line between cells and prevents passing through blocked corners.
 func has_clear_path(
@@ -643,12 +653,9 @@ func _is_path_cell_blocked(cell: Vector2i, movement_unit: Unit) -> bool:
 	return is_cell_blocked(cell)
 
 
-## Filters geometric range to destinations not currently occupied by another unit.
-func get_movement_tiles(
-	unit: Unit
-) -> Array[Vector2i]:
-
-	var tiles: Array[Vector2i] = get_pattern_tiles(
+## Vision includes occupied destinations while retaining terrain/path restrictions.
+func get_movement_vision_tiles(unit: Unit) -> Array[Vector2i]:
+	return get_pattern_tiles(
 		unit.movement_pattern,
 		unit.unit_walk_range,
 		unit.walk_base_dimensions_override,
@@ -656,6 +663,14 @@ func get_movement_tiles(
 		unit.current_cell,
 		unit
 	)
+
+
+## Filters movement vision to destinations not occupied by another unit.
+func get_movement_tiles(
+	unit: Unit
+) -> Array[Vector2i]:
+
+	var tiles: Array[Vector2i] = get_movement_vision_tiles(unit)
 
 	var available_tiles: Array[Vector2i] = []
 

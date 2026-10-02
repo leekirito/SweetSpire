@@ -1,9 +1,10 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://crabibuq7yosw"]
 
 [ext_resource type="Script" uid="uid://ugoaj7ys6drr" path="res://scripts/UnitData.gd" id="1_78uh2"]
-[ext_resource type="Texture2D" uid="uid://c6pqytwmijxs5" path="res://assets/environment/tiles/warrior.png" id="1_nqjjh"]
 [ext_resource type="Script" uid="uid://bawcf75unqena" path="res://scripts/RangePattern.gd" id="2_gnmde"]
-[ext_resource type="Texture2D" uid="uid://cbem2dwr8bux8" path="res://assets/sprites/FIGHTER_SABA.png" id="3_4qk3i"]
+[ext_resource type="Texture2D" uid="uid://dg6gy8ekxn37b" path="res://assets/sprites/player/FIGHTER_KAMOTE.png" id="2_lmlmw"]
+[ext_resource type="Texture2D" uid="uid://boe0gg128vv2h" path="res://assets/sprites/FIGHTER_SABA.png" id="3_4qk3i"]
+[ext_resource type="Texture2D" uid="uid://co1ssef0o5lvb" path="res://assets/sprites/player/FIGHTER_MALAGKIT.png" id="3_rltr1"]
 
 [sub_resource type="Resource" id="Resource_4qk3i"]
 script = ExtResource("2_gnmde")
@@ -22,13 +23,11 @@ health = 8
 attack_damage = 2
 attack_range = 2
 defence = 2
-can_traverse_water = null
-ignores_terrain_blocking = null
 movement_pattern = SubResource("Resource_qlxqp")
 attack_pattern = SubResource("Resource_4qk3i")
 character_texture = Dictionary[String, Texture2D]({
-"KAMOTE": ExtResource("1_nqjjh"),
-"MALAGKIT": ExtResource("1_nqjjh"),
+"KAMOTE": ExtResource("2_lmlmw"),
+"MALAGKIT": ExtResource("3_rltr1"),
 "SABA": ExtResource("3_4qk3i")
 })
 metadata/_custom_type_script = "uid://ugoaj7ys6drr"

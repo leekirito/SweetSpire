@@ -49,6 +49,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	var mouse_position: Vector2 = (
 		get_global_mouse_position()
 	)
+	if not match_manager.is_cell_visible_to_player(
+		board_manager.cell_from_world(mouse_position), match_manager.active_player_id
+	):
+		return
 
 	# A unit is already selected:
 	# let it process movement / attack first.
@@ -302,6 +306,8 @@ func _show_attack_options(
 	)
 
 	for tile: Vector2i in attack_tiles:
+		if not match_manager.is_cell_visible_to_player(tile, unit.owner_id):
+			continue
 
 		var target_id: int = (
 			board_manager.get_unit_id_at_cell(

@@ -4,6 +4,12 @@ extends Node
 
 
 signal match_started
+signal vision_sources_changed
+
+@onready var fog_of_war: FogOfWar = get_node_or_null("../FogOfWar")
+
+func is_cell_visible_to_player(cell: Vector2i, player_id: int) -> bool:
+	return fog_of_war == null or fog_of_war.is_cell_visible(cell, player_id)
 
 signal turn_started(
 	player_id: int,
@@ -253,6 +259,7 @@ func register_resource(
 	board_manager.register_resource(
 		resource
 	)
+	territory_manager.bind_resources_to_territories([resource])
 	
 func _get_all_buildings() -> Array[Building]:
 
@@ -571,6 +578,7 @@ func _on_building_level_changed(
 	_refresh_resource_collectibility()
 
 	# rebuild_territories already queues the updated fill and border redraw.
+	vision_sources_changed.emit()
 
 func get_unit(
 	unit_id: int

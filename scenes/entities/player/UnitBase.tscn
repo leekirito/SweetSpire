@@ -58,17 +58,19 @@ polygon = PackedVector2Array(0, -64, 128, 0, 0, 64, -128, 0)
 
 [node name="Health" type="ProgressBar" parent="." unique_id=271927386]
 offset_left = -74.0
-offset_top = -309.0
+offset_top = 20.0
 offset_right = 76.0
-offset_bottom = -279.0
+offset_bottom = 50.0
+mouse_filter = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_4beuo")
 show_percentage = false
 
 [node name="Defence" type="ProgressBar" parent="." unique_id=368266656]
 offset_left = -74.0
-offset_top = -309.0
+offset_top = 20.0
 offset_right = 76.0
-offset_bottom = -278.0
+offset_bottom = 51.0
+mouse_filter = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_ue1wv")
 show_percentage = false
 
