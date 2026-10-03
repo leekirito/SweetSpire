@@ -107,10 +107,14 @@ func _refresh() -> void:
 			_add_action(resource.data.upgrade_texture if resource.data.upgrade_texture != null else resource.sprite.texture, "Upgrade", reason, _upgrade)
 		if resource.data.resource_alias == "forest":
 			_add_build_action(StructureManager.LUMBER)
+		elif resource.data.resource_alias == "mountain":
+			_add_build_action(StructureManager.MINE)
 		elif not resource.data.can_collect and not resource.data.can_upgrade:
 			subtitle.text += " | No actions unlocked"
 	elif match_manager.board_manager.water_cells.has(cell):
 		_add_build_action(StructureManager.DOCK)
+	else:
+		_add_build_action(StructureManager.FARM)
 
 func _add_build_action(data: StructureData) -> void:
 	var reason := match_manager.structure_manager.placement_error(data, cell, match_manager.active_player_id)

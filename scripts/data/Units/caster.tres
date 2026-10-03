@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://uanynaeidas3"]
+
+[ext_resource type="Script" uid="uid://bawcf75unqena" path="res://scripts/RangePattern.gd" id="1_0c4qg"]
+[ext_resource type="Script" uid="uid://ugoaj7ys6drr" path="res://scripts/UnitData.gd" id="1_data"]
+[ext_resource type="Texture2D" uid="uid://ddlp1fu3jricv" path="res://assets/sprites/player/CASTER_SABA.png" id="2_sprite"]
+[ext_resource type="Texture2D" uid="uid://bp023qfw8cu8f" path="res://assets/sprites/player/CASTER_KAMOTE.png" id="2_ybikl"]
+[ext_resource type="Texture2D" uid="uid://i0d10me0yaw7" path="res://assets/sprites/player/CASTER_MALAGKIT.png" id="3_0hi36"]
+[ext_resource type="Texture2D" uid="uid://dfdhve4sct337" path="res://assets/effects/kenney_particle_pack/star_08.png" id="3_wxtca"]
+[ext_resource type="PackedScene" uid="uid://b2cxnvupelcbq" path="res://scenes/effects/MeteorEffect.tscn" id="4_pr6b4"]
+
+[sub_resource type="Resource" id="Resource_0a2py"]
+script = ExtResource("1_0c4qg")
+base_dimensions = Vector2i(4, 4)
+metadata/_custom_type_script = "uid://bawcf75unqena"
+
+[sub_resource type="Resource" id="Resource_2ryja"]
+script = ExtResource("1_0c4qg")
+base_dimensions = Vector2i(3, 3)
+metadata/_custom_type_script = "uid://bawcf75unqena"
+
+[sub_resource type="Resource" id="Resource_0c4qg"]
+script = ExtResource("1_0c4qg")
+base_dimensions = Vector2i(1, 1)
+metadata/_custom_type_script = "uid://bawcf75unqena"
+
+[resource]
+script = ExtResource("1_data")
+type = "Area Attack"
+unit_name = "Caster"
+cost = 3
+required_technology_id = "runecraft"
+health = 8
+walk_range = 2
+attack_damage = 2
+attack_range = 3
+defence = 1
+minimum_attack_distance = 2
+blast_pattern = SubResource("Resource_2ryja")
+blast_radius = 0
+can_hit_allies = true
+attack_visual = 1
+meteor_effect_scene = ExtResource("4_pr6b4")
+meteor_decal_texture = ExtResource("3_wxtca")
+meteor_decal_tint = Color(0.955259, 0.4424257, 0, 1)
+meteor_decal_time_offset = 0.1499999999999999
+movement_pattern = SubResource("Resource_0c4qg")
+attack_pattern = SubResource("Resource_0a2py")
+character_texture = Dictionary[String, Texture2D]({
+"KAMOTE": ExtResource("2_ybikl"),
+"MALAGKIT": ExtResource("3_0hi36"),
+"SABA": ExtResource("2_sprite")
+})

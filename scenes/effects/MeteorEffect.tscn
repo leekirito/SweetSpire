@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://b2cxnvupelcbq"]
+
+[ext_resource type="Script" uid="uid://dhuudidvg4acx" path="res://scripts/effects/meteor_effect.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://b2i0t0qhij3wp" path="res://assets/ui/source/free_fantasy_gui/png/Jawbreaker.png" id="2_1nt14"]
+[ext_resource type="Shader" uid="uid://bnjqasb65s1jy" path="res://assets/Shader/MeteorEffect.tres" id="2_u0i87"]
+[ext_resource type="Texture2D" uid="uid://dfrri3bfgs5rj" path="res://assets/effects/kenney_particle_pack/fire_01.png" id="3_trail"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1nt14"]
+shader = ExtResource("2_u0i87")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_trail"]
+direction = Vector3(0, -1, 0)
+spread = 24.0
+initial_velocity_min = 20.0
+initial_velocity_max = 65.0
+gravity = Vector3(0, -40, 0)
+scale_min = 0.15
+scale_max = 0.35
+
+[node name="MeteorEffect" type="Node2D" unique_id=807766799]
+z_index = 1500
+script = ExtResource("1_script")
+size_multiplier = 0.6000000000000001
+preview_effect_time = 0.75
+
+[node name="MeteorSprite" type="Sprite2D" parent="." unique_id=676170640]
+material = SubResource("ShaderMaterial_1nt14")
+texture = ExtResource("2_1nt14")
+
+[node name="Trail" type="GPUParticles2D" parent="." unique_id=1159648673]
+emitting = false
+amount = 18
+texture = ExtResource("3_trail")
+process_material = SubResource("ParticleProcessMaterial_trail")
+
+[node name="CastAudio" type="AudioStreamPlayer2D" parent="." unique_id=1468199510]
+
+[node name="ImpactAudio" type="AudioStreamPlayer2D" parent="." unique_id=619618960]

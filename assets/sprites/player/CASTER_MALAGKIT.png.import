@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bpobgit00pixw"
-path="res://.godot/imported/PATHFINDER_SABA(1).png-a8163d9ce3a25bdf009ba39ac82c9b62.ctex"
+uid="uid://i0d10me0yaw7"
+path="res://.godot/imported/CASTER_MALAGKIT.png-a84fbc46d382668bba43faece6618eb9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/PATHFINDER_SABA(1).png"
-dest_files=["res://.godot/imported/PATHFINDER_SABA(1).png-a8163d9ce3a25bdf009ba39ac82c9b62.ctex"]
+source_file="res://assets/sprites/player/CASTER_MALAGKIT.png"
+dest_files=["res://.godot/imported/CASTER_MALAGKIT.png-a84fbc46d382668bba43faece6618eb9.ctex"]
 
 [params]
 

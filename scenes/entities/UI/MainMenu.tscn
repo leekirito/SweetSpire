@@ -864,5 +864,6 @@ libraries/ = SubResource("AnimationLibrary_qwd58")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=741303028]
 stream = ExtResource("8_hg2b1")
+volume_db = 10.0
 autoplay = true
 parameters/looping = true

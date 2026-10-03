@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b6oalr4c2xudw"
-path="res://.godot/imported/RANGER_SABA.png-b399536a9074fab124b08fd400331da8.ctex"
+uid="uid://bkcd1modxyefx"
+path="res://.godot/imported/farm.svg-e4f84bc5eb7d029e836d7bf1a189ccf2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/RANGER_SABA.png"
-dest_files=["res://.godot/imported/RANGER_SABA.png-b399536a9074fab124b08fd400331da8.ctex"]
+source_file="res://assets/structures/farm.svg"
+dest_files=["res://.godot/imported/farm.svg-e4f84bc5eb7d029e836d7bf1a189ccf2.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

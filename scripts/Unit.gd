@@ -53,6 +53,7 @@ var target_cell: Vector2i
 # Visuals
 
 @onready var sprite: Sprite2D = $Sprite2D
+@onready var tribe_outline: Sprite2D = $TribeOutline
 @onready var health_ui: ProgressBar = $Health
 @onready var defence_ui: ProgressBar = $Defence
 @onready var audio: AudioStreamPlayer2D = $AudioStreamPlayer2D
@@ -63,6 +64,11 @@ var target_cell: Vector2i
 @export var shake_decay: float = 5.0
 @export_group("Walk Trail")
 @export var walk_trail_enabled: bool = true
+@export_group("Tribe Outline")
+@export_range(0.0, 1.0, 0.05) var outline_opacity: float = 1.0:
+	set(value):
+		outline_opacity = value
+		_update_outline_shader()
 var _sprite_rest_position: Vector2
 var _health_rest_position: Vector2
 var _defence_rest_position: Vector2
@@ -86,6 +92,7 @@ func _ready() -> void:
 	health_ui.value = unit_health
 	defence_ui.max_value = defence
 	defence_ui.value = defence
+	defence_ui.visible = defence > 0
 	_sprite_rest_position = sprite.position
 	_health_rest_position = health_ui.position
 	_defence_rest_position = defence_ui.position
@@ -110,6 +117,7 @@ func _process(delta: float) -> void:
 		sprite.position = _sprite_rest_position
 		health_ui.position = _health_rest_position
 		defence_ui.position = _defence_rest_position
+	tribe_outline.position = sprite.position
 
 func apply_shake(strength: float = 10.0) -> void:
 	shake_strength = strength
@@ -182,6 +190,35 @@ func setup_player(
 		sprite.texture = data.character_texture[
 			player.tribe.tribe_name
 		]
+	if tribe_outline != null:
+		var outline_material := tribe_outline.material.duplicate() as ShaderMaterial
+		tribe_outline.material = outline_material
+		_update_outline_shader()
+		refresh_tribe_outline(owner_id)
+
+
+func _update_outline_shader() -> void:
+	if not is_node_ready() or tribe_outline == null or player_state == null:
+		return
+	var outline_material := tribe_outline.material as ShaderMaterial
+	if outline_material == null:
+		return
+	var color := player_state.tribe.unit_outline_color
+	color.a *= outline_opacity
+	outline_material.set_shader_parameter("outline_color", color)
+
+
+## Keeps the outline tied to the displayed sprite and the current player's view.
+func refresh_tribe_outline(viewing_player_id: int) -> void:
+	if tribe_outline == null or sprite == null:
+		return
+	tribe_outline.texture = sprite.texture
+	tribe_outline.offset = sprite.offset
+	tribe_outline.visible = (
+		player_state != null
+		and viewing_player_id != -1
+		and (viewing_player_id != owner_id or (not has_moved and not has_attacked))
+	)
 
 
 ## Consumes defence before health, then refreshes the unit bars.
@@ -265,12 +302,17 @@ func get_attack_damage() -> int:
 	return unit_damage
 
 
+func has_area_attack() -> bool:
+	return not is_embarked and data != null and data.blast_pattern != null
+
+
 func is_dead() -> bool:
 	return unit_health <= 0
 	
 func update_ui()->void:
 	health_ui.value = unit_health
 	defence_ui.value = defence
+	defence_ui.visible = defence > 0
 	
 
 ## Only locomotion/presentation change. Health, damage, defence, owner and action flags survive.

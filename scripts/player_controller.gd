@@ -18,6 +18,8 @@ extends Node2D
 var selected_unit_id: int = -1
 
 var attack_tiles: Array[Vector2i] = []
+var is_aiming: bool = false
+var preview_cell: Vector2i = Vector2i(-999999, -999999)
 
 
 # SETUP
@@ -39,6 +41,18 @@ func _ready() -> void:
 
 ## Routes a click by priority: selected-unit action, unit selection, town UI, then resource UI.
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and is_aiming:
+		_cancel_aim()
+		get_viewport().set_input_as_handled()
+		return
+	if event is InputEventMouseMotion and is_aiming:
+		var hovered_cell := board_manager.cell_from_world(get_global_mouse_position())
+		if hovered_cell != preview_cell:
+			_update_blast_preview(hovered_cell)
+		return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		_toggle_aim()
+		return
 	if not (
 		event is InputEventMouseButton
 		and event.pressed
@@ -52,6 +66,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not match_manager.is_cell_visible_to_player(
 		board_manager.cell_from_world(mouse_position), match_manager.active_player_id
 	):
+		return
+	if is_aiming:
+		_handle_aim_click(board_manager.cell_from_world(mouse_position))
 		return
 
 	# A unit is already selected:
@@ -98,7 +115,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		return
 	var clicked_cell := board_manager.cell_from_world(mouse_position)
-	if match_manager.structure_manager.structures.has(clicked_cell) or board_manager.water_cells.has(clicked_cell):
+	if match_manager.structure_manager.structures.has(clicked_cell) or (
+		board_manager.water_cells.has(clicked_cell)
+		and board_manager.get_resource_id_at_cell(clicked_cell) == -1
+	):
 		ResourceChoices.open_tile(match_manager, clicked_cell)
 		return
 	var resource_id: int = (
@@ -130,8 +150,59 @@ func _unhandled_input(event: InputEvent) -> void:
 			)
 
 			return
+	ResourceChoices.open_tile(match_manager, clicked_cell)
 
 # SELECTED UNIT INPUT
+
+func _toggle_aim() -> void:
+	if is_aiming:
+		_cancel_aim()
+		return
+	var unit: Unit = match_manager.get_unit(selected_unit_id)
+	if unit == null or unit.owner_id != match_manager.active_player_id:
+		return
+	if not unit.has_area_attack() or unit.has_attacked or unit.is_animating:
+		return
+	is_aiming = true
+	_show_aim_options(unit)
+
+
+func _cancel_aim() -> void:
+	is_aiming = false
+	preview_cell = Vector2i(-999999, -999999)
+	var unit: Unit = match_manager.get_unit(selected_unit_id)
+	if unit != null:
+		_show_unit_options(unit)
+	else:
+		deselect_unit()
+
+
+func _show_aim_options(unit: Unit) -> void:
+	clear_highlights()
+	attack_tiles = match_manager.get_visible_attack_tiles(unit)
+	preview_cell = Vector2i(-999999, -999999)
+	_update_blast_preview(board_manager.cell_from_world(get_global_mouse_position()))
+
+
+func _update_blast_preview(cell: Vector2i) -> void:
+	preview_cell = cell
+	board_manager.clear_overlay()
+	for target_cell: Vector2i in attack_tiles:
+		board_manager.highlight_attack_cell(target_cell)
+	if cell not in attack_tiles:
+		return
+	var unit: Unit = match_manager.get_unit(selected_unit_id)
+	if unit == null:
+		return
+	for blast_cell: Vector2i in board_manager.get_blast_cells(unit, cell, attack_tiles):
+		board_manager.highlight_blast_cell(blast_cell)
+
+
+func _handle_aim_click(cell: Vector2i) -> void:
+	if cell not in attack_tiles:
+		return
+	if match_manager.request_attack_at_cell(selected_unit_id, cell):
+		deselect_unit()
 
 ## Interprets a selected unit's next click as an attack, move, or deselection.
 func _handle_selected_unit_click(
@@ -264,7 +335,10 @@ func _try_select_unit(
 func _on_unit_range_configuration_changed(unit: Unit) -> void:
 	if unit == null or unit.unit_id != selected_unit_id:
 		return
-	_show_unit_options(unit)
+	if is_aiming:
+		_show_aim_options(unit)
+	else:
+		_show_unit_options(unit)
 
 
 # SHOW OPTIONS
@@ -287,7 +361,7 @@ func _show_unit_options(
 
 	# Attack
 
-	if not unit.has_attacked:
+	if not unit.has_attacked and not unit.has_area_attack():
 
 		_show_attack_options(
 			unit
@@ -357,7 +431,9 @@ func _on_move_finished(
 	clear_highlights()
 
 	# Unit already moved, so now only show attack options.
-	if not unit.has_attacked:
+	if unit.has_area_attack():
+		_show_unit_options(unit)
+	elif not unit.has_attacked:
 
 		_show_attack_options(
 			unit
@@ -394,5 +470,7 @@ func deselect_unit() -> void:
 	clear_highlights()
 
 	selected_unit_id = -1
+	is_aiming = false
+	preview_cell = Vector2i(-999999, -999999)
 	
 	

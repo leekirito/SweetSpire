@@ -16,20 +16,23 @@ enum LineAxis {
 	VERTICAL
 }
 
+## Square fills the box; Cross uses its rows and columns; Diagonal uses diagonals;
+## Line uses one axis; Area forms a diamond.
 @export var shape: Shape = Shape.SQUARE:
 	set(value):
 		if shape == value:
 			return
 		shape = value
 		emit_changed()
-## The numeric walk/attack range is added to both dimensions.
-## With the default (2, 2), range 1 produces a 3x3 footprint.
+## Starting width (X) and height (Y). The range or blast radius is added to both.
+## For a 3x3 blast with Blast Radius 0, set this to (3, 3).
 @export var base_dimensions: Vector2i = Vector2i(2, 2):
 	set(value):
 		if base_dimensions == value:
 			return
 		base_dimensions = value
 		emit_changed()
+## Direction used only when Shape is Line; ignored for Square and other shapes.
 @export var line_axis: LineAxis = LineAxis.HORIZONTAL:
 	set(value):
 		if line_axis == value:

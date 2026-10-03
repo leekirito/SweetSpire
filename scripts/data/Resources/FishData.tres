@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://ckd21u3gvflcg"]
+
+[ext_resource type="Script" uid="uid://b3dglxtibtwod" path="res://scripts/ResourceData.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://c736s1fu835di" path="res://assets/environment/MISCELLANEOUS/FISH.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+resource_id = 5
+resource_alias = "fish"
+collect_technology_id = "fishing"
+can_upgrade = false
+biome_textures = Dictionary[String, Texture2D]({
+"NEUTRAL": ExtResource("2"),
+"WATER": ExtResource("2")
+})

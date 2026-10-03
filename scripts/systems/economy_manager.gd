@@ -93,6 +93,8 @@ func request_recruit_unit(
 	var building: Building = game.get_building(building_id)
 	if building == null or building.owner_id != game.active_player_id:
 		return null
+	if building.last_recruited_round == game.current_round:
+		return null
 
 	var player: PlayerState = game.get_active_player()
 	if player == null:
@@ -117,7 +119,10 @@ func request_recruit_unit(
 	game.get_tree().current_scene.add_child(unit)
 	unit.setup_player(player)
 	unit.global_position = game.board_manager.cell_to_world(building.current_cell)
+	unit.has_moved = true
+	unit.has_attacked = true
 	game.register_new_unit(unit)
+	building.last_recruited_round = game.current_round
 	return unit
 
 

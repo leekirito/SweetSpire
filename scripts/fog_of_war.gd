@@ -179,6 +179,7 @@ func _apply_unit_visibility() -> void:
 	for unit: Unit in game.units.values():
 		var cell := board.cell_from_world(unit.global_position) if unit.is_animating else unit.current_cell
 		unit.visible = is_cell_visible(cell)
+		unit.refresh_tribe_outline(viewing_player_id)
 
 func _apply_entity_visibility() -> void:
 	_apply_unit_visibility()

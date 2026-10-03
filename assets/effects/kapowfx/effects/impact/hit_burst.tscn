@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://kpv3t3qx0m0j"]
 
-[ext_resource type="Script" path="res://assets/effects/kapowfx/effects/impact/hit_burst.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cse31pbfywi1g" path="res://assets/effects/kapowfx/effects/impact/hit_burst.gd" id="1_script"]
 
-[node name="HitBurst" type="Node2D"]
+[node name="HitBurst" type="Node2D" unique_id=883077757]
 script = ExtResource("1_script")

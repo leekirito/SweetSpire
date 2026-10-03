@@ -5,6 +5,7 @@ extends Node2D
 
 @export var tile_map_layer: TileMapLayer
 @export var tile_map_overlay: TileMapLayer
+@export var movement_overlay: TileMapLayer
 @export var buildings_tile: TileMapLayer
 
 @export var solid_custom_data_name: String = "solid"
@@ -690,13 +691,40 @@ func get_attack_tiles(
 	unit: Unit
 ) -> Array[Vector2i]:
 
-	return get_pattern_tiles(
+	var tiles: Array[Vector2i] = get_pattern_tiles(
 		unit.attack_pattern,
 		unit.attack_range,
 		unit.attack_base_dimensions_override,
 		unit.attack_exact_dimensions_override,
 		unit.current_cell
 	)
+	if unit.is_embarked or unit.data == null or unit.data.minimum_attack_distance <= 1:
+		return tiles
+	var targetable: Array[Vector2i] = []
+	for cell: Vector2i in tiles:
+		var offset := cell - unit.current_cell
+		if maxi(absi(offset.x), absi(offset.y)) >= unit.data.minimum_attack_distance:
+			targetable.append(cell)
+	return targetable
+
+
+## A blast can affect only the same visible cells highlighted for aiming.
+func get_blast_cells(
+	unit: Unit,
+	center: Vector2i,
+	targetable: Array[Vector2i]
+) -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	if unit == null or not unit.has_area_attack():
+		return cells
+	if center not in targetable:
+		return cells
+	cells.append(center)
+	for offset: Vector2i in unit.data.blast_pattern.get_offsets(unit.data.blast_radius):
+		var cell := center + offset
+		if cell in targetable:
+			cells.append(cell)
+	return cells
 
 
 ## Converts a reusable shape resource into legal board cells.
@@ -832,6 +860,59 @@ func animate_unit_move(
 
 func clear_overlay() -> void:
 	tile_map_overlay.clear()
+	if movement_overlay != null:
+		movement_overlay.clear()
+
+
+func _movement_highlight_layer() -> TileMapLayer:
+	return movement_overlay if movement_overlay != null else tile_map_overlay
+
+
+## Keeps decal sprites on the overlay layer while tile highlights refresh.
+func show_meteor_decals(
+	cells: Array[Vector2i],
+	decal_texture: Texture2D,
+	tint: Color,
+	size_multiplier: float,
+	fade_seconds: float
+) -> void:
+	if tile_map_overlay == null or tile_map_layer == null or tile_map_layer.tile_set == null or decal_texture == null:
+		return
+	var tile_size := Vector2(tile_map_layer.tile_set.tile_size)
+	var texture_size := decal_texture.get_size()
+	for cell: Vector2i in cells:
+		var decal := Sprite2D.new()
+		decal.name = "MeteorDecal"
+		decal.add_to_group("meteor_decals")
+		decal.texture = decal_texture
+		decal.modulate = tint
+		decal.scale = Vector2(
+			tile_size.x / maxf(texture_size.x, 1.0),
+			tile_size.y / maxf(texture_size.y, 1.0)
+		) * size_multiplier
+		decal.z_index = 1
+		tile_map_overlay.add_child(decal)
+		decal.global_position = cell_to_world(cell)
+		var fade := decal.create_tween()
+		fade.tween_property(decal, "modulate:a", 0.0, fade_seconds)
+		fade.tween_callback(decal.queue_free)
+
+
+## World footprint of a group of isometric cells, including the outer tile edges.
+func get_cells_world_size(cells: Array[Vector2i]) -> Vector2:
+	if tile_map_layer == null or tile_map_layer.tile_set == null:
+		return Vector2.ONE
+	var tile_size := Vector2(tile_map_layer.tile_set.tile_size)
+	if cells.is_empty():
+		return tile_size
+	var first := cell_to_world(cells[0])
+	var minimum := first
+	var maximum := first
+	for cell: Vector2i in cells:
+		var point := cell_to_world(cell)
+		minimum = minimum.min(point)
+		maximum = maximum.max(point)
+	return maximum - minimum + tile_size
 
 
 func highlight_movement(
@@ -843,7 +924,7 @@ func highlight_movement(
 	)
 
 	for tile: Vector2i in tiles:
-		tile_map_overlay.set_cell(
+		_movement_highlight_layer().set_cell(
 			tile,
 			movement_source_id,
 			movement_atlas_coordinate,
@@ -859,6 +940,15 @@ func highlight_attack_cell(
 		cell,
 		attack_source_id,
 		attack_atlas_coordinate,
+		0
+	)
+
+
+func highlight_blast_cell(cell: Vector2i) -> void:
+	_movement_highlight_layer().set_cell(
+		cell,
+		movement_source_id,
+		movement_atlas_coordinate,
 		0
 	)
 # CURSOR

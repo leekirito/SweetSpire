@@ -5,6 +5,8 @@ extends RefCounted
 func request_end_turn(game: MatchManager) -> bool:
 	if game.current_phase != MatchManager.Phase.PLAYER_TURN:
 		return false
+	if game.combat_resolver.attack_in_progress:
+		return false
 	if any_unit_animating(game):
 		return false
 

@@ -20,6 +20,7 @@ const EXP_REQUIREMENTS := {
 # ============================================================
 
 var owner_id: int = -1
+var last_recruited_round: int = 0
 
 # Only controls THIS building's appearance.
 var visual_tribe: TribeData = null
@@ -61,7 +62,8 @@ var territory_cells: Array[Vector2i] = []
 @export var available_unit_types: Array[PackedScene] = [
 	preload("uid://kyhenfdpjtn"),
 	preload("uid://dw8n2deqnba4p"),
-	preload("uid://bxt5sabvny8r7")
+	preload("uid://bxt5sabvny8r7"),
+	preload("res://scenes/entities/player/Caster.tscn")
 ]
 
 

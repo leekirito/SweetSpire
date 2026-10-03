@@ -34,7 +34,7 @@ signal match_ended(winner_id: int, victory_reason: String)
 
 @export_category("Victory Conditions")
 @export_range(1, 99, 1) var center_control_rounds: int = 3
-## Exact board cell that represents the Sweetspire center.
+## Top-left board cell of the 2x2 Sweetspire objective.
 @export var sweetspire_center_cell: Vector2i = Vector2i.ZERO
 @onready var sugar_text: Label = $"../CanvasLayer/Control/Sugar"
 
@@ -624,6 +624,19 @@ func request_attack(attacker_id: int, target_id: int) -> bool:
 		return false
 	return combat_resolver.request_attack(self, attacker_id, target_id)
 
+func request_attack_at_cell(attacker_id: int, target_cell: Vector2i) -> bool:
+	if current_phase != Phase.PLAYER_TURN:
+		return false
+	return combat_resolver.request_attack_at_cell(self, attacker_id, target_cell)
+
+## The same visible cells used by targeting, previews, and damage validation.
+func get_visible_attack_tiles(unit: Unit) -> Array[Vector2i]:
+	var visible_tiles: Array[Vector2i] = []
+	for cell: Vector2i in board_manager.get_attack_tiles(unit):
+		if is_cell_visible_to_player(cell, unit.owner_id):
+			visible_tiles.append(cell)
+	return visible_tiles
+
 
 func remove_unit_authoritative(unit: Unit) -> void:
 	unit_registry.remove_unit(self, unit)
@@ -645,6 +658,15 @@ func _evaluate_center_control() -> void:
 
 func get_center_controller() -> PlayerState:
 	return victory_manager.get_center_controller(self)
+
+
+func get_center_cells() -> Array[Vector2i]:
+	return [
+		sweetspire_center_cell,
+		sweetspire_center_cell + Vector2i.RIGHT,
+		sweetspire_center_cell + Vector2i.DOWN,
+		sweetspire_center_cell + Vector2i.ONE,
+	]
 
 
 func get_center_control_target() -> int:

@@ -414,7 +414,7 @@ func start_game() -> void:
 	player_1.player_id = 1
 	player_1.player_name = "Player 1"
 	player_1.tribe = selected_tribes[1]
-	player_1.sugars = 5
+	player_1.sugars = 20
 
 	player_1.unlocked_technologies.append(
 		player_1.tribe.starting_technology.technology_id
@@ -429,7 +429,7 @@ func start_game() -> void:
 	player_2.player_id = 2
 	player_2.player_name = "Player 2"
 	player_2.tribe = selected_tribes[2]
-	player_2.sugars = 5
+	player_2.sugars = 20
 
 	player_2.unlocked_technologies.append(
 		player_2.tribe.starting_technology.technology_id

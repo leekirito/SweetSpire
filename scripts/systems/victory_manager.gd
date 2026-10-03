@@ -43,14 +43,20 @@ func evaluate_center_control(game: MatchManager) -> void:
 
 
 func get_center_controller(game: MatchManager) -> PlayerState:
-	var unit_id: int = game.board_manager.get_unit_id_at_cell(game.sweetspire_center_cell)
-	if unit_id == -1:
+	var controlling_player_id := -1
+	for cell: Vector2i in game.get_center_cells():
+		var unit_id: int = game.board_manager.get_unit_id_at_cell(cell)
+		if unit_id == -1:
+			continue
+		var unit: Unit = game.get_unit(unit_id)
+		if unit == null or game.eliminated_player_ids.has(unit.owner_id):
+			continue
+		if controlling_player_id != -1 and controlling_player_id != unit.owner_id:
+			return null
+		controlling_player_id = unit.owner_id
+	if controlling_player_id == -1:
 		return null
-
-	var unit: Unit = game.get_unit(unit_id)
-	if unit == null or game.eliminated_player_ids.has(unit.owner_id):
-		return null
-	return game.get_player(unit.owner_id)
+	return game.get_player(controlling_player_id)
 
 
 func _player_has_buildings(game: MatchManager, player_id: int) -> bool:

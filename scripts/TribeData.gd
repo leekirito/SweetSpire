@@ -19,3 +19,4 @@ extends Resource
 @export var visuals: TribeVisualData
 
 @export var territory_color: Color = Color.WHITE
+@export var unit_outline_color: Color = Color.WHITE

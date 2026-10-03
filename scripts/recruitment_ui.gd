@@ -62,12 +62,19 @@ func setup(building: Building) -> void:
 
 		units[unit_name] = unit
 		_configure_choice(choice, unit_name, unit)
+		if building.last_recruited_round == match_manager.current_round:
+			choice.disabled = true
+			choice.tooltip_text = "This town has already recruited this round"
 
 	_animate_visible_choices()
 
 
 func _ready() -> void:
 	preview_panel.hide()
+	var fourth_choice := choice3.duplicate(0) as Button
+	fourth_choice.name = "Button4"
+	choice3.get_parent().add_child(fourth_choice)
+	choices.append(fourth_choice)
 
 	for choice: Button in choices:
 		choice.pressed.connect(_on_choice_pressed.bind(choice))
@@ -98,6 +105,13 @@ func _animate_visible_choices() -> void:
 				Vector2(-283.0, -142.0),
 				Vector2(-87.0, -250.0),
 				Vector2(120.0, -142.0)
+			]
+		4:
+			target_positions = [
+				Vector2(-205.0, -330.0),
+				Vector2(36.0, -330.0),
+				Vector2(-205.0, -155.0),
+				Vector2(36.0, -155.0)
 			]
 
 	for index: int in range(visible_choices.size()):

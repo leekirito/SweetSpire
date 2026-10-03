@@ -20,6 +20,8 @@
 [ext_resource type="Script" uid="uid://bx6hh21twapwx" path="res://scripts/water_effects.gd" id="19_water_script"]
 [ext_resource type="Script" uid="uid://df00xj23bquvv" path="res://scripts/fog_of_war.gd" id="20_fog"]
 [ext_resource type="Script" uid="uid://dtblac7hfauoi" path="res://scripts/fogged_terrain.gd" id="21_fog_terrain"]
+[ext_resource type="Script" uid="uid://bah8mu8udpc5" path="res://scripts/effects/center_objective_highlight.gd" id="22_center_highlight"]
+[ext_resource type="Shader" uid="uid://n87tl322x7hd" path="res://assets/Shader/movement_overlay.gdshader" id="23_movement_shader"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_water_surface"]
 shader = ExtResource("18_water_shader")
@@ -31,6 +33,12 @@ shader_parameter/surface_opacity = 0.14
 shader_parameter/highlight_opacity = 0.4
 shader_parameter/detail_scale = 0.018
 shader_parameter/ripple_density = 0.72
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_movement_overlay"]
+shader = ExtResource("23_movement_shader")
+shader_parameter/highlight_color = Color(0.18, 0.55, 1, 0.68)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/pulse_strength = 0.12
 
 [sub_resource type="Gradient" id="Gradient_ostsq"]
 offsets = PackedFloat32Array(1)
@@ -72,10 +80,18 @@ z_index = 2
 y_sort_enabled = true
 tile_set = ExtResource("1_1rhdn")
 
+[node name="MovementOverlay" type="TileMapLayer" parent="." unique_id=703769685]
+z_index = -1
+material = SubResource("ShaderMaterial_movement_overlay")
+tile_set = ExtResource("1_1rhdn")
+
 [node name="Overlay" type="TileMapLayer" parent="." unique_id=567210458]
 unique_name_in_owner = true
-z_index = -1
 tile_set = ExtResource("1_1rhdn")
+
+[node name="CenterObjectiveHighlight" type="Node2D" parent="." unique_id=716334016]
+z_index = -1
+script = ExtResource("22_center_highlight")
 
 [node name="Cursor" type="TileMapLayer" parent="." unique_id=1826037308]
 unique_name_in_owner = true
@@ -95,11 +111,12 @@ building_vision_radius = 4
 [node name="Camera2D" type="Camera2D" parent="." unique_id=327920758]
 script = ExtResource("4_sjxhf")
 
-[node name="BoardManager" type="Node2D" parent="." unique_id=1842379971 node_paths=PackedStringArray("tile_map_layer", "tile_map_overlay", "buildings_tile", "obstacle_layers")]
+[node name="BoardManager" type="Node2D" parent="." unique_id=1842379971 node_paths=PackedStringArray("tile_map_layer", "tile_map_overlay", "movement_overlay", "buildings_tile", "obstacle_layers")]
 z_index = 1
 script = ExtResource("4_ostsq")
 tile_map_layer = NodePath("../Ground")
 tile_map_overlay = NodePath("../Overlay")
+movement_overlay = NodePath("../MovementOverlay")
 buildings_tile = NodePath("../Buildings")
 obstacle_layers = [null, NodePath("../Obstacles")]
 debug_draw = false
@@ -315,7 +332,6 @@ position = Vector2(3806, -1349)
 
 [node name="GameplayMusic" type="AudioStreamPlayer" parent="." unique_id=254671292]
 stream = ExtResource("16_u8lgh")
-volume_db = -15.294
 autoplay = true
 
 [connection signal="button_down" from="CanvasLayer/Control/Button" to="MatchManager" method="_on_button_button_down"]

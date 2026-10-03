@@ -7,8 +7,8 @@
 script = ExtResource("1_o1bm4")
 technology_id = "mining"
 technology_name = "Mining"
-description = "Allows the tribe to construct Mining Dens within controlled territories."
-unlock_effects = Array[String](["Construct Mining Dens in controlled territory", "Gain access to minerals used for advanced development"])
+description = "Build Mining Dens on mountain resources inside controlled territory."
+unlock_effects = Array[String](["Construct Mining Dens on controlled mountains", "Mining Dens produce 1 Sugar each round"])
 cost = 5
 prerequisite_technology = ExtResource("2_prereq")
 metadata/_custom_type_script = "uid://c5gq5kd0befx6"

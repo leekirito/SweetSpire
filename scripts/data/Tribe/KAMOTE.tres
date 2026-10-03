@@ -13,4 +13,5 @@ starting_technology = ExtResource("2_qa3ia")
 starting_unit_scene = ExtResource("2_asb50")
 visuals = ExtResource("3_moeyl")
 territory_color = Color(0.91764706, 0.34509805, 0.12156863, 1)
+unit_outline_color = Color(0.81659573, 0.47038496, 1.92523e-07, 1)
 metadata/_custom_type_script = "uid://d3qj65j0welet"

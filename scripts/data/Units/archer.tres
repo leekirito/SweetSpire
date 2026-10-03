@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://ugoaj7ys6drr" path="res://scripts/UnitData.gd" id="2_82ayl"]
 [ext_resource type="Script" uid="uid://bawcf75unqena" path="res://scripts/RangePattern.gd" id="2_dep64"]
 [ext_resource type="Texture2D" uid="uid://bhmpcqwl14mne" path="res://assets/sprites/player/RANGER_MALAGKIT.png" id="3_4hepd"]
-[ext_resource type="Texture2D" uid="uid://b6oalr4c2xudw" path="res://assets/sprites/RANGER_SABA.png" id="3_il0lu"]
+[ext_resource type="Texture2D" uid="uid://b6oalr4c2xudw" path="res://assets/sprites/player/RANGER_SABA.png" id="3_il0lu"]
 
 [sub_resource type="Resource" id="Resource_qsuev"]
 script = ExtResource("2_dep64")

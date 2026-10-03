@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://c5dj52wvwvtg7"]
+
+[ext_resource type="PackedScene" uid="uid://14itgc23aurn" path="res://scenes/entities/Resources/resources.tscn" id="1"]
+[ext_resource type="Resource" path="res://scripts/data/Resources/FishData.tres" id="2"]
+[ext_resource type="Texture2D" uid="uid://c736s1fu835di" path="res://assets/environment/MISCELLANEOUS/FISH.png" id="3"]
+
+[node name="Fish" unique_id=1609212884 instance=ExtResource("1")]
+data = ExtResource("2")
+base_sprite = ExtResource("3")
+
+[node name="Sprite2D" parent="." index="0" unique_id=891014490]
+texture = ExtResource("3")
+
+[node name="CollectibleOutline" parent="." index="1"]
+texture = ExtResource("3")

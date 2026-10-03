@@ -30,6 +30,31 @@ func run() -> void:
 	var manager := game.structure_manager
 	check(game.resources.size() >= 64, "Demo resources populated")
 	check(game.buildings.size() > 7, "Demo neutral towns populated")
+	for biome: String in DemoMap.BIOMES:
+		var biome_towns := 0
+		var biome_resources := 0
+		for candidate: Building in game.buildings.values():
+			if board.get_biome_name(candidate.current_cell) == biome:
+				biome_towns += 1
+		for candidate: Resources in game.resources.values():
+			if board.get_biome_name(candidate.current_cell) == biome:
+				biome_resources += 1
+		check(biome_towns >= 3, "%s has at least three towns" % biome)
+		check(biome_resources >= 20, "%s has at least twenty resources" % biome)
+	var fish_count := 0
+	for candidate: Resources in game.resources.values():
+		if candidate.data.resource_alias == "fish":
+			fish_count += 1
+			check(board.water_cells.has(candidate.current_cell) and not board.is_ocean(candidate.current_cell), "Fish spawn only in non-ocean water")
+	check(fish_count > 0, "Non-ocean water contains fish")
+	for candidate: Building in game.buildings.values():
+		var nearby := 0
+		var forest_nearby := false
+		for resource: Resources in game.resources.values():
+			if maxi(absi(candidate.current_cell.x - resource.current_cell.x), absi(candidate.current_cell.y - resource.current_cell.y)) <= 1 and (candidate.owner_id == -1 or resource.controlling_building_id == candidate.building_id):
+				nearby += 1
+				forest_nearby = forest_nearby or resource.data.resource_alias == "forest"
+		check(nearby >= 3 and forest_nearby, "Each town has a nearby forest and three resources")
 	var town: Building
 	for candidate: Building in game.buildings.values():
 		if candidate.owner_id == 1:
@@ -86,6 +111,23 @@ func run() -> void:
 	check(not manager.build(StructureManager.DOCK, dock, 1), "Insufficient funds rejected")
 	player.sugars = before
 	check(manager.build(StructureManager.DOCK, dock, 1), "Build shore dock")
+	var catchable_fish := preload("res://scenes/entities/Resources/fish.tscn").instantiate() as Resources
+	scene.add_child(catchable_fish)
+	catchable_fish.global_position = board.cell_to_world(lake)
+	game.register_resource(catchable_fish)
+	catchable_fish.set_player_owner(1)
+	catchable_fish.set_controlling_building(town.building_id)
+	check(not game.request_collect_resource(catchable_fish.resource_instance_id, 1), "Fishing technology gates fish collection")
+	player.unlock_technology("fishing")
+	catchable_fish.open_resource_choices(game)
+	await get_tree().process_frame
+	var fish_popup := get_tree().get_first_node_in_group("resource_action_popup") as ResourceChoices
+	check(fish_popup != null and fish_popup.actions.get_child_count() == 1, "Lake fish opens a collection action")
+	if fish_popup != null:
+		fish_popup.queue_free()
+	before = player.sugars
+	check(game.request_collect_resource(catchable_fish.resource_instance_id, 1), "Fishing catches a controlled lake fish")
+	check(player.sugars == before + 1, "Fish collection grants 1 Sugar")
 	var unit: Unit = game.units.values()[0]
 	unit.owner_id = 1
 	board.unregister_unit(unit)
@@ -127,6 +169,47 @@ func run() -> void:
 	var exp_before := town.current_exp
 	check(game.request_collect_resource(extra.resource_instance_id, 1), "Forest collection succeeds with Forestry")
 	check(player.sugars == before + 1 and town.current_exp == exp_before, "Forest grants sugar without EXP")
+	var farm_cell := Vector2i(44, 44)
+	var mine_cell := Vector2i(45, 44)
+	for cell: Vector2i in [farm_cell, mine_cell]:
+		board.tile_map_layer.set_cell(cell, 39, Vector2i(4, 0))
+		game.territory_manager.cell_to_building_id[cell] = town.building_id
+	board.astar_grid.region = board.tile_map_layer.get_used_rect()
+	board.astar_grid.update()
+	board._refresh_solid_cells()
+	var mountain := preload("res://scenes/entities/Resources/mountain.tscn").instantiate() as Resources
+	scene.add_child(mountain)
+	mountain.global_position = board.cell_to_world(mine_cell)
+	game.register_resource(mountain)
+	mountain.set_player_owner(1)
+	mountain.set_controlling_building(town.building_id)
+	check(not manager.build(StructureManager.FARM, farm_cell, 1), "Cultivation gates farm construction")
+	check(not manager.build(StructureManager.MINE, mine_cell, 1), "Mining gates mountain construction")
+	player.unlock_technology("cultivation")
+	player.unlock_technology("mining")
+	ResourceChoices.open_tile(game, farm_cell)
+	await get_tree().process_frame
+	var farm_popup := get_tree().get_first_node_in_group("resource_action_popup") as ResourceChoices
+	check(farm_popup != null and farm_popup.actions.get_child_count() == 1, "Clear controlled land offers a Farm action")
+	if farm_popup != null:
+		farm_popup.queue_free()
+	await get_tree().process_frame
+	mountain.open_resource_choices(game)
+	await get_tree().process_frame
+	var mine_popup := get_tree().get_first_node_in_group("resource_action_popup") as ResourceChoices
+	check(mine_popup != null and mine_popup.actions.get_child_count() == 1, "Controlled mountain offers a Mining Den action")
+	if mine_popup != null:
+		mine_popup.queue_free()
+	check(not manager.build(StructureManager.FARM, mine_cell, 1), "Farm requires clear ground")
+	check(not manager.build(StructureManager.MINE, farm_cell, 1), "Mine requires a mountain")
+	check(not manager.build(StructureManager.FARM, farm_cell, 2), "Opponent cannot farm controlled territory")
+	before = player.sugars
+	check(manager.build(StructureManager.FARM, farm_cell, 1), "Cultivation plants a farm in controlled territory")
+	check(manager.build(StructureManager.MINE, mine_cell, 1), "Mining builds on a controlled mountain")
+	check(player.sugars == before - 6, "Farm and mine each cost 3 Sugar")
+	check(mountain.visible == false, "Mine art replaces the mountain resource")
+	check(manager.income_for(town) == 4, "Farm and mine each add round income")
+	check(not manager.build(StructureManager.MINE, mine_cell, 1), "Cannot build a second mine on one mountain")
 	ResourceChoices.open_tile(game, dock)
 	await get_tree().process_frame
 	check(get_tree().get_nodes_in_group("resource_action_popup").size() == 1, "Structure info popup opens")

@@ -1,8 +1,14 @@
 class_name CombatResolver
 extends RefCounted
- 
+
+const ATTACK_PRESENTATION: GDScript = preload("res://scripts/effects/attack_presentation.gd")
+const DEATH_FLING: GDScript = preload("res://scripts/effects/death_fling.gd")
+
+var attack_in_progress: bool = false
 
 func request_move(game: MatchManager, unit_id: int, target_cell: Vector2i) -> bool:
+	if attack_in_progress:
+		return false
 	var unit: Unit = game.get_unit(unit_id)
 	if unit == null or unit.owner_id != game.active_player_id:
 		return false
@@ -20,25 +26,101 @@ func request_move(game: MatchManager, unit_id: int, target_cell: Vector2i) -> bo
 
 
 func request_attack(game: MatchManager, attacker_id: int, target_id: int) -> bool:
-	var attacker: Unit = game.get_unit(attacker_id)
 	var target: Unit = game.get_unit(target_id)
-	if attacker == null or target == null:
+	if target == null:
 		return false
-	if attacker.owner_id != game.active_player_id or target.owner_id == game.active_player_id:
+	return request_attack_at_cell(game, attacker_id, target.current_cell)
+
+
+func request_attack_at_cell(game: MatchManager, attacker_id: int, target_cell: Vector2i) -> bool:
+	if attack_in_progress:
 		return false
-	if attacker.has_attacked or attacker.is_animating or target.is_animating:
+	var attacker: Unit = game.get_unit(attacker_id)
+	if attacker == null or attacker.owner_id != game.active_player_id:
 		return false
-	if not game.is_cell_visible_to_player(target.current_cell, attacker.owner_id):
+	if attacker.has_attacked or attacker.is_animating:
 		return false
-	if target.current_cell not in game.board_manager.get_attack_tiles(attacker):
+	var targetable: Array[Vector2i] = game.get_visible_attack_tiles(attacker)
+	if target_cell not in targetable:
 		return false
 
-	target.take_damage(attacker.get_attack_damage())
+	var target_cells: Array[Vector2i] = [target_cell]
+	if attacker.has_area_attack():
+		target_cells = game.board_manager.get_blast_cells(attacker, target_cell, targetable)
+	var targets: Array[Unit] = []
+	for cell: Vector2i in target_cells:
+		var target: Unit = game.get_unit(game.board_manager.get_unit_id_at_cell(cell))
+		if target == null:
+			continue
+		if target.owner_id == attacker.owner_id and (
+			not attacker.has_area_attack() or not attacker.data.can_hit_allies
+		):
+			continue
+		if target.is_animating:
+			return false
+		targets.append(target)
+	if targets.is_empty() and not attacker.has_area_attack():
+		return false
+
 	attacker.has_attacked = true
 	attacker.has_moved = true
+	attacker.is_animating = true
+	attack_in_progress = true
+	var presentation: AttackPresentation = ATTACK_PRESENTATION.new()
+	game.get_tree().current_scene.add_child(presentation)
+	presentation.decals_due.connect(_on_attack_decals_due.bind(
+		game, target_cells, attacker.data.meteor_decal_texture,
+		attacker.data.meteor_decal_tint,
+		attacker.data.meteor_decal_size_multiplier,
+		attacker.data.meteor_decal_fade_seconds
+	))
+	presentation.impact.connect(_on_attack_impact.bind(
+		game, targets, attacker.get_attack_damage()
+	))
+	presentation.finished.connect(_on_attack_finished.bind(attacker))
+	presentation.play_attack(
+		attacker.global_position,
+		game.board_manager.cell_to_world(target_cell),
+		attacker.data,
+		game.board_manager.get_cells_world_size(target_cells)
+	)
+	return true
 
-	if target.is_dead():
+
+func _on_attack_impact(
+	game: MatchManager,
+	targets: Array[Unit],
+	damage: int
+) -> void:
+	var defeated: Array[Unit] = []
+	for target: Unit in targets:
+		if not is_instance_valid(target) or target.is_dead():
+			continue
+		target.take_damage(damage)
+		if target.is_dead():
+			defeated.append(target)
+	for target: Unit in defeated:
+		var fling: DeathFling = DEATH_FLING.new()
+		game.get_tree().current_scene.add_child(fling)
+		fling.launch(target, game.board_manager)
 		game.remove_unit_authoritative(target)
+	if not defeated.is_empty():
 		game.evaluate_eliminations()
 
-	return true
+
+func _on_attack_decals_due(
+	game: MatchManager,
+	target_cells: Array[Vector2i],
+	decal_texture: Texture2D,
+	tint: Color,
+	size_multiplier: float,
+	fade_seconds: float
+) -> void:
+	game.board_manager.show_meteor_decals(target_cells, decal_texture, tint, size_multiplier, fade_seconds)
+
+
+
+func _on_attack_finished(attacker: Unit) -> void:
+	attack_in_progress = false
+	if is_instance_valid(attacker):
+		attacker.is_animating = false

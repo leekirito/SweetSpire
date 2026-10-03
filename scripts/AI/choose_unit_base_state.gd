@@ -17,6 +17,8 @@ func enter() -> void:
 
 		if unit.is_animating:
 			continue
+		if unit.has_moved and unit.has_attacked:
+			continue
 
 		ai.selected_unit = unit
 		break

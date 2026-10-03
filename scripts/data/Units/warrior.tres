@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ugoaj7ys6drr" path="res://scripts/UnitData.gd" id="1_78uh2"]
 [ext_resource type="Script" uid="uid://bawcf75unqena" path="res://scripts/RangePattern.gd" id="2_gnmde"]
 [ext_resource type="Texture2D" uid="uid://dg6gy8ekxn37b" path="res://assets/sprites/player/FIGHTER_KAMOTE.png" id="2_lmlmw"]
-[ext_resource type="Texture2D" uid="uid://boe0gg128vv2h" path="res://assets/sprites/FIGHTER_SABA.png" id="3_4qk3i"]
+[ext_resource type="Texture2D" uid="uid://boe0gg128vv2h" path="res://assets/sprites/player/FIGHTER_SABA.png" id="3_4qk3i"]
 [ext_resource type="Texture2D" uid="uid://co1ssef0o5lvb" path="res://assets/sprites/player/FIGHTER_MALAGKIT.png" id="3_rltr1"]
 
 [sub_resource type="Resource" id="Resource_4qk3i"]

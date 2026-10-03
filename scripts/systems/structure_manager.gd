@@ -3,6 +3,8 @@ extends RefCounted
 
 const DOCK: StructureData = preload("res://scripts/data/Structures/Dock.tres")
 const LUMBER: StructureData = preload("res://scripts/data/Structures/LumberFactory.tres")
+const MINE: StructureData = preload("res://scripts/data/Structures/MiningDen.tres")
+const FARM: StructureData = preload("res://scripts/data/Structures/Farm.tres")
 var structures: Dictionary[Vector2i, Structure] = {}
 var game: MatchManager
 
@@ -15,7 +17,7 @@ func controlling_town(cell: Vector2i) -> Building:
 	return game.get_building(town_id)
 
 func placement_error(data: StructureData, cell: Vector2i, player_id: int) -> String:
-	if data not in [DOCK, LUMBER]:
+	if data not in [DOCK, LUMBER, MINE, FARM]:
 		return "Unknown structure"
 	if game.current_phase != MatchManager.Phase.PLAYER_TURN or game.active_player_id != player_id:
 		return "Wait for your turn"
