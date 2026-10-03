@@ -133,15 +133,15 @@ func refresh(instant: bool = false) -> void:
 		explored_by_player[player_id] = explored
 	var switched := viewing_player_id != game.active_player_id
 	viewing_player_id = game.active_player_id
-	var changed := switched
+	var view_changed := switched
 	for cell: Vector2i in fog_nodes:
 		var state := state_for(cell, viewing_player_id)
 		if instant or switched or displayed_states.get(cell, -1) != state:
 			fog_nodes[cell].set_fog_state(state, not (instant or switched), transition_duration)
 			displayed_states[cell] = state
-			changed = true
+			view_changed = true
 	_apply_entity_visibility()
-	if changed:
+	if view_changed:
 		board.tile_map_layer.notify_runtime_tile_data_update()
 		fog_updated.emit()
 	_refreshing = false

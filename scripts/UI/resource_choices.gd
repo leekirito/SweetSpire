@@ -100,7 +100,7 @@ func _refresh() -> void:
 				reason = "Requires " + resource.data.collect_technology_id.capitalize()
 			elif not match_manager.can_interact_with_resource(resource, player.player_id):
 				reason = "Unavailable"
-			var reward := "+%d Sugar" % resource.data.collect_sugar if resource.data.collect_sugar > 0 else "+%d town EXP" % resource.data.exp
+			var reward := "+%d Sugar" % resource.data.collect_sugar if resource.data.collect_sugar > 0 else "+%d town EXP" % resource.data.experience_reward
 			_add_action(resource.sprite.texture, "Collect\n" + reward, reason, _collect)
 		if resource.data.can_upgrade and not resource.is_upgraded:
 			var reason := "" if player.has_technology(resource.data.upgrade_technology_id) else "Requires " + resource.data.upgrade_technology_id.capitalize()

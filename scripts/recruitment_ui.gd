@@ -24,7 +24,7 @@ var units: Dictionary[String, PackedScene]
 func setup(building: Building) -> void:
 	selected_building = building
 	units.clear()
-	var owner: PlayerState = match_manager.get_player(building.owner_id)
+	var building_owner: PlayerState = match_manager.get_player(building.owner_id)
 	var available_units: Array[PackedScene] = []
 
 	for unit_scene: PackedScene in building.available_unit_types:
@@ -37,8 +37,8 @@ func setup(building: Building) -> void:
 
 		var technology_id: String = candidate.data.required_technology_id
 		var is_unlocked := (
-			owner != null
-			and owner.has_technology(technology_id)
+			building_owner != null
+			and building_owner.has_technology(technology_id)
 		)
 		candidate.free()
 
@@ -144,10 +144,10 @@ func _configure_choice(
 	var portrait: TextureRect = choice.get_node("Portrait")
 	var price: Label = choice.get_node("PriceBadge/Price")
 	var tribe_name := ""
-	var owner: PlayerState = match_manager.get_player(selected_building.owner_id)
+	var building_owner: PlayerState = match_manager.get_player(selected_building.owner_id)
 
-	if owner != null and owner.tribe != null:
-		tribe_name = owner.tribe.tribe_name
+	if building_owner != null and building_owner.tribe != null:
+		tribe_name = building_owner.tribe.tribe_name
 
 	if unit_data.character_texture.has(tribe_name):
 		portrait.texture = unit_data.character_texture[tribe_name]

@@ -10,7 +10,7 @@
 script = ExtResource("1")
 resource_id = 1
 resource_alias = "forest"
-exp = 0
+experience_reward = 0
 collect_sugar = 1
 collect_technology_id = "forestry"
 can_upgrade = false

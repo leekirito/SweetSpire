@@ -1,21 +1,21 @@
 [gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://c320ci5jwoqu3"]
 
-[ext_resource type="Script" path="res://scripts/ResourceData.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/environment/SABA/SABA_MOUNTAIN.png" id="2"]
-[ext_resource type="Texture2D" path="res://assets/environment/KAMOTE/KAMOTE_MOUNTAIN.png" id="3"]
-[ext_resource type="Texture2D" path="res://assets/environment/MALAGKIT/MALAGKIT_MOUNTAIN.png" id="4"]
-[ext_resource type="Texture2D" path="res://assets/environment/SWEETSPIRE/SWEETSPIRE_MOUNTAIN.png" id="5"]
+[ext_resource type="Script" uid="uid://b3dglxtibtwod" path="res://scripts/ResourceData.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://d18rlmf3evtvr" path="res://assets/environment/SABA/SABA_MOUNTAIN.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://rbt6a7507k0b" path="res://assets/environment/KAMOTE/KAMOTE_MOUNTAIN.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://0bmvwrhqeexm" path="res://assets/environment/MALAGKIT/MALAGKIT_MOUNTAIN.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://bclc84jxsvotj" path="res://assets/environment/SWEETSPIRE/SWEETSPIRE_MOUNTAIN.png" id="5"]
 
 [resource]
 script = ExtResource("1")
 resource_id = 4
 resource_alias = "mountain"
-exp = 0
-can_upgrade = false
+experience_reward = 0
 can_collect = false
+can_upgrade = false
 biome_textures = Dictionary[String, Texture2D]({
-"SABA": ExtResource("2"),
 "KAMOTE": ExtResource("3"),
 "MALAGKIT": ExtResource("4"),
+"SABA": ExtResource("2"),
 "SWEETSPIRE": ExtResource("5")
 })

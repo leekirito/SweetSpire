@@ -16,6 +16,8 @@ signal turn_started(
 	round_number: int
 )
 
+# Emitted by UnitRegistry through the MatchManager facade.
+@warning_ignore("unused_signal")
 signal unit_removed(
 	unit_id: int
 )
@@ -25,6 +27,8 @@ signal technology_purchased(
 	technology_id: String
 )
 
+# Emitted by VictoryManager through the MatchManager facade.
+@warning_ignore("unused_signal")
 signal player_eliminated(player_id: int)
 signal match_ended(winner_id: int, victory_reason: String)
 

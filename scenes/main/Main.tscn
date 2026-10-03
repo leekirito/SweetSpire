@@ -90,6 +90,7 @@ navigation_enabled = false
 script = ExtResource("20_fog")
 board = NodePath("../BoardManager")
 game = NodePath("../MatchManager")
+building_vision_radius = 4
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=327920758]
 script = ExtResource("4_sjxhf")
@@ -312,10 +313,9 @@ position = Vector2(3550, -1349)
 [node name="Town7Fruit" parent="." unique_id=2546432 instance=ExtResource("9_3km4f")]
 position = Vector2(3806, -1349)
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=254671292]
+[node name="GameplayMusic" type="AudioStreamPlayer" parent="." unique_id=254671292]
 stream = ExtResource("16_u8lgh")
 volume_db = -15.294
 autoplay = true
-parameters/looping = true
 
 [connection signal="button_down" from="CanvasLayer/Control/Button" to="MatchManager" method="_on_button_button_down"]

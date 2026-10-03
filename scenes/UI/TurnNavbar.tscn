@@ -136,8 +136,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 script = ExtResource("1_nav")
+mouse_filter = 2
 
 [node name="BottomNav" type="Panel" parent="." unique_id=1642143629]
 layout_mode = 1
@@ -207,6 +207,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_tree")
+mouse_filter = 0
 
 [node name="Background" type="ColorRect" parent="TechnologyTree" unique_id=2111778130]
 show_behind_parent = true

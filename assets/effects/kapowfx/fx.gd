@@ -115,7 +115,7 @@ func popup(text: String, global_pos: Vector2, opts: Dictionary = {}) -> void:
 	lbl.add_theme_font_size_override("font_size", fsize)
 	lbl.add_theme_color_override("font_color", col)
 	lbl.add_theme_color_override("font_outline_color", Color(0.08, 0.07, 0.12, 1))
-	lbl.add_theme_constant_override("outline_size", maxi(fsize / 5, 4))
+	lbl.add_theme_constant_override("outline_size", maxi(int(fsize / 5.0), 4))
 	var parent: Node = opts.get("parent", get_tree().current_scene)
 	parent.add_child(lbl)
 	lbl.global_position = global_pos

@@ -39,7 +39,7 @@ func request_upgrade_resource(
 	if building == null:
 		return false
 
-	building.add_exp(resource.data.exp)
+	building.add_exp(resource.data.experience_reward)
 	resource.upgrade_resource()
 	return true
 
@@ -76,7 +76,7 @@ func request_collect_resource(
 	if building == null:
 		return false
 
-	building.add_exp(resource.data.exp)
+	building.add_exp(resource.data.experience_reward)
 	player.sugars += resource.data.collect_sugar
 	game.update_ui()
 	game.board_manager.unregister_resource(resource)
