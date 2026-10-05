@@ -8,6 +8,7 @@ var my_unit := -1
 var reconnect_done := false
 var frames := 0
 var mode: String = GameSession.FOG_OF_WAR
+var test_run := ""
 
 func _ready() -> void:
 	set_process(false)
@@ -23,15 +24,19 @@ func _start() -> void:
 	for arg in args:
 		if arg.begins_with("--players="):
 			expected = int(arg.get_slice("=", 1))
+		elif arg.begins_with("--test-run="):
+			test_run = arg.get_slice("=", 1).validate_filename()
 	if host:
 		assert(LanSession.host_room("Host", "LAN test", expected, "saba", 29876, mode))
+		if "--private" in args:
+			assert(LanSession.configure_room("Private test", expected, mode, true, "process-secret"))
 		LanSession.choose("saba", true)
 	else:
 		# Exercise compatibility after a different resource/instance creation order.
 		var menu: Node = load("res://scenes/entities/UI/MainMenu.tscn").instantiate()
 		get_tree().root.add_child(menu)
 		menu.queue_free()
-		assert(LanSession.join_room("127.0.0.1", "Guest", "kamote", 29876))
+		assert(LanSession.join_room("127.0.0.1", "Guest", "kamote", 29876, "process-secret" if "--private" in args else ""))
 
 func check(value: bool, label: String) -> void:
 	if not value:
@@ -64,8 +69,8 @@ func _process(delta: float) -> void:
 	if stage >= 5 and game.current_round >= 3:
 		print("LAN PROCESS SUCCESS ", "HOST" if host else "GUEST", " seat=", me)
 		set_process(false)
-		await get_tree().create_timer(3.0).timeout
-		get_tree().quit()
+		var completed := await _wait_for_test_peers(me)
+		get_tree().quit(0 if completed else 1)
 		return
 	if stage == 0:
 		check(GameSession.match_mode == mode, "everyone uses the host's selected mode")
@@ -119,3 +124,24 @@ func _process(delta: float) -> void:
 		if not host:
 			check(game.request_end_turn(), "rejoined player can finish turn")
 		stage = 6
+
+func _wait_for_test_peers(me: int) -> bool:
+	# Keep successful peers connected until every process has observed the final
+	# snapshot. Otherwise an early test exit pauses slower peers during teardown.
+	if test_run.is_empty():
+		await get_tree().create_timer(3.0).timeout
+		return true
+	var prefix := "res://.godot/lan-tests/completion-%s-" % test_run
+	var marker := FileAccess.open(prefix + str(me), FileAccess.WRITE)
+	marker.store_string("complete")
+	marker.close()
+	var deadline := Time.get_ticks_msec() + 120000
+	while Time.get_ticks_msec() < deadline:
+		var complete := true
+		for seat in range(1, expected + 1):
+			complete = complete and FileAccess.file_exists(prefix + str(seat))
+		if complete:
+			return true
+		await get_tree().create_timer(0.1).timeout
+	push_error("LAN completion barrier timed out")
+	return false

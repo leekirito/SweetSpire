@@ -86,11 +86,5 @@ func _fail(message: String) -> void:
 func _ready() -> void:
 	if setup_error.is_empty():
 		return
-	var layer := CanvasLayer.new()
-	layer.layer = 200
-	add_child(layer)
-	var label := Label.new()
-	label.text = "MAP SETUP FAILED\n" + setup_error
-	label.position = Vector2(24, 24)
-	label.add_theme_font_size_override("font_size", 24)
-	layer.add_child(label)
+	$MapSetupError/Message.text = "MAP SETUP FAILED\n" + setup_error
+	$MapSetupError.show()

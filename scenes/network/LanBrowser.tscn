@@ -1,0 +1,54 @@
+[gd_scene format=3]
+[node name="LanBrowser" type="VBoxContainer"]
+theme_override_constants/separation = 12
+[node name="Heading" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Heading"]
+layout_mode = 2
+text = "NEARBY GAMES"
+size_flags_horizontal = 3
+[node name="Refresh" type="Button" parent="Heading"]
+layout_mode = 2
+text = "REFRESH"
+[node name="Rooms" type="ItemList" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 120)
+[node name="Empty" type="Label" parent="."]
+layout_mode = 2
+text = "Looking for rooms… You can also join by address below."
+autowrap_mode = 3
+[node name="JoinSelected" type="Button" parent="."]
+layout_mode = 2
+text = "JOIN SELECTED ROOM"
+disabled = true
+[node name="ManualTitle" type="Label" parent="."]
+layout_mode = 2
+text = "JOIN BY ADDRESS"
+[node name="Manual" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+[node name="Address" type="LineEdit" parent="Manual"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Host address or address:port"
+max_length = 253
+[node name="PortLabel" type="Label" parent="Manual"]
+layout_mode = 2
+text = "PORT"
+[node name="Port" type="SpinBox" parent="Manual"]
+layout_mode = 2
+min_value = 1.0
+max_value = 65535.0
+value = 28760.0
+[node name="Password" type="LineEdit" parent="."]
+layout_mode = 2
+placeholder_text = "Room password (private rooms only)"
+secret = true
+max_length = 64
+[node name="Connect" type="Button" parent="."]
+layout_mode = 2
+text = "JOIN BY ADDRESS"
+custom_minimum_size = Vector2(0, 44)
+

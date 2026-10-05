@@ -1,7 +1,8 @@
 param(
     [Parameter(Mandatory = $true)][string]$GodotPath,
     [ValidateRange(2, 8)][int]$Players = 8,
-    [switch]$Regular
+    [switch]$Regular,
+    [switch]$Private
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
@@ -26,13 +27,14 @@ function Wait-TestProcess([System.Diagnostics.Process]$Child, [string]$Label) {
 }
 
 try {
-    foreach ($suite in @('LanLobbyTest', 'LanRulesTest')) {
+    foreach ($suite in @('LanLobbyTest', 'LanUITest', 'LanRulesTest')) {
         $child = Start-TestProcess "res://scenes/network/tests/$suite.tscn" $suite
         Wait-TestProcess $child $suite
     }
     $peers = @()
-    $modeArgs = @()
+    $modeArgs = @("--test-run=$([guid]::NewGuid().ToString('N'))")
     if ($Regular) { $modeArgs += '--regular' }
+    if ($Private) { $modeArgs += '--private' }
     $peers += Start-TestProcess 'res://scenes/network/tests/LanProcessTest.tscn' 'host' (@('--host', "--players=$Players") + $modeArgs)
     Start-Sleep -Seconds 2
     for ($seat = 2; $seat -le $Players; $seat++) {

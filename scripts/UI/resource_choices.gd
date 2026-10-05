@@ -4,14 +4,14 @@ extends Control
 var resource: Resources
 var match_manager: MatchManager
 var cell: Vector2i
-var actions: HBoxContainer
-var subtitle: Label
+@onready var actions: HBoxContainer = $Panel/Content/Actions
+@onready var subtitle: Label = $Panel/Content/Subtitle
 
 static func open_tile(game: MatchManager, target: Vector2i) -> void:
 	var town := game.structure_manager.controlling_town(target)
 	if town == null or town.owner_id != game.active_player_id:
 		return
-	var ui := ResourceChoices.new()
+	var ui := load("res://scenes/UI/resource_choices.tscn").instantiate() as ResourceChoices
 	game.get_tree().current_scene.get_node("CanvasLayer").add_child(ui)
 	ui.setup_tile(game, target)
 
@@ -20,39 +20,7 @@ func _ready() -> void:
 	for old: Node in get_tree().get_nodes_in_group("resource_action_popup"):
 		if old != self:
 			old.queue_free()
-	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	z_index = 3500
-	var panel := PanelContainer.new()
-	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	panel.position = Vector2(-235, -330)
-	panel.custom_minimum_size = Vector2(470, 200)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color("172820")
-	style.border_color = Color("b7cb8f")
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(20)
-	style.content_margin_left = 22
-	style.content_margin_right = 22
-	style.content_margin_top = 16
-	style.content_margin_bottom = 16
-	panel.add_theme_stylebox_override("panel", style)
-	add_child(panel)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 12)
-	panel.add_child(column)
-	subtitle = Label.new()
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	subtitle.add_theme_font_size_override("font_size", 16)
-	column.add_child(subtitle)
-	actions = HBoxContainer.new()
-	actions.alignment = BoxContainer.ALIGNMENT_CENTER
-	actions.add_theme_constant_override("separation", 26)
-	column.add_child(actions)
-	var close := Button.new()
-	close.text = "Close"
-	close.pressed.connect(queue_free)
-	column.add_child(close)
+	$Panel/Content/Close.pressed.connect(queue_free)
 
 func setup(new_resource: Resources, game: MatchManager) -> void:
 	resource = new_resource
@@ -76,19 +44,10 @@ func _refresh() -> void:
 	var existing: Structure = manager.structures.get(cell)
 	if existing != null:
 		subtitle.text = "%s | +%d Sugar / round" % [existing.data.display_name, existing.data.sugar_per_round]
-		var information := VBoxContainer.new()
+		var information := preload("res://scenes/UI/StructureInfo.tscn").instantiate()
 		actions.add_child(information)
-		var icon := TextureRect.new()
-		icon.texture = existing.data.texture
-		icon.custom_minimum_size = Vector2(100, 76)
-		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		information.add_child(icon)
-		var description := Label.new()
-		description.text = "Enter from adjacent land to become a boat.\nLand on any shore to return to your original unit." if existing.data.converts_to_boat else "Supplies Sugar to its controlling town each round."
-		description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		description.add_theme_font_size_override("font_size", 13)
-		information.add_child(description)
+		information.get_node("Icon").texture = existing.data.texture
+		information.get_node("Description").text = "Enter from adjacent land to become a boat.\nLand on any shore to return to your original unit." if existing.data.converts_to_boat else "Supplies Sugar to its controlling town each round."
 		return
 	var player := match_manager.get_active_player()
 	if player == null:
@@ -128,13 +87,9 @@ func _add_build_action(data: StructureData) -> void:
 			_refresh())
 
 func _add_action(icon: Texture2D, caption: String, reason: String, callback: Callable) -> void:
-	var column := VBoxContainer.new()
-	column.custom_minimum_size.x = 175
+	var column := preload("res://scenes/UI/ResourceAction.tscn").instantiate()
 	actions.add_child(column)
-	var button := Button.new()
-	button.custom_minimum_size = Vector2(76, 76)
-	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	button.expand_icon = true
+	var button: Button = column.get_node("Button")
 	# Resource sprites include tall transparent canvas space for isometric placement.
 	# Crop only the button's view so the actual collectible remains readable.
 	if icon != null:
@@ -146,27 +101,10 @@ func _add_action(icon: Texture2D, caption: String, reason: String, callback: Cal
 			button.icon = cropped
 		else:
 			button.icon = icon
-	button.add_theme_constant_override("icon_max_width", 54)
 	button.disabled = not reason.is_empty()
 	button.tooltip_text = reason if not reason.is_empty() else caption
-	for state: String in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color("395943") if state != "disabled" else Color("303c35")
-		if state == "hover":
-			style.bg_color = Color("60865c")
-		style.border_color = Color("e6d6a0") if state != "disabled" else Color("647565")
-		style.set_border_width_all(2)
-		style.set_corner_radius_all(38)
-		style.content_margin_left = 10
-		style.content_margin_right = 10
-		button.add_theme_stylebox_override(state, style)
 	button.pressed.connect(callback)
-	column.add_child(button)
-	var label := Label.new()
-	label.text = caption + ("\n" + reason if not reason.is_empty() else "")
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 13)
-	column.add_child(label)
+	column.get_node("Caption").text = caption + ("\n" + reason if not reason.is_empty() else "")
 
 func _collect() -> void:
 	if is_instance_valid(resource) and match_manager.request_collect_resource(resource.resource_instance_id, resource.owner_id):

@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://c3hlwg80u3er2"]
 
 [ext_resource type="Script" uid="uid://c3mbogyqsg1t3" path="res://scripts/MainMenu.gd" id="1_gxkns"]
-[ext_resource type="Script" uid="uid://c0jfgj5tpmb7n" path="res://scripts/GameSession.gd" id="1_pxg6q"]
 [ext_resource type="Resource" uid="uid://dm3adu0qdtrhj" path="res://scripts/data/Tribe/SABA.tres" id="2_emauo"]
 [ext_resource type="Resource" uid="uid://dlemgt63ajxfo" path="res://scripts/data/Tribe/MALAGKIT_DATA.tres" id="3_mmvq5"]
 [ext_resource type="Resource" uid="uid://c7idhxlkcd7ue" path="res://scripts/data/Tribe/KAMOTE.tres" id="4_l688p"]
@@ -21,8 +20,7 @@
 [ext_resource type="StyleBox" uid="uid://b8e716wn111sr" path="res://assets/ui/buttons/pink_disabled.tres" id="15_l7fal"]
 [ext_resource type="StyleBox" uid="uid://cahr4dhf1nhcb" path="res://assets/ui/buttons/blue_disabled.tres" id="19_jop6x"]
 [ext_resource type="PackedScene" path="res://scenes/entities/UI/HotseatSetup.tscn" id="30_hotseat"]
-
-[ext_resource type="PackedScene" path="res://scenes/network/LanLobby.tscn" id="31_lan"]
+[ext_resource type="PackedScene" uid="uid://ddy1rljmd7el4" path="res://scenes/network/LanLobby.tscn" id="31_lan"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ue1wv"]
 shader = ExtResource("6_l688p")
@@ -293,7 +291,7 @@ custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 text = "BACK"
 
-[node name="LANSetup" parent="." instance=ExtResource("31_lan")]
+[node name="LANSetup" parent="." unique_id=1363811625 instance=ExtResource("31_lan")]
 visible = false
 
 [node name="Main" type="Control" parent="." unique_id=616465581]

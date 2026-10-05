@@ -23,6 +23,10 @@
 [ext_resource type="Script" uid="uid://bah8mu8udpc5" path="res://scripts/effects/center_objective_highlight.gd" id="22_center_highlight"]
 [ext_resource type="Shader" uid="uid://n87tl322x7hd" path="res://assets/Shader/movement_overlay.gdshader" id="23_movement_shader"]
 [ext_resource type="Script" uid="uid://bpq0ux3l63kff" path="res://scripts/map/map_bootstrap.gd" id="24_map_bootstrap"]
+[ext_resource type="PackedScene" path="res://scenes/UI/HotseatHandoff.tscn" id="ui_HotseatHandoff"]
+[ext_resource type="PackedScene" uid="uid://b18tab1wru4nl" path="res://scenes/network/LanMatchStatus.tscn" id="ui_lan_status"]
+[ext_resource type="PackedScene" path="res://scenes/UI/MapSetupError.tscn" id="ui_MapSetupError"]
+[ext_resource type="PackedScene" path="res://scenes/UI/MatchResult.tscn" id="ui_MatchResult"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_water_surface"]
 shader = ExtResource("18_water_shader")
@@ -139,6 +143,8 @@ script = ExtResource("6_qkm1d")
 center_control_rounds = 10
 sweetspire_center_cell = Vector2i(14, 14)
 populate_demo_map = true
+
+[node name="HotseatHandoff" parent="MatchManager" unique_id=1759458237 instance=ExtResource("ui_HotseatHandoff")]
 
 [node name="TerritoryManager" type="Node2D" parent="." unique_id=1925162669]
 position = Vector2(1929, 153)
@@ -342,5 +348,12 @@ position = Vector2(3806, -1349)
 [node name="GameplayMusic" type="AudioStreamPlayer" parent="." unique_id=254671292]
 stream = ExtResource("16_u8lgh")
 autoplay = true
+
+[node name="MatchResultLayer" parent="." unique_id=1549318691 instance=ExtResource("ui_MatchResult")]
+
+[node name="MapSetupError" parent="." unique_id=241342859 instance=ExtResource("ui_MapSetupError")]
+
+[node name="LanMatchStatus" parent="." unique_id=642825859 instance=ExtResource("ui_lan_status")]
+visible = false
 
 [connection signal="button_down" from="CanvasLayer/Control/Button" to="MatchManager" method="_on_button_button_down"]

@@ -107,16 +107,14 @@ var structure_manager := StructureManager.new()
 @export var demo_seed: int = 260926
 var map_manifest: Dictionary = {}
 var map_setup_error: String = ""
-var hotseat_handoff: CanvasLayer
+@onready var hotseat_handoff: CanvasLayer = get_node_or_null("HotseatHandoff")
 # ============================================================
 # START
 # ============================================================
 
 func _ready() -> void:
-	if GameSession.hotseat_mode:
-		hotseat_handoff = preload("res://scripts/UI/hotseat_handoff.gd").new()
+	if hotseat_handoff != null:
 		hotseat_handoff.game = self
-		add_child(hotseat_handoff)
 
 	call_deferred(
 		"_initialize_match"
@@ -226,8 +224,6 @@ func _initialize_match() -> void:
 	)
 	if LanSession.active():
 		LanSession.attach_match(self)
-		var status := preload("res://scenes/network/LanMatchStatus.tscn").instantiate()
-		get_tree().current_scene.add_child(status)
 
 
 
@@ -725,29 +721,9 @@ func _show_match_result(victor_id: int, victory_reason: String) -> void:
 	var victor: PlayerState = get_player(victor_id)
 	var victor_name: String = victor.player_name if victor != null else "PLAYER %d" % victor_id
 
-	var result_layer := CanvasLayer.new()
-	result_layer.name = "MatchResultLayer"
-	result_layer.layer = 100
-	get_tree().current_scene.add_child(result_layer)
-
-	var backdrop := ColorRect.new()
-	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	backdrop.color = Color(0.02, 0.025, 0.04, 0.88)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	result_layer.add_child(backdrop)
-
-	var result := Label.new()
-	result.set_anchors_preset(Control.PRESET_CENTER)
-	result.position = Vector2(-300.0, -90.0)
-	result.size = Vector2(600.0, 180.0)
-	result.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	result.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	result.text = "%s WINS!\n%s" % [victor_name.to_upper(), victory_reason]
-	result.add_theme_font_size_override("font_size", 38)
-	result.add_theme_color_override("font_color", Color("ffd166"))
-	result.add_theme_color_override("font_outline_color", Color("351b12"))
-	result.add_theme_constant_override("outline_size", 10)
-	backdrop.add_child(result)
+	var result_layer := get_tree().current_scene.get_node("MatchResultLayer") as CanvasLayer
+	result_layer.get_node("Backdrop/Result").text = "%s WINS!\n%s" % [victor_name.to_upper(), victory_reason]
+	result_layer.show()
 
 
 # TURN SYSTEM

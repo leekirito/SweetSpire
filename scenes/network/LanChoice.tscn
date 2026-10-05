@@ -1,0 +1,20 @@
+[gd_scene format=3]
+[node name="LanChoice" type="CenterContainer"]
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(460, 0)
+theme_override_constants/separation = 24
+[node name="Hint" type="Label" parent="Content"]
+layout_mode = 2
+text = "CREATE A ROOM OR JOIN A FRIEND"
+horizontal_alignment = 1
+[node name="Host" type="Button" parent="Content"]
+layout_mode = 2
+text = "HOST"
+custom_minimum_size = Vector2(0, 76)
+[node name="Join" type="Button" parent="Content"]
+layout_mode = 2
+text = "JOIN"
+custom_minimum_size = Vector2(0, 76)
+

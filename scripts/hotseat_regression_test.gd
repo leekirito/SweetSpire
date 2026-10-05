@@ -69,7 +69,7 @@ func run() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var game := scene.get_node("MatchManager") as MatchManager
-	check(not scene.has_node("LanMatchStatus"), "Hotseat has no LAN connection overlay")
+	check(not scene.get_node("LanMatchStatus").visible, "Hotseat keeps the authored LAN connection overlay hidden")
 	check(game.current_phase == MatchManager.Phase.PLAYER_TURN, "Eight-player match begins")
 	check(game.players.size() == 8 and game.units.size() == 8, "Eight players receive units")
 	var cover := game.hotseat_handoff

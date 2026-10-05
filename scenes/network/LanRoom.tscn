@@ -1,0 +1,136 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://scenes/network/LanPlayerRow.tscn" id="1"]
+[sub_resource type="StyleBoxFlat" id="ReadyNormal"]
+bg_color = Color(0.12, 0.43, 0.23, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ReadyHover"]
+bg_color = Color(0.16, 0.51, 0.28, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ReadyPressed"]
+bg_color = Color(0.65, 0.18, 0.18, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[sub_resource type="StyleBoxFlat" id="ReadyPressedHover"]
+bg_color = Color(0.75, 0.23, 0.23, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[node name="LanRoom" type="VBoxContainer"]
+theme_override_constants/separation = 12
+[node name="AddressRow" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+[node name="Label" type="Label" parent="AddressRow"]
+layout_mode = 2
+text = "HOST ADDRESS"
+[node name="Addresses" type="OptionButton" parent="AddressRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Choose the address on your friends’ network."
+[node name="Copy" type="Button" parent="AddressRow"]
+layout_mode = 2
+text = "COPY ADDRESS"
+[node name="Settings" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+[node name="RoomName" type="LineEdit" parent="Settings"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Room name"
+max_length = 32
+[node name="SeatsLabel" type="Label" parent="Settings"]
+layout_mode = 2
+text = "SEATS"
+[node name="Capacity" type="SpinBox" parent="Settings"]
+layout_mode = 2
+min_value = 2.0
+max_value = 8.0
+value = 8.0
+[node name="Mode" type="OptionButton" parent="Settings"]
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "FOG OF WAR"
+popup/item_0/id = 0
+popup/item_1/text = "REGULAR"
+popup/item_1/id = 1
+[node name="Privacy" type="OptionButton" parent="Settings"]
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "PUBLIC"
+popup/item_0/id = 0
+popup/item_1/text = "PRIVATE"
+popup/item_1/id = 1
+[node name="PasswordRow" type="HBoxContainer" parent="."]
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 12
+[node name="Password" type="LineEdit" parent="PasswordRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Room password"
+secret = true
+max_length = 64
+[node name="Save" type="Button" parent="PasswordRow"]
+layout_mode = 2
+text = "SET PASSWORD"
+[node name="Copy" type="Button" parent="PasswordRow"]
+layout_mode = 2
+text = "COPY PASSWORD"
+[node name="PrivacyHint" type="Label" parent="."]
+layout_mode = 2
+text = "Public · Listed in nearby games on this network."
+autowrap_mode = 3
+[node name="PlayersTitle" type="Label" parent="."]
+layout_mode = 2
+text = "PLAYERS · CHOOSE YOUR NAME AND TRIBE"
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+[node name="Players" type="VBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+[node name="HostPreview" parent="Scroll/Players" instance=ExtResource("1")]
+layout_mode = 2
+[node name="GuestPreview" parent="Scroll/Players" instance=ExtResource("1")]
+layout_mode = 2
+[node name="Actions" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 16
+[node name="Leave" type="Button" parent="Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+text = "LEAVE ROOM"
+[node name="Ready" type="Button" parent="Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 48)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("ReadyNormal")
+theme_override_styles/hover = SubResource("ReadyHover")
+theme_override_styles/pressed = SubResource("ReadyPressed")
+theme_override_styles/hover_pressed = SubResource("ReadyPressedHover")
+toggle_mode = true
+text = "READY"
+[node name="Start" type="Button" parent="Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "START MATCH"
+disabled = true
+

@@ -1,3 +1,4 @@
+@tool
 class_name TechnologyTreeUI
 extends Control
 
@@ -21,14 +22,6 @@ const TECH_PATHS := {
 	"runecraft": preload("res://scripts/data/Technologies/Tertiary/Runecraft.tres")
 }
 
-const NODE_POSITIONS := {
-	"pathfinding": Vector2(0.27, 0.35), "pathways": Vector2(0.27, 0.20), "expedition": Vector2(0.27, 0.07),
-	"fishing": Vector2(0.73, 0.35), "sailing": Vector2(0.73, 0.20), "navigation": Vector2(0.73, 0.07),
-	"wilderness": Vector2(0.18, 0.69), "marksmanship": Vector2(0.18, 0.82), "forestry": Vector2(0.18, 0.95),
-	"harvesting": Vector2(0.50, 0.69), "cultivation": Vector2(0.50, 0.82), "restoration": Vector2(0.50, 0.95),
-	"climbing": Vector2(0.82, 0.69), "mining": Vector2(0.82, 0.82), "runecraft": Vector2(0.82, 0.95)
-}
-
 const CHAINS := [
 	["pathfinding", "pathways", "expedition"],
 	["fishing", "sailing", "navigation"],
@@ -40,15 +33,19 @@ const CHAINS := [
 var active_player: PlayerState
 var tech_nodes: Dictionary[String, Button] = {}
 var selected_technology: TechnologyData
-@onready var match_manager: MatchManager = get_tree().current_scene.get_node("MatchManager")
+@onready var match_manager: MatchManager = null if Engine.is_editor_hint() else get_tree().current_scene.get_node("MatchManager")
 
 
 func _ready() -> void:
+	_bind_nodes()
+	resized.connect(queue_redraw)
+	$TribeNode.item_rect_changed.connect(queue_redraw)
+	$Nodes.item_rect_changed.connect(queue_redraw)
+	if Engine.is_editor_hint():
+		return
 	$Close.pressed.connect(func() -> void: closed.emit())
 	$TechCard/CardMargin/CardContent/CardClose.pressed.connect(_close_card)
 	$TechCard/CardMargin/CardContent/Buy.pressed.connect(_purchase_selected)
-	resized.connect(_layout_nodes)
-	_build_nodes()
 	LanSession.changed.connect(_network_refresh)
 
 func _network_refresh() -> void:
@@ -69,36 +66,16 @@ func open_for_player(player: PlayerState) -> void:
 	queue_redraw()
 
 
-func _build_nodes() -> void:
-	for technology_id: String in NODE_POSITIONS:
-		var technology: TechnologyData = TECH_PATHS[technology_id]
-		var button := Button.new()
-		button.name = technology_id.capitalize()
-		button.text = ""
-		button.tooltip_text = technology.description
-		button.custom_minimum_size = Vector2(64.0, 64.0)
-		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		button.add_theme_stylebox_override("normal", _node_style(Color("151b27"), Color("657189")))
-		button.add_theme_stylebox_override("hover", _node_style(Color("24334a"), Color("72b7ff")))
-		button.pressed.connect(_select_technology.bind(technology))
-		$Nodes.add_child(button)
-		tech_nodes[technology_id] = button
-		_build_node_content(button, technology)
-
-	_layout_nodes()
-
-
-func _layout_nodes() -> void:
-	if not is_node_ready():
-		return
-
-	var content_rect := Rect2(Vector2(50.0, 70.0), size - Vector2(100.0, 115.0))
-	for technology_id: String in tech_nodes:
-		var normalized: Vector2 = NODE_POSITIONS[technology_id]
-		var button: Button = tech_nodes[technology_id]
-		button.position = content_rect.position + content_rect.size * normalized - button.custom_minimum_size * 0.5
-
-	$TribeNode.position = content_rect.position + content_rect.size * Vector2(0.5, 0.52) - $TribeNode.size * 0.5
+## Positions and child controls are authored in TurnNavbar/TechnologyTree.
+func _bind_nodes() -> void:
+	for button: Button in $Nodes.get_children():
+		var technology: TechnologyData = button.technology
+		if technology == null:
+			continue
+		tech_nodes[technology.technology_id] = button
+		button.item_rect_changed.connect(queue_redraw)
+		if not Engine.is_editor_hint():
+			button.pressed.connect(_select_technology.bind(technology))
 	queue_redraw()
 
 
@@ -109,7 +86,7 @@ func _refresh_states() -> void:
 		var unlocked := active_player != null and active_player.has_technology(technology_id)
 		var prerequisite_owned := (
 			technology.prerequisite_technology == null
-			or active_player.has_technology(technology.prerequisite_technology.technology_id)
+			or (active_player != null and active_player.has_technology(technology.prerequisite_technology.technology_id))
 		)
 		var affordable := active_player != null and active_player.sugars >= technology.cost
 		button.modulate = Color.WHITE if unlocked else Color(1, 1, 1, 0.5)
@@ -118,31 +95,6 @@ func _refresh_states() -> void:
 
 	if selected_technology != null and $TechCard.visible:
 		_update_card(selected_technology)
-
-
-func _build_node_content(button: Button, technology: TechnologyData) -> void:
-	var icon := TextureRect.new()
-	icon.name = "Icon"
-	icon.position = Vector2(12.0, 8.0)
-	icon.size = Vector2(40.0, 40.0)
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	icon.texture = technology.icon
-	button.add_child(icon)
-
-	var cost := Label.new()
-	cost.position = Vector2(7.0, 44.0)
-	cost.size = Vector2(50.0, 18.0)
-	cost.text = str(technology.cost) + " S"
-	cost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	cost.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	cost.add_theme_font_size_override("font_size", 11)
-	cost.add_theme_color_override("font_color", Color("ffd166"))
-	cost.add_theme_color_override("font_outline_color", Color("151b27"))
-	cost.add_theme_constant_override("outline_size", 4)
-	cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	button.add_child(cost)
 
 
 func _select_technology(technology: TechnologyData) -> void:
@@ -200,19 +152,23 @@ func _draw() -> void:
 	if tech_nodes.is_empty():
 		return
 
-	var center: Vector2 = $TribeNode.position + $TribeNode.size * 0.5
+	var center: Vector2 = _node_center($TribeNode)
 	var line_color := Color("526075")
 	var root_ids := ["pathfinding", "fishing", "wilderness", "harvesting", "climbing"]
 
 	for root_id: String in root_ids:
 		var root: Button = tech_nodes[root_id]
-		draw_line(center, root.position + root.size * 0.5, line_color, 3.0, true)
+		draw_line(center, _node_center(root), line_color, 3.0, true)
 
 	for chain: Array in CHAINS:
 		for index: int in range(chain.size() - 1):
 			var from: Button = tech_nodes[chain[index]]
 			var to: Button = tech_nodes[chain[index + 1]]
-			draw_line(from.position + from.size * 0.5, to.position + to.size * 0.5, line_color, 3.0, true)
+			draw_line(_node_center(from), _node_center(to), line_color, 3.0, true)
+
+
+func _node_center(control: Control) -> Vector2:
+	return get_global_transform().affine_inverse() * (control.get_global_transform() * (control.size * 0.5))
 
 
 func _node_style(background: Color, border: Color) -> StyleBoxFlat:

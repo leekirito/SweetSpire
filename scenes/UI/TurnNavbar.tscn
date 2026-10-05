@@ -4,6 +4,23 @@
 [ext_resource type="Script" uid="uid://sc7mnxd2j8gd" path="res://scripts/UI/technology_tree_ui.gd" id="2_tree"]
 [ext_resource type="StyleBox" uid="uid://bidqr7ho3fehm" path="res://assets/ui/elements/fantasy_hud_panel.tres" id="3_hud"]
 
+[ext_resource type="PackedScene" path="res://scenes/UI/TechnologyNode.tscn" id="tech_node"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Primary/Pathfinding.tres" id="tech_pathfinding"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Secondary/Pathways.tres" id="tech_pathways"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Tertiary/Expedition.tres" id="tech_expedition"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Primary/Fishing.tres" id="tech_fishing"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Secondary/Sailing.tres" id="tech_sailing"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Tertiary/Navigation.tres" id="tech_navigation"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Primary/Wilderness.tres" id="tech_wilderness"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Secondary/Marksmanship.tres" id="tech_marksmanship"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Tertiary/Forestry.tres" id="tech_forestry"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Primary/Harvesting.tres" id="tech_harvesting"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Secondary/Cultivation.tres" id="tech_cultivation"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Tertiary/Restoration.tres" id="tech_restoration"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Primary/Climbing.tres" id="tech_climbing"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Secondary/Mining.tres" id="tech_mining"]
+[ext_resource type="Resource" path="res://scripts/data/Technologies/Tertiary/Runecraft.tres" id="tech_runecraft"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_placeholder"]
 bg_color = Color(0.0784314, 0.0941176, 0.133333, 0.94)
 border_width_left = 3
@@ -254,11 +271,198 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+
+[node name="Pathfinding" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.27
+anchor_right = 0.27
+anchor_top = 0.35
+anchor_bottom = 0.35
+offset_left = -9
+offset_right = 55
+offset_top = -2.25
+offset_bottom = 61.75
+technology = ExtResource("tech_pathfinding")
+
+[node name="Pathways" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.27
+anchor_right = 0.27
+anchor_top = 0.2
+anchor_bottom = 0.2
+offset_left = -9
+offset_right = 55
+offset_top = 15
+offset_bottom = 79
+technology = ExtResource("tech_pathways")
+
+[node name="Expedition" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.27
+anchor_right = 0.27
+anchor_top = 0.07
+anchor_bottom = 0.07
+offset_left = -9
+offset_right = 55
+offset_top = 29.950000000000003
+offset_bottom = 93.95
+technology = ExtResource("tech_expedition")
+
+[node name="Fishing" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.73
+anchor_right = 0.73
+anchor_top = 0.35
+anchor_bottom = 0.35
+offset_left = -55
+offset_right = 9
+offset_top = -2.25
+offset_bottom = 61.75
+technology = ExtResource("tech_fishing")
+
+[node name="Sailing" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.73
+anchor_right = 0.73
+anchor_top = 0.2
+anchor_bottom = 0.2
+offset_left = -55
+offset_right = 9
+offset_top = 15
+offset_bottom = 79
+technology = ExtResource("tech_sailing")
+
+[node name="Navigation" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.73
+anchor_right = 0.73
+anchor_top = 0.07
+anchor_bottom = 0.07
+offset_left = -55
+offset_right = 9
+offset_top = 29.950000000000003
+offset_bottom = 93.95
+technology = ExtResource("tech_navigation")
+
+[node name="Wilderness" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.18
+anchor_right = 0.18
+anchor_top = 0.69
+anchor_bottom = 0.69
+offset_left = 0
+offset_right = 64
+offset_top = -41.349999999999994
+offset_bottom = 22.650000000000006
+technology = ExtResource("tech_wilderness")
+
+[node name="Marksmanship" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.18
+anchor_right = 0.18
+anchor_top = 0.82
+anchor_bottom = 0.82
+offset_left = 0
+offset_right = 64
+offset_top = -56.3
+offset_bottom = 7.700000000000003
+technology = ExtResource("tech_marksmanship")
+
+[node name="Forestry" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.18
+anchor_right = 0.18
+anchor_top = 0.95
+anchor_bottom = 0.95
+offset_left = 0
+offset_right = 64
+offset_top = -71.25
+offset_bottom = -7.25
+technology = ExtResource("tech_forestry")
+
+[node name="Harvesting" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.69
+anchor_bottom = 0.69
+offset_left = -32
+offset_right = 32
+offset_top = -41.349999999999994
+offset_bottom = 22.650000000000006
+technology = ExtResource("tech_harvesting")
+
+[node name="Cultivation" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.82
+anchor_bottom = 0.82
+offset_left = -32
+offset_right = 32
+offset_top = -56.3
+offset_bottom = 7.700000000000003
+technology = ExtResource("tech_cultivation")
+
+[node name="Restoration" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.95
+anchor_bottom = 0.95
+offset_left = -32
+offset_right = 32
+offset_top = -71.25
+offset_bottom = -7.25
+technology = ExtResource("tech_restoration")
+
+[node name="Climbing" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.82
+anchor_right = 0.82
+anchor_top = 0.69
+anchor_bottom = 0.69
+offset_left = -64
+offset_right = 0
+offset_top = -41.349999999999994
+offset_bottom = 22.650000000000006
+technology = ExtResource("tech_climbing")
+
+[node name="Mining" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.82
+anchor_right = 0.82
+anchor_top = 0.82
+anchor_bottom = 0.82
+offset_left = -64
+offset_right = 0
+offset_top = -56.3
+offset_bottom = 7.700000000000003
+technology = ExtResource("tech_mining")
+
+[node name="Runecraft" parent="TechnologyTree/Nodes" instance=ExtResource("tech_node")]
+layout_mode = 1
+anchor_left = 0.82
+anchor_right = 0.82
+anchor_top = 0.95
+anchor_bottom = 0.95
+offset_left = -64
+offset_right = 0
+offset_top = -71.25
+offset_bottom = -7.25
+technology = ExtResource("tech_runecraft")
+
 [node name="TribeNode" type="Button" parent="TechnologyTree" unique_id=1722531748]
 custom_minimum_size = Vector2(120, 96)
-layout_mode = 0
-offset_right = 120.0
-offset_bottom = 96.0
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.52
+anchor_bottom = 0.52
+offset_left = -60.0
+offset_right = 60.0
+offset_top = -37.8
+offset_bottom = 58.2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.913725, 0.701961, 1)
 theme_override_font_sizes/font_size = 17

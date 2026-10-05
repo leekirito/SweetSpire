@@ -23,8 +23,8 @@ config/features=PackedStringArray("4.7", "Mobile")
 GameSession="*uid://c0jfgj5tpmb7n"
 Fx="*uid://u6sqyh22tpu3"
 NumericFontManager="*res://scripts/UI/numeric_font_manager.gd"
-_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 LanSession="*res://scripts/network/lan_session.gd"
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [editor]
 

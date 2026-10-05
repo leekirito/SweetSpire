@@ -1,0 +1,57 @@
+[gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/UI/technology_node.gd" id="1"]
+[sub_resource type="StyleBoxFlat" id="Normal"]
+bg_color = Color(0.082, 0.106, 0.153, 1)
+border_color = Color(0.396, 0.443, 0.537, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_left = 32
+corner_radius_bottom_right = 32
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 5
+[sub_resource type="StyleBoxFlat" id="Hover"]
+bg_color = Color(0.141, 0.2, 0.29, 1)
+border_color = Color(0.447, 0.718, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_left = 32
+corner_radius_bottom_right = 32
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 5
+[node name="TechnologyNode" type="Button"]
+custom_minimum_size = Vector2(64, 64)
+offset_right = 64.0
+offset_bottom = 64.0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("Normal")
+theme_override_styles/hover = SubResource("Hover")
+script = ExtResource("1")
+[node name="Icon" type="TextureRect" parent="."]
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 52.0
+offset_bottom = 48.0
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+[node name="Cost" type="Label" parent="."]
+offset_left = 7.0
+offset_top = 44.0
+offset_right = 57.0
+offset_bottom = 62.0
+text = "0 S"
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(1, 0.8196, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.082, 0.106, 0.153, 1)
+theme_override_constants/outline_size = 4

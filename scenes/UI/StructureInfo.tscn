@@ -1,0 +1,12 @@
+[gd_scene format=3]
+[node name="StructureInfo" type="VBoxContainer"]
+[node name="Icon" type="TextureRect" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(100, 76)
+expand_mode = 1
+stretch_mode = 5
+[node name="Description" type="Label" parent="."]
+layout_mode = 2
+text = "Structure effects"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13

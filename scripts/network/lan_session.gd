@@ -47,6 +47,10 @@ var _pending_elapsed := 0.0
 var _peer_budgets: Dictionary = {}
 var _handshake_deadlines: Dictionary = {}
 var _rejected: Dictionary = {}
+var room_access := LanRoomAccess.new()
+var private_room := false
+var join_password := ""
+var discovery_available := false
 
 func active() -> bool:
 	return state in ["loading", "playing", "reconnecting"] or (state == "ended" and is_instance_valid(game))
@@ -77,10 +81,14 @@ func host_room(player_name: String, title: String, count: int, tribe: String, cu
 	peer = ENetMultiplayerPeer.new()
 	port = custom_port if custom_port > 0 else SETTINGS.game_port
 	var result := peer.create_server(port, SETTINGS.max_players + 8)
+	if result != OK and custom_port == 0:
+		peer = ENetMultiplayerPeer.new()
+		result = peer.create_server(0, SETTINGS.max_players + 8)
 	if result != OK:
 		fail("Could not host. This port may already be in use.")
 		peer = null
 		return false
+	port = peer.host.get_local_port()
 	hosting = true
 	state = "lobby"
 	local_player_id = 1
@@ -96,14 +104,19 @@ func host_room(player_name: String, title: String, count: int, tribe: String, cu
 	changed.emit()
 	return true
 
-func join_room(host_address: String, player_name: String, tribe: String, custom_port: int = 0) -> bool:
+func join_room(host_address: String, player_name: String, tribe: String, custom_port: int = 0, password: String = "") -> bool:
 	leave()
+	var endpoint := LanAddress.parse(host_address, custom_port if custom_port > 0 else SETTINGS.game_port)
+	if endpoint.is_empty():
+		fail("Enter a host address and a port between 1 and 65535.")
+		return false
 	if not prepare_compatibility():
 		return false
-	address = host_address.strip_edges()
+	address = endpoint.address
+	join_password = password.left(64)
 	display_name = player_name.strip_edges().left(24)
 	selected_tribe = tribe
-	port = custom_port if custom_port > 0 else SETTINGS.game_port
+	port = int(endpoint.port)
 	return _connect()
 
 func _connect() -> bool:
@@ -134,6 +147,10 @@ func leave() -> void:
 	if discovery != null:
 		discovery.close()
 	discovery = null
+	discovery_available = false
+	private_room = false
+	room_access.configure(false)
+	join_password = ""
 	state = "offline"
 	match_mode = GameSession.FOG_OF_WAR
 	hosting = false
@@ -179,7 +196,51 @@ func _broadcast(kind: String, data: Dictionary = {}) -> void:
 		_send(remote, kind, data)
 
 func _roster() -> Dictionary:
-	return {"seats": seats, "capacity": capacity, "room": room_name, "mode": match_mode, "paused": paused_for_disconnect, "loaded": loaded.keys()}
+	return {"seats": seats, "capacity": capacity, "room": room_name, "mode": match_mode, "private": private_room, "paused": paused_for_disconnect, "loaded": loaded.keys()}
+
+func configure_room(title: String, count: int, mode: String, is_private: bool, password: String = "") -> bool:
+	if not hosting or state != "lobby" or count < maxi(2, seats.size()) or count > SETTINGS.max_players or mode not in GameSession.MATCH_MODES:
+		return false
+	var rules_changed := capacity != count or match_mode != mode or private_room != is_private
+	room_name = title.strip_edges().left(32)
+	if room_name.is_empty():
+		room_name = "Sweetspire game"
+	capacity = count
+	match_mode = mode
+	if private_room != is_private or (is_private and password != room_access.password):
+		room_access.configure(is_private, password.left(64))
+	private_room = is_private
+	if rules_changed:
+		for row: Dictionary in seats:
+			row.ready = false
+	error_message = ""
+	_publish_lobby()
+	return true
+
+func rename_player(title: String) -> void:
+	if state != "lobby":
+		return
+	if hosting:
+		_set_name(local_player_id, title)
+	else:
+		_send(1, "name", {"name": title.left(24)})
+
+func _set_name(id: int, title: String) -> void:
+	for row: Dictionary in seats:
+		if int(row.id) == id:
+			row.name = title.strip_edges().left(24) if not title.strip_edges().is_empty() else "Player %d" % id
+	_publish_lobby()
+
+func kick_player(seat: int) -> bool:
+	if not hosting or state != "lobby" or seat == local_player_id:
+		return false
+	for remote: int in peer_seats.keys():
+		if int(peer_seats[remote]) == seat:
+			_send(remote, "kicked", {"message": "You were removed by the host."})
+			_peer_left(remote)
+			_rejected[remote] = Time.get_ticks_msec() + 500
+			return true
+	return false
 
 func choose_mode(mode: String) -> void:
 	if not hosting or state != "lobby" or mode not in GameSession.MATCH_MODES or mode == match_mode:
@@ -336,6 +397,7 @@ func _apply_snapshot(data: Dictionary) -> void:
 	changed.emit()
 
 func _peer_left(remote: int) -> void:
+	room_access.pending.erase(remote)
 	_peer_budgets.erase(remote)
 	_handshake_deadlines.erase(remote)
 	_rejected.erase(remote)
@@ -362,6 +424,13 @@ func _peer_left(remote: int) -> void:
 
 func _receive(sender: int, kind: String, data: Dictionary) -> void:
 	if hosting:
+		if kind == "auth":
+			var hello := room_access.authenticate(sender, str(data.get("proof", "")))
+			if hello.is_empty():
+				_reject(sender, "Incorrect or expired room password. Try again.")
+			else:
+				_accept(sender, hello, true)
+			return
 		if kind == "hello":
 			_accept(sender, data)
 			return
@@ -369,6 +438,9 @@ func _receive(sender: int, kind: String, data: Dictionary) -> void:
 			return
 		var seat := int(peer_seats[sender])
 		match kind:
+			"name":
+				if state == "lobby" and data.get("name") is String:
+					_set_name(seat, data.name)
 			"choice":
 				if state == "lobby" and data.get("tribe", "") is String and LanCatalog.TRIBES.has(data.tribe) and data.get("ready") is bool:
 					_set_choice(seat, data.tribe, data.ready)
@@ -388,6 +460,9 @@ func _receive(sender: int, kind: String, data: Dictionary) -> void:
 		if sender != 1:
 			return
 		match kind:
+			"challenge":
+				if state in ["connecting", "reconnecting"] and data.get("nonce") is String:
+					_send(1, "auth", {"proof": LanRoomAccess.proof(join_password, data.nonce)})
 			"welcome":
 				local_player_id = int(data.id)
 				reconnect_token = data.token
@@ -424,15 +499,18 @@ func _receive(sender: int, kind: String, data: Dictionary) -> void:
 			"attack_fx":
 				if is_instance_valid(game):
 					_play_attack(data)
-			"closed", "reject":
+			"closed", "reject", "kicked":
 				if peer != null:
 					peer.close()
 				peer = null
 				state = "ended"
 				pending_command = false
+				if kind == "kicked":
+					reconnect_token = ""
 				fail(str(data.get("message", "Connection ended.")))
 
 func _set_roster(data: Dictionary) -> void:
+	private_room = bool(data.get("private", false))
 	match_mode = str(data.get("mode", GameSession.FOG_OF_WAR))
 	GameSession.match_mode = match_mode
 	seats = data.seats
@@ -444,7 +522,7 @@ func _set_roster(data: Dictionary) -> void:
 		loaded[int(id)] = true
 	changed.emit()
 
-func _accept(remote: int, data: Dictionary) -> void:
+func _accept(remote: int, data: Dictionary, authenticated: bool = false) -> void:
 	if peer_seats.has(remote):
 		return
 	if str(data.get("version", "")) != compatibility:
@@ -464,6 +542,9 @@ func _accept(remote: int, data: Dictionary) -> void:
 			if int(row.id) == seat:
 				row.connected = true
 	elif state == "lobby" and seats.size() < capacity:
+		if private_room and not authenticated:
+			_send(remote, "challenge", {"nonce": room_access.challenge(remote, data)})
+			return
 		seat = 2
 		var ids: Array = []
 		for row: Dictionary in seats:
@@ -604,7 +685,13 @@ func _setup_discovery(as_host: bool) -> void:
 		discovery.close()
 	discovery = PacketPeerUDP.new()
 	discovery.set_broadcast_enabled(true)
-	if discovery.bind(SETTINGS.discovery_port if as_host else 0) != OK:
+	var result := ERR_CANT_CREATE
+	for slot in SETTINGS.discovery_slots if as_host else 1:
+		result = discovery.bind(SETTINGS.discovery_port + slot if as_host else 0)
+		if result == OK:
+			break
+	discovery_available = result == OK
+	if result != OK:
 		discovery = null
 		return
 	_discovery_elapsed = SETTINGS.discovery_interval
@@ -620,17 +707,18 @@ func _process_discovery(delta: float) -> void:
 	if not hosting and _discovery_elapsed >= SETTINGS.discovery_interval:
 		_discovery_elapsed = 0.0
 		for destination: String in ["255.255.255.255", "127.0.0.1"]:
-			discovery.set_dest_address(destination, SETTINGS.discovery_port)
-			discovery.put_packet("SWEETSPIRE_LAN_DISCOVER_1".to_utf8_buffer())
+			for slot in SETTINGS.discovery_slots:
+				discovery.set_dest_address(destination, SETTINGS.discovery_port + slot)
+				discovery.put_packet("SWEETSPIRE_LAN_DISCOVER_1".to_utf8_buffer())
 	for _packet in 16:
 		if discovery.get_available_packet_count() == 0:
 			break
 		var bytes := discovery.get_packet()
 		var ip := discovery.get_packet_ip()
 		var source_port := discovery.get_packet_port()
-		if hosting and state == "lobby" and bytes.get_string_from_utf8() == "SWEETSPIRE_LAN_DISCOVER_1":
+		if hosting and not private_room and state == "lobby" and bytes.get_string_from_utf8() == "SWEETSPIRE_LAN_DISCOVER_1":
 			discovery.set_dest_address(ip, source_port)
-			discovery.put_packet(JSON.stringify({"game": "sweetspire", "room": room_name, "count": seats.size(), "capacity": capacity, "port": port}).to_utf8_buffer())
+			discovery.put_packet(JSON.stringify({"game": "sweetspire", "room": room_name, "count": seats.size(), "capacity": capacity, "port": port, "mode": match_mode, "version": compatibility}).to_utf8_buffer())
 		elif not hosting and bytes.size() < 1024:
 			var row: Variant = JSON.parse_string(bytes.get_string_from_utf8())
 			if row is Dictionary and row.get("game") == "sweetspire" and row.get("room") is String and typeof(row.get("port")) == TYPE_FLOAT:

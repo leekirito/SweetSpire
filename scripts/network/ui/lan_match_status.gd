@@ -12,6 +12,9 @@ func _process(_delta: float) -> void:
 		_refresh()
 
 func _refresh() -> void:
+	visible = LanSession.active()
+	if not visible:
+		return
 	var blocked := LanSession.state != "playing" or LanSession.paused_for_disconnect
 	$Overlay.visible = blocked
 	$Bar.visible = not blocked
