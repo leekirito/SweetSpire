@@ -1,0 +1,92 @@
+[gd_scene format=4 uid="uid://dv56mh65kpi8k"]
+
+[ext_resource type="Script" uid="uid://corvnumeu7fq5" path="res://scripts/map/biome_chunk.gd" id="1_q27cm"]
+[ext_resource type="TileSet" uid="uid://bd5goybbeoi4i" path="res://assets/tilesets/Dungeon.tres" id="2_se4yt"]
+[ext_resource type="Script" uid="uid://bccvv500n40nt" path="res://scripts/map/chunk_placement.gd" id="3_rosen"]
+
+[node name="MalagkitTerraces" type="Node2D" unique_id=540323913]
+script = ExtResource("1_q27cm")
+biome_id = "MALAGKIT"
+variant_id = "malagkit_terraces"
+
+[node name="Ground" type="TileMapLayer" parent="." unique_id=1818528607]
+y_sort_enabled = true
+tile_map_data = PackedByteArray("AAAAAAAAAwAAAAAAAAABAAAAAwAAAAAAAAACAAAAAwAAAAAAAAADAAAAAwAAAAAAAAAEAAAAAwAAAAAAAAAFAAAAAwAAAAAAAAAGAAAAAwAAAAAAAAAHAAAAAwAAAAAAAAAIAAAAAwAAAAAAAAAJAAAAAwAAAAAAAAAAAAEAAwAAAAAAAAABAAEAAwAAAAAAAAACAAEAAwAAAAAAAAADAAEAAwAAAAAAAAAEAAEAAwAAAAAAAAAFAAEAAwAAAAAAAAAGAAEAAwAAAAAAAAAHAAEAAwAAAAAAAAAIAAEAAwAAAAAAAAAJAAEAAwAAAAAAAAAAAAIAAwAAAAAAAAABAAIAAwAAAAAAAAACAAIAAwAAAAAAAAADAAIAAwAAAAAAAAAEAAIAAwAAAAAAAAAFAAIAAwAAAAAAAAAGAAIAAwAAAAAAAAAHAAIAAwAAAAAAAAAIAAIAAwAAAAAAAAAJAAIAAwAAAAAAAAAAAAMAAwAAAAAAAAABAAMAAwAAAAAAAAACAAMAAwAAAAAAAAADAAMAAwAAAAAAAAAEAAMAAwAAAAAAAAAFAAMAAwAAAAAAAAAGAAMAAwAAAAAAAAAHAAMAAwAAAAAAAAAIAAMAAwAAAAAAAAAJAAMAAwAAAAAAAAAAAAQAAwAAAAAAAAABAAQAAwAAAAAAAAACAAQAAwAAAAAAAAADAAQAAwAAAAAAAAAEAAQAAwAAAAAAAAAFAAQAAwAAAAAAAAAGAAQAAwAAAAAAAAAHAAQABgAAAAAAAAAIAAQAAwAAAAAAAAAJAAQAAwAAAAAAAAAAAAUAAwAAAAAAAAABAAUAAwAAAAAAAAACAAUAAwAAAAAAAAADAAUAAwAAAAAAAAAEAAUAAwAAAAAAAAAFAAUAAwAAAAAAAAAGAAUAAwAAAAAAAAAHAAUABgAAAAAAAAAIAAUAAwAAAAAAAAAJAAUAAwAAAAAAAAAAAAYAAwAAAAAAAAABAAYAAwAAAAAAAAACAAYABgAAAAAAAAADAAYAAwAAAAAAAAAEAAYAAwAAAAAAAAAFAAYAAwAAAAAAAAAGAAYAAwAAAAAAAAAHAAYAAwAAAAAAAAAIAAYAAwAAAAAAAAAJAAYAAwAAAAAAAAAAAAcAAwAAAAAAAAABAAcAAwAAAAAAAAACAAcAAwAAAAAAAAADAAcAAwAAAAAAAAAEAAcAAwAAAAAAAAAFAAcAAwAAAAAAAAAGAAcAAwAAAAAAAAAHAAcAAwAAAAAAAAAIAAcAAwAAAAAAAAAJAAcAAwAAAAAAAAAAAAgAAwAAAAAAAAABAAgAAwAAAAAAAAACAAgAAwAAAAAAAAADAAgAAwAAAAAAAAAEAAgAAwAAAAAAAAAFAAgAAwAAAAAAAAAGAAgAAwAAAAAAAAAHAAgAAwAAAAAAAAAIAAgAAwAAAAAAAAAJAAgAAwAAAAAAAAAAAAkAAwAAAAAAAAABAAkAAwAAAAAAAAACAAkAAwAAAAAAAAADAAkAAwAAAAAAAAAEAAkAAwAAAAAAAAAFAAkAAwAAAAAAAAAGAAkAAwAAAAAAAAAHAAkAAwAAAAAAAAAIAAkAAwAAAAAAAAAJAAkAAwAAAAAAAAA=")
+tile_set = ExtResource("2_se4yt")
+
+[node name="Decoration" type="TileMapLayer" parent="." unique_id=1712058755]
+tile_set = ExtResource("2_se4yt")
+
+[node name="Obstacles" type="TileMapLayer" parent="." unique_id=816640914]
+tile_set = ExtResource("2_se4yt")
+
+[node name="Placements" type="Node2D" parent="." unique_id=412211681]
+
+[node name="mountain_2_1" type="Marker2D" parent="Placements" unique_id=1783333497]
+position = Vector2(512, 0)
+script = ExtResource("3_rosen")
+kind = "mountain"
+
+[node name="mountain_5_1" type="Marker2D" parent="Placements" unique_id=6359514]
+position = Vector2(896, -192)
+script = ExtResource("3_rosen")
+kind = "mountain"
+
+[node name="fruit_6_2" type="Marker2D" parent="Placements" unique_id=2065622524]
+position = Vector2(1152, -192)
+script = ExtResource("3_rosen")
+kind = "fruit"
+
+[node name="forest_2_3" type="Marker2D" parent="Placements" unique_id=1682292393]
+position = Vector2(768, 128)
+script = ExtResource("3_rosen")
+kind = "forest"
+
+[node name="fruit_4_3" type="Marker2D" parent="Placements" unique_id=1796760813]
+position = Vector2(1024, 0)
+script = ExtResource("3_rosen")
+kind = "fruit"
+
+[node name="forest_3_4" type="Marker2D" parent="Placements" unique_id=1360423806]
+position = Vector2(1024, 128)
+script = ExtResource("3_rosen")
+kind = "forest"
+
+[node name="town_4_4" type="Marker2D" parent="Placements" unique_id=926299152]
+position = Vector2(1152, 64)
+script = ExtResource("3_rosen")
+starting_town = true
+
+[node name="animal_5_4" type="Marker2D" parent="Placements" unique_id=2114439249]
+position = Vector2(1280, 0)
+script = ExtResource("3_rosen")
+kind = "animal"
+
+[node name="fish_7_4" type="Marker2D" parent="Placements" unique_id=158501935]
+position = Vector2(1536, -128)
+script = ExtResource("3_rosen")
+kind = "fish"
+
+[node name="fish_2_6" type="Marker2D" parent="Placements" unique_id=343968964]
+position = Vector2(1152, 320)
+script = ExtResource("3_rosen")
+kind = "fish"
+
+[node name="fruit_6_6" type="Marker2D" parent="Placements" unique_id=2134617254]
+position = Vector2(1664, 64)
+script = ExtResource("3_rosen")
+kind = "fruit"
+
+[node name="forest_7_6" type="Marker2D" parent="Placements" unique_id=1077144947]
+position = Vector2(1792, 0)
+script = ExtResource("3_rosen")
+kind = "forest"
+
+[node name="town_7_7" type="Marker2D" parent="Placements" unique_id=1778864858]
+position = Vector2(1920, 64)
+script = ExtResource("3_rosen")
+
+[node name="animal_6_8" type="Marker2D" parent="Placements" unique_id=849156397]
+position = Vector2(1920, 192)
+script = ExtResource("3_rosen")
+kind = "animal"

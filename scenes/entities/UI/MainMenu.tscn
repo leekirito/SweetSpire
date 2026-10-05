@@ -765,7 +765,7 @@ frame_progress = 0.7053625
 
 [node name="MainMenuAsset" type="Sprite2D" parent="Main/DesignCanvas" unique_id=159721911]
 position = Vector2(414.74994, 322.50003)
-scale = Vector2(0.34453118, 0.5925597)
+scale = Vector2(0.34453118, 0.6342592)
 texture = ExtResource("11_0nsne")
 
 [node name="GameLogo" type="Sprite2D" parent="Main/DesignCanvas" unique_id=940914899]

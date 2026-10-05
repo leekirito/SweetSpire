@@ -61,7 +61,8 @@ enum Phase {
 	PLAYER_TURN,
 	RESOURCE_SCORE_UPDATE,
 	ROUND_END,
-	GAME_OVER
+	GAME_OVER,
+	HOTSEAT_HANDOFF
 }
 
 
@@ -104,11 +105,18 @@ var victory_manager := VictoryManager.new()
 var structure_manager := StructureManager.new()
 @export var populate_demo_map: bool = false
 @export var demo_seed: int = 260926
+var map_manifest: Dictionary = {}
+var map_setup_error: String = ""
+var hotseat_handoff: CanvasLayer
 # ============================================================
 # START
 # ============================================================
 
 func _ready() -> void:
+	if GameSession.hotseat_mode:
+		hotseat_handoff = preload("res://scripts/UI/hotseat_handoff.gd").new()
+		hotseat_handoff.game = self
+		add_child(hotseat_handoff)
 
 	call_deferred(
 		"_initialize_match"
@@ -117,6 +125,8 @@ func _ready() -> void:
 
 ## Builds the authoritative runtime registries, assigns starting towns, and begins round one.
 func _initialize_match() -> void:
+	if not map_setup_error.is_empty():
+		return
 
 	# Get the PlayerStates created
 	# by the Main Menu.
@@ -124,6 +134,8 @@ func _initialize_match() -> void:
 	if populate_demo_map:
 		DemoMap.ensure_players(GameSession)
 	players = GameSession.players
+	if not map_manifest.is_empty():
+		players.sort_custom(func(a: PlayerState, b: PlayerState) -> bool: return a.player_id < b.player_id)
 
 
 	if players.is_empty():
@@ -248,11 +260,11 @@ func register_resource(
 
 
 	resource.resource_instance_id = (
-		next_resource_instance_id
+		int(resource.get_meta("map_entity_id", next_resource_instance_id))
 	)
 
 
-	next_resource_instance_id += 1
+	next_resource_instance_id = maxi(next_resource_instance_id, resource.resource_instance_id + 1)
 
 
 	resources[
@@ -332,6 +344,17 @@ func get_active_player() -> PlayerState:
 
 ## Assigns each player one unclaimed town allowed by their chosen tribe.
 func _setup_random_starting_bases() -> bool:
+	if not map_manifest.is_empty():
+		# These choices belong to the host manifest, never to a client's RNG.
+		for start: Dictionary in map_manifest.starts:
+			var player := get_player(int(start.player_id))
+			var town := get_building(int(start.building_id))
+			if player == null or town == null or not town.can_be_starting_base_for(player.tribe):
+				push_error("Manifest starting town does not match the runtime registry.")
+				return false
+			if not _assign_starting_base(player, town):
+				return false
+		return true
 
 	for player: PlayerState in players:
 
@@ -528,10 +551,10 @@ func register_building(
 
 
 	building.building_id = (
-		next_building_id
+		int(building.get_meta("map_entity_id", next_building_id))
 	)
 
-	next_building_id += 1
+	next_building_id = maxi(next_building_id, building.building_id + 1)
 
 
 	buildings[
@@ -720,6 +743,19 @@ func _show_match_result(victor_id: int, victory_reason: String) -> void:
 ## Rejects turn completion while unit animations could leave clients visually out of sync.
 func request_end_turn() -> bool:
 	return turn_manager.request_end_turn(self)
+
+func begin_hotseat_handoff() -> void:
+	current_phase = Phase.HOTSEAT_HANDOFF
+	_refresh_resource_collectibility()
+	hotseat_handoff.show_for_player(get_active_player(), current_round)
+
+func continue_hotseat_turn() -> bool:
+	if current_phase != Phase.HOTSEAT_HANDOFF:
+		return false
+	# Reset selection, fog and camera while the black cover is still visible.
+	turn_manager.start_player_turn(self)
+	hotseat_handoff.dismiss()
+	return true
 func request_upgrade_resource(resource_instance_id: int, player_id: int) -> bool:
 	return economy_manager.request_upgrade_resource(self, resource_instance_id, player_id)
 func collect_sugars() -> void:

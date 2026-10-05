@@ -1,0 +1,94 @@
+[gd_scene format=4 uid="uid://b32wlnbnmm7rh"]
+
+[ext_resource type="Script" uid="uid://corvnumeu7fq5" path="res://scripts/map/biome_chunk.gd" id="1_bhtjo"]
+[ext_resource type="TileSet" uid="uid://bd5goybbeoi4i" path="res://assets/tilesets/Dungeon.tres" id="2_mwb7b"]
+[ext_resource type="Script" uid="uid://bccvv500n40nt" path="res://scripts/map/chunk_placement.gd" id="3_0laj8"]
+
+[node name="KamoteBasin" type="Node2D" unique_id=1548691589]
+script = ExtResource("1_bhtjo")
+biome_id = "KAMOTE"
+variant_id = "kamote_basin"
+revision = 2
+
+[node name="Ground" type="TileMapLayer" parent="." unique_id=240516124]
+z_index = -2
+y_sort_enabled = true
+tile_map_data = PackedByteArray("AAAAAAAABAAAAAAAAAABAAAABAAAAAAAAAACAAAABAAAAAAAAAADAAAABAAAAAAAAAAEAAAABAAAAAAAAAAFAAAABAAAAAAAAAAGAAAABAAAAAAAAAAHAAAABAAAAAAAAAAIAAAABAAAAAAAAAAJAAAABAAAAAAAAAAAAAEABAAAAAAAAAABAAEABAAAAAAAAAACAAEABAAAAAAAAAADAAEABAAAAAAAAAAEAAEABAAAAAAAAAAFAAEABAAAAAAAAAAGAAEABAAAAAAAAAAHAAEABAAAAAAAAAAIAAEABAAAAAAAAAAJAAEABAAAAAAAAAAAAAIABAAAAAAAAAABAAIABAAAAAAAAAACAAIABAAAAAAAAAADAAIABAAAAAAAAAAEAAIABAAAAAAAAAAFAAIABAAAAAAAAAAGAAIABAAAAAAAAAAHAAIABAAAAAAAAAAIAAIABAAAAAAAAAAJAAIABAAAAAAAAAAAAAMABAAAAAAAAAABAAMABAAAAAAAAAACAAMABAAAAAAAAAADAAMABAAAAAAAAAAEAAMABAAAAAAAAAAFAAMABAAAAAAAAAAGAAMABAAAAAAAAAAHAAMABAAAAAAAAAAIAAMABAAAAAAAAAAJAAMABAAAAAAAAAAAAAQABAAAAAAAAAABAAQABAAAAAAAAAACAAQABAAAAAAAAAADAAQABAAAAAAAAAAEAAQABAAAAAAAAAAFAAQABAAAAAAAAAAGAAQABAAAAAAAAAAHAAQABgAAAAAAAAAIAAQABAAAAAAAAAAJAAQABAAAAAAAAAAAAAUABAAAAAAAAAABAAUABAAAAAAAAAACAAUABAAAAAAAAAADAAUABAAAAAAAAAAEAAUABAAAAAAAAAAFAAUABAAAAAAAAAAGAAUABAAAAAAAAAAHAAUABgAAAAAAAAAIAAUABAAAAAAAAAAJAAUABAAAAAAAAAAAAAYABAAAAAAAAAABAAYABAAAAAAAAAACAAYABAAAAAAAAAADAAYABAAAAAAAAAAEAAYABAAAAAAAAAAFAAYABAAAAAAAAAAGAAYABAAAAAAAAAAHAAYABAAAAAAAAAAIAAYABAAAAAAAAAAJAAYABAAAAAAAAAAAAAcABAAAAAAAAAABAAcABAAAAAAAAAACAAcABAAAAAAAAAADAAcABAAAAAAAAAAFAAcABAAAAAAAAAAGAAcABAAAAAAAAAAHAAcABAAAAAAAAAAIAAcABAAAAAAAAAAJAAcABAAAAAAAAAAAAAgABAAAAAAAAAABAAgABgAAAAAAAAACAAgABgAAAAAAAAADAAgABAAAAAAAAAAFAAgABAAAAAAAAAAGAAgABAAAAAAAAAAHAAgABAAAAAAAAAAIAAgABAAAAAAAAAAJAAgABAAAAAAAAAAAAAkABAAAAAAAAAABAAkABAAAAAAAAAACAAkABAAAAAAAAAAFAAkABAAAAAAAAAAGAAkABAAAAAAAAAAHAAkABAAAAAAAAAAIAAkABAAAAAAAAAAJAAkABAAAAAAAAAADAAkABAAAAAAAAAAEAAkABAAAAAAAAAAEAAgABAAAAAAAAAAEAAcABAAAAAAAAAA=")
+tile_set = ExtResource("2_mwb7b")
+
+[node name="Decoration" type="TileMapLayer" parent="." unique_id=774054088]
+tile_set = ExtResource("2_mwb7b")
+
+[node name="Obstacles" type="TileMapLayer" parent="." unique_id=2116924384]
+tile_set = ExtResource("2_mwb7b")
+
+[node name="Placements" type="Node2D" parent="." unique_id=1517695323]
+
+[node name="fruit_1_1" type="Marker2D" parent="Placements" unique_id=1012148778]
+position = Vector2(384, 64)
+script = ExtResource("3_0laj8")
+kind = "fruit"
+
+[node name="mountain_8_1" type="Marker2D" parent="Placements" unique_id=2144332772]
+position = Vector2(1280, -384)
+script = ExtResource("3_0laj8")
+kind = "mountain"
+
+[node name="forest_1_2" type="Marker2D" parent="Placements" unique_id=173213705]
+position = Vector2(512, 128)
+script = ExtResource("3_0laj8")
+kind = "forest"
+
+[node name="fruit_4_3" type="Marker2D" parent="Placements" unique_id=780645941]
+position = Vector2(1024, 0)
+script = ExtResource("3_0laj8")
+kind = "fruit"
+
+[node name="forest_3_4" type="Marker2D" parent="Placements" unique_id=426637390]
+position = Vector2(1024, 128)
+script = ExtResource("3_0laj8")
+kind = "forest"
+
+[node name="town_4_4" type="Marker2D" parent="Placements" unique_id=862575989]
+position = Vector2(1152, 64)
+script = ExtResource("3_0laj8")
+starting_town = true
+
+[node name="animal_5_4" type="Marker2D" parent="Placements" unique_id=1161782795]
+position = Vector2(1280, 0)
+script = ExtResource("3_0laj8")
+kind = "animal"
+
+[node name="fish_7_4" type="Marker2D" parent="Placements" unique_id=1982560156]
+position = Vector2(1536, -128)
+script = ExtResource("3_0laj8")
+kind = "fish"
+
+[node name="mountain_2_6" type="Marker2D" parent="Placements" unique_id=753357503]
+position = Vector2(1152, 320)
+script = ExtResource("3_0laj8")
+kind = "mountain"
+
+[node name="fruit_6_6" type="Marker2D" parent="Placements" unique_id=1746559927]
+position = Vector2(1664, 64)
+script = ExtResource("3_0laj8")
+kind = "fruit"
+
+[node name="forest_7_6" type="Marker2D" parent="Placements" unique_id=419317916]
+position = Vector2(1792, 0)
+script = ExtResource("3_0laj8")
+kind = "forest"
+
+[node name="town_7_7" type="Marker2D" parent="Placements" unique_id=1677808138]
+position = Vector2(1920, 64)
+script = ExtResource("3_0laj8")
+
+[node name="fish_2_8" type="Marker2D" parent="Placements" unique_id=250154618]
+position = Vector2(1408, 448)
+script = ExtResource("3_0laj8")
+kind = "fish"
+
+[node name="animal_6_8" type="Marker2D" parent="Placements" unique_id=1478096481]
+position = Vector2(1920, 192)
+script = ExtResource("3_0laj8")
+kind = "animal"

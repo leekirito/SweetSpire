@@ -43,7 +43,16 @@ func end_turn(game: MatchManager) -> void:
 
 	game.active_player_index = next_index
 	game.active_player_id = game.players[next_index].player_id
-	start_player_turn(game)
+	# Round-end captures can eliminate the player selected before resolution.
+	for _step in game.players.size():
+		if not game.eliminated_player_ids.has(game.active_player_id):
+			break
+		game.active_player_index = (game.active_player_index + 1) % game.players.size()
+		game.active_player_id = game.players[game.active_player_index].player_id
+	if GameSession.hotseat_mode and game.players.size() > 1 and game.hotseat_handoff != null:
+		game.begin_hotseat_handoff()
+	else:
+		start_player_turn(game)
 
 
 func start_player_turn(game: MatchManager) -> void:

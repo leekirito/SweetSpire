@@ -37,3 +37,4 @@ func _close_technology_tree() -> void:
 func _on_turn_started(_player_id: int, _round_number: int) -> void:
 	technology_tree.hide()
 	$BottomNav.visible = match_manager.current_phase == MatchManager.Phase.PLAYER_TURN
+	_sync_technology_modal()

@@ -2,6 +2,8 @@
 
 Reviewed 2026-10-02. This is an architecture review, not multiplayer implementation or a two-computer test.
 
+Update 2026-10-05: biome chunk assembly is now implemented. See [the implementation and authoring guide](biome-map-generation.md) for the current layout, eight starter variants, spawn guarantees, manifest handoff, and validation results. The map-work sections below preserve the original planning context; networking remains unimplemented.
+
 ## Agreed scope
 
 - First multiplayer release: host/join with friends on LAN or direct IP.

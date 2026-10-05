@@ -22,7 +22,7 @@ func evaluate_eliminations(game: MatchManager) -> void:
 		if not game.eliminated_player_ids.has(player.player_id):
 			survivors.append(player)
 
-	if survivors.size() == 1:
+	if survivors.size() == 1 and game.players.size() > 1:
 		game.finish_match_authoritative(survivors[0].player_id, "LAST PLAYER STANDING")
 
 

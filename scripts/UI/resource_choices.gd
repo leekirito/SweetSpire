@@ -61,7 +61,10 @@ func setup(new_resource: Resources, game: MatchManager) -> void:
 func setup_tile(game: MatchManager, target: Vector2i) -> void:
 	match_manager = game
 	cell = target
-	game.turn_started.connect(func(_id: int, _round: int): queue_free())
+	game.turn_started.connect(func(_id: int, _round: int):
+		hide()
+		queue_free()
+	)
 	game.technology_purchased.connect(func(_id: int, _tech: String): _refresh())
 	_refresh()
 

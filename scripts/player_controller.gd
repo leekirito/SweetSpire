@@ -41,6 +41,8 @@ func _ready() -> void:
 
 ## Routes a click by priority: selected-unit action, unit selection, town UI, then resource UI.
 func _unhandled_input(event: InputEvent) -> void:
+	if match_manager.current_phase != MatchManager.Phase.PLAYER_TURN:
+		return
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and is_aiming:
 		_cancel_aim()
 		get_viewport().set_input_as_handled()

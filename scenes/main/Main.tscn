@@ -22,6 +22,7 @@
 [ext_resource type="Script" uid="uid://dtblac7hfauoi" path="res://scripts/fogged_terrain.gd" id="21_fog_terrain"]
 [ext_resource type="Script" uid="uid://bah8mu8udpc5" path="res://scripts/effects/center_objective_highlight.gd" id="22_center_highlight"]
 [ext_resource type="Shader" uid="uid://n87tl322x7hd" path="res://assets/Shader/movement_overlay.gdshader" id="23_movement_shader"]
+[ext_resource type="Script" uid="uid://bpq0ux3l63kff" path="res://scripts/map/map_bootstrap.gd" id="24_map_bootstrap"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_water_surface"]
 shader = ExtResource("18_water_shader")
@@ -50,6 +51,7 @@ width = 1000
 
 [node name="ExampleMap" type="Node2D" unique_id=1698263691]
 y_sort_enabled = true
+script = ExtResource("24_map_bootstrap")
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=551823337]
 z_index = -2
@@ -74,11 +76,18 @@ water_source_ids = Array[int]([5, 6])
 z_index = 2
 y_sort_enabled = true
 tile_set = ExtResource("1_1rhdn")
+script = ExtResource("21_fog_terrain")
 
 [node name="Buildings" type="TileMapLayer" parent="." unique_id=12208693]
 z_index = 2
 y_sort_enabled = true
 tile_set = ExtResource("1_1rhdn")
+
+[node name="Decoration" type="TileMapLayer" parent="." unique_id=1713019606]
+z_index = -1
+y_sort_enabled = true
+tile_set = ExtResource("1_1rhdn")
+script = ExtResource("21_fog_terrain")
 
 [node name="MovementOverlay" type="TileMapLayer" parent="." unique_id=703769685]
 z_index = -1

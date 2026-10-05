@@ -1,0 +1,78 @@
+[gd_scene format=4 uid="uid://c7y5sclf0occr"]
+
+[ext_resource type="Script" uid="uid://corvnumeu7fq5" path="res://scripts/map/biome_chunk.gd" id="1_ckntp"]
+[ext_resource type="TileSet" uid="uid://bd5goybbeoi4i" path="res://assets/tilesets/Dungeon.tres" id="2_r73hf"]
+[ext_resource type="Script" uid="uid://bccvv500n40nt" path="res://scripts/map/chunk_placement.gd" id="3_pngp0"]
+
+[node name="SweetspireGardens" type="Node2D" unique_id=1117780307]
+script = ExtResource("1_ckntp")
+biome_id = "SWEETSPIRE"
+variant_id = "sweetspire_gardens"
+revision = 2
+
+[node name="Ground" type="TileMapLayer" parent="." unique_id=467860585]
+y_sort_enabled = true
+tile_map_data = PackedByteArray("AAAAAAAABQAAAAAAAAABAAAABQAAAAAAAAACAAAABQAAAAAAAAADAAAABQAAAAAAAAAEAAAABgAAAAAAAAAFAAAABQAAAAAAAAAGAAAABQAAAAAAAAAHAAAABgAAAAAAAAAIAAAABQAAAAAAAAAJAAAABgAAAAAAAAAAAAEABQAAAAAAAAABAAEABQAAAAAAAAACAAEABQAAAAAAAAADAAEABQAAAAAAAAAEAAEABQAAAAAAAAAFAAEABQAAAAAAAAAGAAEABQAAAAAAAAAHAAEABQAAAAAAAAAIAAEABQAAAAAAAAAJAAEABQAAAAAAAAAAAAIABQAAAAAAAAABAAIABQAAAAAAAAACAAIAGgACAAAAAAADAAIAGgACAAAAAAAEAAIAGgACAAAAAAAFAAIAGgACAAAAAAAGAAIAGgACAAAAAAAHAAIAGgACAAAAAAAIAAIABQAAAAAAAAAJAAIABQAAAAAAAAAAAAMABQAAAAAAAAABAAMABQAAAAAAAAACAAMAGgACAAAAAAADAAMAGgACAAAAAAAEAAMAGgACAAAAAAAFAAMAGgACAAAAAAAGAAMAGgACAAAAAAAHAAMAGgACAAAAAAAIAAMABQAAAAAAAAAJAAMABQAAAAAAAAAAAAQABgAAAAAAAAABAAQABQAAAAAAAAACAAQAGgACAAAAAAADAAQAGgACAAAAAAAEAAQAGgACAAAAAAAFAAQAGgACAAAAAAAGAAQAGgACAAAAAAAHAAQAGgACAAAAAAAIAAQABQAAAAAAAAAJAAQABQAAAAAAAAAAAAUABQAAAAAAAAABAAUABQAAAAAAAAACAAUAGgACAAAAAAADAAUAGgACAAAAAAAEAAUAGgACAAAAAAAFAAUAGgACAAAAAAAGAAUAGgACAAAAAAAHAAUAGgACAAAAAAAIAAUABQAAAAAAAAAJAAUABQAAAAAAAAAAAAYABQAAAAAAAAABAAYABQAAAAAAAAACAAYAGgACAAAAAAADAAYAGgACAAAAAAAEAAYAGgACAAAAAAAFAAYAGgACAAAAAAAGAAYAGgACAAAAAAAHAAYAGgACAAAAAAAIAAYABQAAAAAAAAAJAAYABQAAAAAAAAAAAAcABgAAAAAAAAABAAcABQAAAAAAAAACAAcAGgACAAAAAAADAAcAGgACAAAAAAAEAAcAGgACAAAAAAAFAAcAGgACAAAAAAAGAAcAGgACAAAAAAAHAAcAGgACAAAAAAAIAAcABQAAAAAAAAAJAAcABQAAAAAAAAAAAAgABQAAAAAAAAABAAgABQAAAAAAAAACAAgABQAAAAAAAAADAAgABQAAAAAAAAAEAAgABQAAAAAAAAAFAAgABQAAAAAAAAAGAAgABQAAAAAAAAAHAAgABQAAAAAAAAAIAAgABQAAAAAAAAAJAAgABQAAAAAAAAAAAAkABgAAAAAAAAABAAkABQAAAAAAAAACAAkABQAAAAAAAAADAAkABgAAAAAAAAAEAAkABQAAAAAAAAAFAAkABQAAAAAAAAAGAAkABgAAAAAAAAAHAAkABQAAAAAAAAAIAAkABQAAAAAAAAAJAAkABQAAAAAAAAA=")
+tile_set = ExtResource("2_r73hf")
+
+[node name="Decoration" type="TileMapLayer" parent="." unique_id=968722184]
+tile_set = ExtResource("2_r73hf")
+
+[node name="Obstacles" type="TileMapLayer" parent="." unique_id=1464280442]
+tile_set = ExtResource("2_r73hf")
+
+[node name="Placements" type="Node2D" parent="." unique_id=967979077]
+
+[node name="forest_2_2" type="Marker2D" parent="Placements" unique_id=1784575089]
+position = Vector2(640, 64)
+script = ExtResource("3_pngp0")
+kind = "forest"
+
+[node name="fruit_4_2" type="Marker2D" parent="Placements" unique_id=1748991101]
+position = Vector2(896, -64)
+script = ExtResource("3_pngp0")
+kind = "fruit"
+
+[node name="mountain_6_2" type="Marker2D" parent="Placements" unique_id=1740159318]
+position = Vector2(1152, -192)
+script = ExtResource("3_pngp0")
+kind = "mountain"
+
+[node name="fruit_5_3" type="Marker2D" parent="Placements" unique_id=872553631]
+position = Vector2(1152, -64)
+script = ExtResource("3_pngp0")
+kind = "fruit"
+
+[node name="forest_2_4" type="Marker2D" parent="Placements" unique_id=2139864476]
+position = Vector2(896, 192)
+script = ExtResource("3_pngp0")
+kind = "forest"
+
+[node name="animal_7_4" type="Marker2D" parent="Placements" unique_id=21063652]
+position = Vector2(1536, -128)
+script = ExtResource("3_pngp0")
+kind = "animal"
+
+[node name="town_3_6" type="Marker2D" parent="Placements" unique_id=1221162180]
+position = Vector2(1280, 256)
+script = ExtResource("3_pngp0")
+
+[node name="fruit_5_6" type="Marker2D" parent="Placements" unique_id=225690312]
+position = Vector2(1536, 128)
+script = ExtResource("3_pngp0")
+kind = "fruit"
+
+[node name="forest_6_6" type="Marker2D" parent="Placements" unique_id=20513049]
+position = Vector2(1664, 64)
+script = ExtResource("3_pngp0")
+kind = "forest"
+
+[node name="mountain_2_7" type="Marker2D" parent="Placements" unique_id=1746922321]
+position = Vector2(1280, 384)
+script = ExtResource("3_pngp0")
+kind = "mountain"
+
+[node name="animal_5_7" type="Marker2D" parent="Placements" unique_id=623260956]
+position = Vector2(1664, 192)
+script = ExtResource("3_pngp0")
+kind = "animal"

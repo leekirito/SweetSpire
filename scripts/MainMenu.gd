@@ -18,6 +18,13 @@ var lan_selected_tribe_index: int = 0
 var lan_tribes: Array[TribeData] = []
 var lan_tribe_buttons: Array[TextureButton] = []
 var hotseat_selection_labels: Dictionary[int, Label] = {}
+var hotseat_player_count: int = 2
+var hotseat_names: Dictionary[int, String] = {}
+var hotseat_tribe_buttons: Dictionary = {}
+var hotseat_grid: GridContainer
+var hotseat_start: Button
+var hotseat_status: Label
+var hotseat_count_picker: OptionButton
 
 
 func _ready() -> void:
@@ -44,51 +51,6 @@ func _ready() -> void:
 		DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	)
 
-	$HotseatSetup/Button2.pressed.connect(
-		select_tribe.bind(
-			1,
-			saba_tribe
-		)
-	)
-
-	$HotseatSetup/Button3.pressed.connect(
-		select_tribe.bind(
-			1,
-			malagkit_tribe
-		)
-	)
-
-	$HotseatSetup/Button4.pressed.connect(
-		select_tribe.bind(
-			1,
-			kamote_tribe
-		)
-	)
-
-	$HotseatSetup/Button5.pressed.connect(
-		select_tribe.bind(
-			2,
-			saba_tribe
-		)
-	)
-
-	$HotseatSetup/Button6.pressed.connect(
-		select_tribe.bind(
-			2,
-			malagkit_tribe
-		)
-	)
-
-	$HotseatSetup/Button7.pressed.connect(
-		select_tribe.bind(
-			2,
-			kamote_tribe
-		)
-	)
-	
-	$HotseatSetup/Button.pressed.connect(
-		start_game
-	)
 	_setup_hotseat_layout()
 
 
@@ -164,7 +126,7 @@ func _setup_hotseat_layout() -> void:
 	hotseat.add_child(margin)
 
 	var page := VBoxContainer.new()
-	page.add_theme_constant_override("separation", 22)
+	page.add_theme_constant_override("separation", 12)
 	margin.add_child(page)
 
 	var header := HBoxContainer.new()
@@ -177,28 +139,84 @@ func _setup_hotseat_layout() -> void:
 	var title := Label.new()
 	title.text = "HOTSEAT SETUP"
 	title.theme_type_variation = &"HeaderLabel"
-	title.add_theme_font_size_override("font_size", 40)
+	title.add_theme_font_size_override("font_size", 28)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
-	var header_spacer := Control.new()
-	header_spacer.custom_minimum_size = Vector2(150, 0)
-	header.add_child(header_spacer)
+	var count_row := HBoxContainer.new()
+	count_row.add_theme_constant_override("separation", 16)
+	page.add_child(count_row)
+	var count_label := Label.new()
+	count_label.text = "PLAYERS"
+	count_row.add_child(count_label)
+	hotseat_count_picker = OptionButton.new()
+	hotseat_count_picker.name = "PlayerCount"
+	for count in range(1, 9):
+		hotseat_count_picker.add_item("1 — SOLO" if count == 1 else "%d PLAYERS" % count, count)
+	hotseat_count_picker.select(hotseat_player_count - 1)
+	hotseat_count_picker.item_selected.connect(func(index: int) -> void: set_hotseat_player_count(index + 1))
+	count_row.add_child(hotseat_count_picker)
+	NumericFontManager.manage_numeric_control(hotseat_count_picker)
+	hotseat_count_picker.get_popup().add_theme_font_override("font", hotseat_count_picker.get_theme_font("font"))
+	var hint := Label.new()
+	hint.text = "Choose a tribe for each player. Tribes can repeat."
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	count_row.add_child(hint)
+	var scroll := ScrollContainer.new()
+	scroll.name = "PlayersScroll"
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
+	page.add_child(scroll)
+	hotseat_grid = GridContainer.new()
+	hotseat_grid.name = "Players"
+	hotseat_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hotseat_grid.add_theme_constant_override("h_separation", 16)
+	hotseat_grid.add_theme_constant_override("v_separation", 16)
+	scroll.add_child(hotseat_grid)
+	scroll.resized.connect(func() -> void: hotseat_grid.columns = 2 if scroll.size.x >= 850 else 1)
+	hotseat_status = Label.new()
+	hotseat_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hotseat_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	page.add_child(hotseat_status)
+	hotseat_start = Button.new()
+	hotseat_start.text = "START MATCH"
+	hotseat_start.custom_minimum_size = Vector2(300, 54)
+	hotseat_start.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	hotseat_start.pressed.connect(start_game)
+	page.add_child(hotseat_start)
+	_rebuild_hotseat_players()
 
-	var player_columns := HBoxContainer.new()
-	player_columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	player_columns.add_theme_constant_override("separation", 24)
-	page.add_child(player_columns)
-	player_columns.add_child(_create_hotseat_player_panel(1))
-	player_columns.add_child(_create_hotseat_player_panel(2))
 
-	var start := Button.new()
-	start.text = "START MATCH"
-	start.custom_minimum_size = Vector2(360, 66)
-	start.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	start.add_theme_font_size_override("font_size", 27)
-	start.pressed.connect(start_game)
-	page.add_child(start)
+func set_hotseat_player_count(count: int) -> void:
+	hotseat_player_count = clampi(count, 1, 8)
+	hotseat_count_picker.select(hotseat_player_count - 1)
+	_rebuild_hotseat_players()
+
+
+func _rebuild_hotseat_players() -> void:
+	for child: Node in hotseat_grid.get_children():
+		hotseat_grid.remove_child(child)
+		child.queue_free()
+	hotseat_selection_labels.clear()
+	hotseat_tribe_buttons.clear()
+	for player_id in range(1, hotseat_player_count + 1):
+		hotseat_grid.add_child(_create_hotseat_player_panel(player_id))
+	_refresh_hotseat_selections()
+
+
+func _refresh_hotseat_selections() -> void:
+	var chosen := 0
+	for player_id in range(1, hotseat_player_count + 1):
+		var selected: TribeData = selected_tribes.get(player_id)
+		if selected != null:
+			chosen += 1
+		hotseat_selection_labels[player_id].text = selected.tribe_name + " SELECTED" if selected != null else "CHOOSE A TRIBE"
+		for entry: Dictionary in hotseat_tribe_buttons[player_id]:
+			entry.button.set_pressed_no_signal(entry.tribe == selected)
+	hotseat_start.disabled = chosen != hotseat_player_count
+	hotseat_status.text = "Solo exploration — capture and hold Sweetspire to win." if hotseat_player_count == 1 and chosen == 1 else "%d / %d players ready" % [chosen, hotseat_player_count]
 
 
 func _create_hotseat_player_panel(player_id: int) -> PanelContainer:
@@ -206,33 +224,35 @@ func _create_hotseat_player_panel(player_id: int) -> PanelContainer:
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 28)
-	margin.add_theme_constant_override("margin_top", 26)
-	margin.add_theme_constant_override("margin_right", 28)
-	margin.add_theme_constant_override("margin_bottom", 26)
+	margin.add_theme_constant_override("margin_left", 16)
+	margin.add_theme_constant_override("margin_top", 14)
+	margin.add_theme_constant_override("margin_right", 16)
+	margin.add_theme_constant_override("margin_bottom", 14)
 	panel.add_child(margin)
 
 	var content := VBoxContainer.new()
-	content.add_theme_constant_override("separation", 18)
+	content.add_theme_constant_override("separation", 8)
 	margin.add_child(content)
 
 	var title := Label.new()
 	title.text = "PLAYER " + str(player_id)
 	title.theme_type_variation = &"HeaderLabel"
-	title.add_theme_font_size_override("font_size", 30)
+	title.add_theme_font_size_override("font_size", 22)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	content.add_child(title)
 
-	var hint := Label.new()
-	hint.text = "Choose a tribe"
-	hint.theme_type_variation = &"BodyLabel"
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	content.add_child(hint)
+	var player_name := LineEdit.new()
+	player_name.placeholder_text = "Name (optional)"
+	player_name.text = hotseat_names.get(player_id, "")
+	player_name.max_length = 24
+	player_name.text_changed.connect(func(value: String) -> void: hotseat_names[player_id] = value)
+	content.add_child(player_name)
 
 	var choices := HBoxContainer.new()
 	choices.alignment = BoxContainer.ALIGNMENT_CENTER
-	choices.add_theme_constant_override("separation", 18)
+	choices.add_theme_constant_override("separation", 8)
 	content.add_child(choices)
+	hotseat_tribe_buttons[player_id] = []
 	for tribe: TribeData in [saba_tribe, malagkit_tribe, kamote_tribe]:
 		choices.add_child(_create_hotseat_tribe_card(player_id, tribe))
 
@@ -249,17 +269,24 @@ func _create_hotseat_tribe_card(player_id: int, tribe: TribeData) -> VBoxContain
 	var card := VBoxContainer.new()
 	card.add_theme_constant_override("separation", 6)
 	var image := TextureButton.new()
-	image.custom_minimum_size = Vector2(128, 128)
+	image.custom_minimum_size = Vector2(88, 72)
 	image.ignore_texture_size = true
 	image.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	image.texture_normal = tribe.visuals.building_textures.get("base")
+	var texture: Texture2D = tribe.visuals.building_textures.get("base")
+	var cropped := AtlasTexture.new()
+	cropped.atlas = texture
+	cropped.region = texture.get_image().get_used_rect()
+	image.texture_normal = cropped
 	image.tooltip_text = tribe.tribe_name
 	image.pressed.connect(select_tribe.bind(player_id, tribe))
 	card.add_child(image)
-	var tribe_name := Label.new()
-	tribe_name.text = tribe.tribe_name
-	tribe_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	card.add_child(tribe_name)
+	var choose := Button.new()
+	choose.text = tribe.tribe_name
+	choose.add_theme_font_size_override("font_size", 14)
+	choose.toggle_mode = true
+	choose.pressed.connect(select_tribe.bind(player_id, tribe))
+	card.add_child(choose)
+	hotseat_tribe_buttons[player_id].append({"button": choose, "tribe": tribe})
 	return card
 
 
@@ -381,6 +408,16 @@ func _resize_main_visuals() -> void:
 		viewport_size.y / MENU_DESIGN_SIZE.y
 	)
 	design_canvas.scale = Vector2.ONE * uniform_scale
+	# The composition fits inside the window; the background must cover it.
+	# Only resize the sprite, leaving its authored position animation intact.
+	var background: AnimatedSprite2D = $Main/DesignCanvas/AnimatedSprite2D
+	var texture := background.sprite_frames.get_frame_texture(background.animation, background.frame)
+	if texture != null and uniform_scale > 0.0:
+		var local_viewport_size := viewport_size / uniform_scale
+		var texture_size := texture.get_size()
+		var cover_scale := maxf(local_viewport_size.x / texture_size.x, local_viewport_size.y / texture_size.y)
+		background.scale = Vector2.ONE * cover_scale
+
 ## Records a player's pending tribe choice without creating match state yet.
 func select_tribe(
 	player_id: int,
@@ -388,58 +425,42 @@ func select_tribe(
 ) -> void:
 
 	selected_tribes[player_id] = tribe
-	if hotseat_selection_labels.has(player_id):
-		hotseat_selection_labels[player_id].text = tribe.tribe_name + " SELECTED"
-
-	print(
-		"Player ",
-		player_id,
-		" selected ",
-		tribe.tribe_name
-	)
+	_refresh_hotseat_selections()
 	
 ## Creates the hotseat player state and hands it to the persistent GameSession.
 func start_game() -> void:
-	if not selected_tribes.has(1):
-		print("Player 1 has not selected a tribe.")
+	if not prepare_hotseat_session():
 		return
+	get_tree().change_scene_to_file("res://scenes/main/Main.tscn")
 
-	if not selected_tribes.has(2):
-		print("Player 2 has not selected a tribe.")
-		return
-
+## Validate all choices and map compatibility before leaving the setup screen.
+func prepare_hotseat_session() -> bool:
+	var roster: Array = []
+	for player_id in range(1, hotseat_player_count + 1):
+		var tribe: TribeData = selected_tribes.get(player_id)
+		if tribe == null:
+			hotseat_status.text = "Choose a tribe for Player %d." % player_id
+			return false
+		roster.append({"player_id": player_id, "tribe_id": tribe.tribe_id})
+	var generator := BiomeMapGenerator.new()
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var seed_value := GameSession.map_seed if GameSession.map_seed >= 0 else int(rng.randi() & 0x7fffffff)
+	var manifest := generator.generate(seed_value, roster)
+	if manifest.is_empty():
+		hotseat_status.text = "Map setup: " + generator.last_error
+		return false
 	GameSession.clear_players()
-
-	var player_1 := PlayerState.new()
-	player_1.player_id = 1
-	player_1.player_name = "Player 1"
-	player_1.tribe = selected_tribes[1]
-	player_1.sugars = 20
-
-	player_1.unlocked_technologies.append(
-		player_1.tribe.starting_technology.technology_id
-	)
-
-	GameSession.add_player(
-		player_1
-	)
-
-
-	var player_2 := PlayerState.new()
-	player_2.player_id = 2
-	player_2.player_name = "Player 2"
-	player_2.tribe = selected_tribes[2]
-	player_2.sugars = 20
-
-	player_2.unlocked_technologies.append(
-		player_2.tribe.starting_technology.technology_id
-	)
-
-	GameSession.add_player(
-		player_2
-	)
-
-
-	get_tree().change_scene_to_file(
-		"res://scenes/main/Main.tscn"
-	)
+	GameSession.hotseat_mode = true
+	GameSession.map_manifest = manifest
+	for player_id in range(1, hotseat_player_count + 1):
+		var player := PlayerState.new()
+		player.player_id = player_id
+		player.player_name = hotseat_names.get(player_id, "").strip_edges()
+		if player.player_name.is_empty():
+			player.player_name = "Player %d" % player_id
+		player.tribe = selected_tribes[player_id]
+		player.sugars = 20
+		player.unlock_technology(player.tribe.starting_technology.technology_id)
+		GameSession.add_player(player)
+	return true

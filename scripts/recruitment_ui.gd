@@ -70,6 +70,10 @@ func setup(building: Building) -> void:
 
 
 func _ready() -> void:
+	match_manager.turn_started.connect(func(_id: int, _round: int) -> void:
+		hide()
+		queue_free()
+	)
 	preview_panel.hide()
 	var fourth_choice := choice3.duplicate(0) as Button
 	fourth_choice.name = "Button4"

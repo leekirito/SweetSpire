@@ -142,7 +142,6 @@ func refresh(instant: bool = false) -> void:
 			view_changed = true
 	_apply_entity_visibility()
 	if view_changed:
-		board.tile_map_layer.notify_runtime_tile_data_update()
 		fog_updated.emit()
 	_refreshing = false
 

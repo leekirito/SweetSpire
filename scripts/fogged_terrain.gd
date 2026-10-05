@@ -1,5 +1,10 @@
 extends TileMapLayer
 
+func _ready() -> void:
+	var fog := get_node_or_null("../FogOfWar") as FogOfWar
+	if fog != null:
+		fog.fog_updated.connect(notify_runtime_tile_data_update)
+
 ## Hide the whole unknown terrain sprite, including raised art and cliff faces.
 ## The separate fog scene tiles supply the opaque cover and reveal animation.
 func _use_tile_data_runtime_update(_coords: Vector2i) -> bool:
