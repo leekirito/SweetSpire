@@ -191,7 +191,7 @@ func _initialize_match() -> void:
 	# Now assign player starting towns.
 
 	var setup_successful: bool = (
-		_setup_random_starting_bases()
+		true if LanSession.client() else _setup_random_starting_bases()
 	)
 
 
@@ -209,6 +209,8 @@ func _initialize_match() -> void:
 
 
 	current_phase = Phase.PLAYER_TURN
+	if LanSession.active():
+		current_phase = Phase.SETUP
 
 
 	update_ui()
@@ -222,6 +224,10 @@ func _initialize_match() -> void:
 		active_player_id,
 		current_round
 	)
+	if LanSession.active():
+		LanSession.attach_match(self)
+		var status := preload("res://scenes/network/LanMatchStatus.tscn").instantiate()
+		get_tree().current_scene.add_child(status)
 
 
 
@@ -639,15 +645,22 @@ func get_building(
 
 ## Validates a player's move request before committing authoritative state and animation.
 func request_move(unit_id: int, target_cell: Vector2i) -> bool:
+	if LanSession.active() and not LanSession.executing:
+		return LanSession.submit({"action": "move", "id": unit_id, "cell": LanCatalog.xy(target_cell)})
 	if current_phase != Phase.PLAYER_TURN:
 		return false
 	return combat_resolver.request_move(self, unit_id, target_cell)
 func request_attack(attacker_id: int, target_id: int) -> bool:
+	if LanSession.active() and not LanSession.executing:
+		var target := get_unit(target_id)
+		return target != null and request_attack_at_cell(attacker_id, target.current_cell)
 	if current_phase != Phase.PLAYER_TURN:
 		return false
 	return combat_resolver.request_attack(self, attacker_id, target_id)
 
 func request_attack_at_cell(attacker_id: int, target_cell: Vector2i) -> bool:
+	if LanSession.active() and not LanSession.executing:
+		return LanSession.submit({"action": "attack", "id": attacker_id, "cell": LanCatalog.xy(target_cell)})
 	if current_phase != Phase.PLAYER_TURN:
 		return false
 	return combat_resolver.request_attack_at_cell(self, attacker_id, target_cell)
@@ -742,6 +755,8 @@ func _show_match_result(victor_id: int, victory_reason: String) -> void:
 
 ## Rejects turn completion while unit animations could leave clients visually out of sync.
 func request_end_turn() -> bool:
+	if LanSession.active() and not LanSession.executing:
+		return LanSession.submit({"action": "end_turn"})
 	return turn_manager.request_end_turn(self)
 
 func begin_hotseat_handoff() -> void:
@@ -757,10 +772,14 @@ func continue_hotseat_turn() -> bool:
 	hotseat_handoff.dismiss()
 	return true
 func request_upgrade_resource(resource_instance_id: int, player_id: int) -> bool:
+	if LanSession.active() and not LanSession.executing:
+		return LanSession.submit({"action": "upgrade", "id": resource_instance_id})
 	return economy_manager.request_upgrade_resource(self, resource_instance_id, player_id)
 func collect_sugars() -> void:
 	economy_manager.collect_sugars(self)
 func request_collect_resource(resource_instance_id: int, player_id: int) -> bool:
+	if LanSession.active() and not LanSession.executing:
+		return LanSession.submit({"action": "collect", "id": resource_instance_id})
 	return economy_manager.request_collect_resource(self, resource_instance_id, player_id)
 func _end_turn() -> void:
 	turn_manager.end_turn(self)
@@ -795,6 +814,9 @@ func refresh_resource_collectibility_authoritative() -> void:
 	_refresh_resource_collectibility()
 ## Purchases and spawns a unit only from an owned, unoccupied town.
 func request_recruit_unit(building_id: int, unit_scene: PackedScene) -> Unit:
+	if LanSession.active() and not LanSession.executing:
+		LanSession.submit({"action": "recruit", "id": building_id, "key": LanCatalog.unit_key(unit_scene.resource_path)})
+		return null
 	if current_phase != Phase.PLAYER_TURN:
 		return null
 
@@ -807,6 +829,8 @@ func can_purchase_technology(player_id: int, technology: TechnologyData) -> bool
 
 
 func request_purchase_technology(player_id: int, technology: TechnologyData) -> bool:
+	if LanSession.active() and not LanSession.executing:
+		return LanSession.submit({"action": "technology", "key": technology.technology_id})
 	if not technology_manager.purchase(self, player_id, technology):
 		return false
 
@@ -834,11 +858,26 @@ func update_ui() -> void:
 		+ str(current_round)
 	)
 
-	if active_player != null:
+	var local_player := get_viewing_player()
+	if local_player != null:
 		sugar_text.text = (
-			str(active_player.sugars)
+			str(local_player.sugars)
 			+ "  SUGAR"
 		)
+
+func get_viewing_player_id() -> int:
+	return LanSession.local_player_id if LanSession.active() else active_player_id
+
+func get_viewing_player() -> PlayerState:
+	return get_player(get_viewing_player_id())
+
+func get_all_buildings_for_network() -> Array[Building]:
+	return _get_all_buildings()
+
+func request_recruitment(building_id: int, unit_scene: PackedScene) -> bool:
+	if LanSession.active() and not LanSession.executing:
+		return LanSession.submit({"action": "recruit", "id": building_id, "key": LanCatalog.unit_key(unit_scene.resource_path)})
+	return request_recruit_unit(building_id, unit_scene) != null
 
 
 func _on_button_button_down() -> void:

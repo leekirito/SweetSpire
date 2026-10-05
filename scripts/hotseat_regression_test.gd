@@ -16,11 +16,28 @@ func _ready() -> void:
 	call_deferred("run")
 
 func run() -> void:
+	check(LanSession.host_room("Test host", "Mode switch", 2, "saba", 29878), "LAN lobby can open before Hotseat")
+	LanSession.leave()
+	check(not LanSession.active() and LanSession.can_act(), "Leaving LAN restores local input")
 	var menu = load("res://scenes/entities/UI/MainMenu.tscn").instantiate()
+	check(menu.get_node("HotseatSetup/ResponsiveLayout/Page/PlayersScroll/Players").get_child_count() == 2, "Player cards exist in the authored scene before ready")
+	check(not menu.has_node("HotseatSetup/Button2"), "Legacy hotseat controls are removed")
 	get_tree().root.add_child(menu)
 	GameSession.map_seed = 12345
 	check(menu.hotseat_player_count == 2, "Default setup has two players")
 	check(menu.hotseat_start.disabled, "Cannot start before choosing tribes")
+	var authored_card: PanelContainer = menu.hotseat_grid.get_child(0)
+	authored_card.get_node("Margin/Content/Choices/Kamote/Choose").pressed.emit()
+	check(menu.selected_tribes[1] == menu.kamote_tribe, "Authored tribe buttons select the correct player")
+	menu.hotseat_count_picker.item_selected.emit(7)
+	check(menu.hotseat_player_count == 8 and menu.hotseat_grid.get_child(0) == authored_card, "Count picker adds cards while preserving existing scene instances")
+	var eighth_card: PanelContainer = menu.hotseat_grid.get_child(7)
+	eighth_card.get_node("Margin/Content/Choices/Malagkit/Artwork").pressed.emit()
+	check(menu.selected_tribes[8] == menu.malagkit_tribe, "Instanced artwork buttons select the correct player")
+	eighth_card.get_node("Margin/Content/PlayerName").text_changed.emit("Eight")
+	menu.set_hotseat_player_count(1)
+	menu.set_hotseat_player_count(8)
+	check(menu.hotseat_grid.get_child(7).get_node("Margin/Content/PlayerName").text == "Eight", "Recreated cards restore edited player names")
 	for count in range(1, 9):
 		menu.set_hotseat_player_count(count)
 		check(menu.hotseat_grid.get_child_count() == count, "Player count controls visible cards")
@@ -38,6 +55,12 @@ func run() -> void:
 	check(GameSession.players[0].player_name == "Mika", "Custom player name is applied")
 	menu.set_hotseat_player_count(8)
 	check(menu.prepare_hotseat_session(), "Returning to eight restores chosen roster")
+	var mode_picker: OptionButton = menu.get_node("HotseatSetup/ResponsiveLayout/Page/ModeRow/MatchMode")
+	check(mode_picker.item_count == 2 and mode_picker.selected == 0, "Setup offers exactly two modes, defaulting to Fog of War")
+	mode_picker.select(1)
+	check(menu.prepare_hotseat_session() and GameSession.match_mode == GameSession.REGULAR, "Hotseat setup applies Regular")
+	mode_picker.select(0)
+	check(menu.prepare_hotseat_session() and GameSession.match_mode == GameSession.FOG_OF_WAR, "Hotseat setup applies Fog of War")
 	menu.queue_free()
 	await get_tree().process_frame
 	var scene = load("res://scenes/main/Main.tscn").instantiate()
@@ -46,6 +69,7 @@ func run() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var game := scene.get_node("MatchManager") as MatchManager
+	check(not scene.has_node("LanMatchStatus"), "Hotseat has no LAN connection overlay")
 	check(game.current_phase == MatchManager.Phase.PLAYER_TURN, "Eight-player match begins")
 	check(game.players.size() == 8 and game.units.size() == 8, "Eight players receive units")
 	var cover := game.hotseat_handoff
@@ -94,6 +118,11 @@ func run() -> void:
 	check(game.request_end_turn() and game.active_player_id == 3, "Eliminated players are skipped")
 	game.continue_hotseat_turn()
 	# Reset to a solo match and verify rounds and the center objective remain playable.
+	GameSession.match_mode = GameSession.REGULAR
+	game.fog_of_war.refresh(true)
+	check(game.request_end_turn() and cover.visible, "Regular Hotseat retains pass-the-device cover")
+	game.continue_hotseat_turn()
+	check(game.fog_of_war.visible_by_player[game.active_player_id].size() == game.board_manager.tile_map_layer.get_used_cells().size(), "Regular reveals the full map after handoff")
 	scene.queue_free()
 	await get_tree().process_frame
 	GameSession.clear_players()
@@ -122,5 +151,6 @@ func run() -> void:
 	await get_tree().process_frame
 	GameSession.clear_players()
 	check(not GameSession.hotseat_mode, "Session reset does not leak hotseat mode")
+	check(GameSession.match_mode == GameSession.FOG_OF_WAR, "Session reset restores default visibility mode")
 	print("HOTSEAT REGRESSION: %d checks, %d failures" % [checks, failures])
 	get_tree().quit(0 if failures == 0 else 1)

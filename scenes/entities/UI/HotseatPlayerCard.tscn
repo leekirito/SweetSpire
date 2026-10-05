@@ -1,0 +1,116 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/hotseat_player_card.gd" id="4_card"]
+
+[ext_resource type="Texture2D" path="res://assets/environment/SABA/SABA_LVL1CITY.png" id="1_lcbqb"]
+[ext_resource type="Texture2D" path="res://assets/environment/MALAGKIT/MALAGKIT_LVL1CITY.png" id="2_kq77p"]
+[ext_resource type="Texture2D" path="res://assets/environment/KAMOTE/KAMOTE_LVL1CITY.png" id="3_ih8nq"]
+
+[sub_resource type="SystemFont" id="SystemFont_44x60"]
+font_names = PackedStringArray("Noto Sans", "Arial", "Segoe UI")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_32u85"]
+atlas = ExtResource("1_lcbqb")
+region = Rect2(52, 272, 152, 180)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_15ug8"]
+atlas = ExtResource("2_kq77p")
+region = Rect2(46, 266, 160, 188)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xothb"]
+atlas = ExtResource("3_ih8nq")
+region = Rect2(48, 293, 160, 160)
+
+[node name="HotseatPlayerCard" type="PanelContainer" unique_id=300682096]
+script = ExtResource("4_card")
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1648693888]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="Margin" unique_id=1975983613]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Margin/Content" unique_id=612267775]
+layout_mode = 2
+theme_type_variation = &"HeaderLabel"
+theme_override_fonts/font = SubResource("SystemFont_44x60")
+theme_override_font_sizes/font_size = 22
+text = "PLAYER 1"
+horizontal_alignment = 1
+
+[node name="PlayerName" type="LineEdit" parent="Margin/Content" unique_id=1016571385]
+layout_mode = 2
+placeholder_text = "Name (optional)"
+max_length = 24
+
+[node name="Choices" type="HBoxContainer" parent="Margin/Content" unique_id=1142823286]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Saba" type="VBoxContainer" parent="Margin/Content/Choices" unique_id=2123771897]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Artwork" type="TextureButton" parent="Margin/Content/Choices/Saba" unique_id=615604885]
+custom_minimum_size = Vector2(88, 72)
+layout_mode = 2
+tooltip_text = "SABA"
+texture_normal = SubResource("AtlasTexture_32u85")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Choose" type="Button" parent="Margin/Content/Choices/Saba" unique_id=814653941]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+toggle_mode = true
+text = "SABA"
+
+[node name="Malagkit" type="VBoxContainer" parent="Margin/Content/Choices" unique_id=716009568]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Artwork" type="TextureButton" parent="Margin/Content/Choices/Malagkit" unique_id=1168548821]
+custom_minimum_size = Vector2(88, 72)
+layout_mode = 2
+tooltip_text = "MALAGKIT"
+texture_normal = SubResource("AtlasTexture_15ug8")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Choose" type="Button" parent="Margin/Content/Choices/Malagkit" unique_id=1923382339]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+toggle_mode = true
+text = "MALAGKIT"
+
+[node name="Kamote" type="VBoxContainer" parent="Margin/Content/Choices" unique_id=2108370790]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Artwork" type="TextureButton" parent="Margin/Content/Choices/Kamote" unique_id=2003751365]
+custom_minimum_size = Vector2(88, 72)
+layout_mode = 2
+tooltip_text = "KAMOTE"
+texture_normal = SubResource("AtlasTexture_xothb")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Choose" type="Button" parent="Margin/Content/Choices/Kamote" unique_id=1116616086]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+toggle_mode = true
+text = "KAMOTE"
+
+[node name="Selection" type="Label" parent="Margin/Content" unique_id=1183265456]
+layout_mode = 2
+theme_type_variation = &"SubtleLabel"
+text = "CHOOSE A TRIBE"
+horizontal_alignment = 1

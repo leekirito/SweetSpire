@@ -21,7 +21,12 @@ func request_move(game: MatchManager, unit_id: int, target_cell: Vector2i) -> bo
 	unit.has_moved = true
 	game.board_manager.commit_unit_move(unit, target_cell)
 	game.structure_manager.on_unit_arrived(unit)
-	game.board_manager.animate_unit_move(unit, old_world_position, target_cell)
+	if LanSession.active():
+		unit.global_position = game.board_manager.cell_to_world(target_cell)
+		unit.present_network_move(old_world_position)
+		game.vision_sources_changed.emit()
+	else:
+		game.board_manager.animate_unit_move(unit, old_world_position, target_cell)
 	return true
 
 
@@ -64,6 +69,10 @@ func request_attack_at_cell(game: MatchManager, attacker_id: int, target_cell: V
 
 	attacker.has_attacked = true
 	attacker.has_moved = true
+	if LanSession.active():
+		LanSession.present_attack(attacker, target_cell, target_cells)
+		_on_attack_impact(game, targets, attacker.get_attack_damage())
+		return true
 	attacker.is_animating = true
 	attack_in_progress = true
 	var presentation: AttackPresentation = ATTACK_PRESENTATION.new()
@@ -96,13 +105,15 @@ func _on_attack_impact(
 	for target: Unit in targets:
 		if not is_instance_valid(target) or target.is_dead():
 			continue
-		target.take_damage(damage)
+		var show_feedback := not LanSession.active() or game.is_cell_visible_to_player(target.current_cell, game.get_viewing_player_id())
+		target.take_damage(damage, show_feedback)
 		if target.is_dead():
 			defeated.append(target)
 	for target: Unit in defeated:
-		var fling: DeathFling = DEATH_FLING.new()
-		game.get_tree().current_scene.add_child(fling)
-		fling.launch(target, game.board_manager)
+		if not LanSession.active() or game.is_cell_visible_to_player(target.current_cell, game.get_viewing_player_id()):
+			var fling: DeathFling = DEATH_FLING.new()
+			game.get_tree().current_scene.add_child(fling)
+			fling.launch(target, game.board_manager)
 		game.remove_unit_authoritative(target)
 	if not defeated.is_empty():
 		game.evaluate_eliminations()

@@ -103,6 +103,20 @@ func refresh(instant: bool = false) -> void:
 	if not initialized or _refreshing:
 		return
 	_refreshing = true
+	if LanSession.client():
+		_display_view(instant)
+		_refreshing = false
+		return
+	if GameSession.match_mode == GameSession.REGULAR:
+		var whole_map: Dictionary = {}
+		for cell: Vector2i in board.tile_map_layer.get_used_cells():
+			whole_map[cell] = true
+		for player: PlayerState in game.players:
+			visible_by_player[player.player_id] = whole_map.duplicate()
+			explored_by_player[player.player_id] = whole_map.duplicate()
+		_display_view(instant)
+		_refreshing = false
+		return
 	var next_views: Dictionary = {}
 	for player: PlayerState in game.players:
 		next_views[player.player_id] = {}
@@ -131,8 +145,12 @@ func refresh(instant: bool = false) -> void:
 			if board.is_cell_on_map(cell):
 				explored[cell] = true
 		explored_by_player[player_id] = explored
-	var switched := viewing_player_id != game.active_player_id
-	viewing_player_id = game.active_player_id
+	_display_view(instant)
+	_refreshing = false
+
+func _display_view(instant: bool) -> void:
+	var switched := viewing_player_id != game.get_viewing_player_id()
+	viewing_player_id = game.get_viewing_player_id()
 	var view_changed := switched
 	for cell: Vector2i in fog_nodes:
 		var state := state_for(cell, viewing_player_id)
@@ -176,7 +194,8 @@ func is_cell_explored(cell: Vector2i, player_id: int = -1) -> bool:
 
 func _apply_unit_visibility() -> void:
 	for unit: Unit in game.units.values():
-		var cell := board.cell_from_world(unit.global_position) if unit.is_animating else unit.current_cell
+		var rendering_move := unit.is_animating or (unit.network_move_tween != null and unit.network_move_tween.is_running())
+		var cell := board.cell_from_world(unit.global_position) if rendering_move else unit.current_cell
 		unit.visible = is_cell_visible(cell)
 		unit.refresh_tribe_outline(viewing_player_id)
 

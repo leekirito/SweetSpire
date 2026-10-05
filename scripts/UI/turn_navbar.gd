@@ -12,13 +12,14 @@ func _ready() -> void:
 	technology_tree.closed.connect(_close_technology_tree)
 	technology_tree.visibility_changed.connect(_sync_technology_modal)
 	match_manager.turn_started.connect(_on_turn_started)
+	LanSession.changed.connect(_sync_technology_modal)
 	_on_turn_started(match_manager.active_player_id, match_manager.current_round)
 
 
 func _open_technology_tree() -> void:
 	# GUI hit testing follows sibling order, independently of visual z_index.
 	move_to_front()
-	var player: PlayerState = match_manager.get_active_player()
+	var player: PlayerState = match_manager.get_viewing_player()
 	technology_tree.open_for_player(player)
 	$BottomNav.hide()
 	technology_tree.get_node("Close").grab_focus()
@@ -26,7 +27,7 @@ func _open_technology_tree() -> void:
 
 func _sync_technology_modal() -> void:
 	if end_turn_button != null:
-		end_turn_button.disabled = technology_tree.visible or match_manager.current_phase != MatchManager.Phase.PLAYER_TURN
+		end_turn_button.disabled = technology_tree.visible or match_manager.current_phase != MatchManager.Phase.PLAYER_TURN or not LanSession.can_act()
 
 
 func _close_technology_tree() -> void:

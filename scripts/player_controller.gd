@@ -25,6 +25,7 @@ var preview_cell: Vector2i = Vector2i(-999999, -999999)
 # SETUP
 
 func _ready() -> void:
+	LanSession.changed.connect(func(): call_deferred("_refresh_network_selection"))
 	board_manager.move_finished.connect(
 		_on_move_finished
 	)
@@ -39,8 +40,21 @@ func _ready() -> void:
 
 # INPUT
 
+func _refresh_network_selection() -> void:
+	if not LanSession.active() or selected_unit_id == -1 or not LanSession.can_act():
+		return
+	var unit := match_manager.get_unit(selected_unit_id)
+	if unit == null or (unit.has_moved and unit.has_attacked):
+		deselect_unit()
+	elif is_aiming:
+		_show_aim_options(unit)
+	else:
+		_show_unit_options(unit)
+
 ## Routes a click by priority: selected-unit action, unit selection, town UI, then resource UI.
 func _unhandled_input(event: InputEvent) -> void:
+	if not LanSession.can_act():
+		return
 	if match_manager.current_phase != MatchManager.Phase.PLAYER_TURN:
 		return
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and is_aiming:

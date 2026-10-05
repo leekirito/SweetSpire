@@ -12,6 +12,12 @@ func _enter_tree() -> void:
 	var root := self
 	var game := root.get_node("MatchManager") as MatchManager
 	game.populate_demo_map = false
+	if LanSession.client():
+		if GameSession.network_map.is_empty():
+			_fail("Waiting for the host map.")
+			return
+		_apply_map(GameSession.network_map)
+		return
 	if GameSession.require_map_manifest and GameSession.map_manifest.is_empty():
 		_fail("Waiting for the host map manifest; local generation is disabled.")
 		return
@@ -35,6 +41,11 @@ func _enter_tree() -> void:
 	if assembled.is_empty():
 		_fail(generator.last_error)
 		return
+	_apply_map(assembled)
+
+func _apply_map(assembled: Dictionary) -> void:
+	var root := self
+	var game := root.get_node("MatchManager") as MatchManager
 	# Validation completes before replacing any authored scene content.
 	for child: Node in root.get_children():
 		if child is Building or child is Resources:

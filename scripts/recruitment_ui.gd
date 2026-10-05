@@ -252,15 +252,15 @@ func _on_button_pressed(
 		return
 
 
-	var purchased_unit: Unit = (
-		match_manager.request_recruit_unit(
+	var purchased: bool = (
+		match_manager.request_recruitment(
 			selected_building.building_id,
 			units[unit_name]
 		)
 	)
 
 
-	if purchased_unit == null:
+	if not purchased:
 		print(
 			"Could not purchase ",
 			unit_name

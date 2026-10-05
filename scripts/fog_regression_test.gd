@@ -17,6 +17,8 @@ func run() -> void:
 	await get_tree().process_frame
 	var game: MatchManager = $MatchManager
 	var fog: FogOfWar = $FogOfWar
+	# This fixture verifies radius growth independently of the scene's tuned default.
+	fog.building_vision_radius = 2
 	var board := game.board_manager
 	check(fog.initialized, "Fog initializes after match setup")
 	check(fog.fog_nodes.size() == board.tile_map_layer.get_used_cells().size(), "One scene node per ground cell")
@@ -162,5 +164,17 @@ func run() -> void:
 	check(tile.cover.visible and tile.cover.scale.is_equal_approx(Vector2.ONE), "Sprite shares grow animation")
 	fog.fog_texture = null
 	check(not tile.fog_sprite.visible and tile.cover.color == fog.explored_color, "Clearing texture restores polygon fallback")
+	GameSession.match_mode = GameSession.REGULAR
+	# Earlier checks moved this enemy next to the scout; isolate a distant target.
+	board.commit_unit_move(enemy, scout.current_cell + Vector2i(6, 0))
+	enemy.global_position = board.cell_to_world(enemy.current_cell)
+	fog.refresh(true)
+	check(fog.visible_by_player[p1.player_id].size() == board.tile_map_layer.get_used_cells().size(), "Regular reveals all terrain to player one")
+	check(fog.visible_by_player[p2.player_id].size() == board.tile_map_layer.get_used_cells().size(), "Regular reveals all terrain to player two")
+	check(enemy.visible and fog.state_for(Vector2i(24, 24)) == FogOfWar.State.VISIBLE, "Regular displays enemies and removes fog cover")
+	check(enemy.current_cell not in game.get_visible_attack_tiles(scout), "Regular visibility does not extend attack range")
+	GameSession.match_mode = GameSession.FOG_OF_WAR
+	fog.refresh(true)
+	check(not enemy.visible, "Fog mode still hides enemies outside vision")
 	print("Fog regression: %d checks, %d failures" % [checks, failures])
 	get_tree().quit(1 if failures else 0)

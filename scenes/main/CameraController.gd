@@ -11,9 +11,17 @@ func _ready() -> void:
 	var game := get_node_or_null("../MatchManager") as MatchManager
 	if game != null:
 		game.turn_started.connect(_focus_player)
+		game.match_started.connect(_initial_network_focus)
+
+func _initial_network_focus() -> void:
+	if LanSession.active():
+		_focus_player(LanSession.local_player_id, 1)
 
 
 func _focus_player(player_id: int, _round: int) -> void:
+	if LanSession.active():
+		if player_id != LanSession.local_player_id:
+			return
 	if not focus_active_player_on_turn:
 		return
 	var game := get_node("../MatchManager") as MatchManager

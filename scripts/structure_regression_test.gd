@@ -126,8 +126,9 @@ func run() -> void:
 	if fish_popup != null:
 		fish_popup.queue_free()
 	before = player.sugars
+	var fish_reward := catchable_fish.data.collect_sugar
 	check(game.request_collect_resource(catchable_fish.resource_instance_id, 1), "Fishing catches a controlled lake fish")
-	check(player.sugars == before + 1, "Fish collection grants 1 Sugar")
+	check(player.sugars == before + fish_reward, "Fish collection grants the authored Sugar reward")
 	var unit: Unit = game.units.values()[0]
 	unit.owner_id = 1
 	board.unregister_unit(unit)

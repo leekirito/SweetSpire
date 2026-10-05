@@ -49,6 +49,11 @@ func _ready() -> void:
 	$TechCard/CardMargin/CardContent/Buy.pressed.connect(_purchase_selected)
 	resized.connect(_layout_nodes)
 	_build_nodes()
+	LanSession.changed.connect(_network_refresh)
+
+func _network_refresh() -> void:
+	if visible and active_player != null:
+		_refresh_states()
 
 
 func open_for_player(player: PlayerState) -> void:
@@ -167,7 +172,7 @@ func _update_card(technology: TechnologyData) -> void:
 	var owned := active_player.has_technology(technology.technology_id)
 	var affordable := active_player.sugars >= technology.cost
 	var buy: Button = content.get_node("Buy")
-	buy.disabled = owned or not prerequisite_owned or not affordable
+	buy.disabled = owned or not prerequisite_owned or not affordable or not LanSession.can_act()
 
 	if owned:
 		buy.text = "TECHNOLOGY OWNED"

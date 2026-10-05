@@ -43,6 +43,18 @@ var _boat_data: StructureData
 var has_moved: bool = false
 var has_attacked: bool = false
 var is_animating: bool = false
+var network_move_tween: Tween
+
+## Board cells are already committed. This tween is purely local presentation.
+func present_network_move(from_position: Vector2) -> void:
+	if network_move_tween != null:
+		network_move_tween.kill()
+	var destination := global_position
+	if from_position.is_equal_approx(destination):
+		return
+	global_position = from_position
+	network_move_tween = create_tween()
+	network_move_tween.tween_property(self, "global_position", destination, LanSession.SETTINGS.move_duration)
 
 # Board State
 
@@ -223,8 +235,9 @@ func refresh_tribe_outline(viewing_player_id: int) -> void:
 
 ## Consumes defence before health, then refreshes the unit bars.
 ## Applies damage and spawns readable combat feedback at the unit's world position.
-func take_damage(damage: int) -> int:
-	audio.play()
+func take_damage(damage: int, show_feedback: bool = true) -> int:
+	if show_feedback:
+		audio.play()
 	var durability_before: int = defence + unit_health
 
 	var absorbed_damage: int = mini(
@@ -245,6 +258,8 @@ func take_damage(damage: int) -> int:
 		damage,
 		durability_before
 	)
+	if not show_feedback:
+		return applied_damage
 	apply_shake()
 	_show_damage_number(applied_damage)
 	if applied_damage > 0:

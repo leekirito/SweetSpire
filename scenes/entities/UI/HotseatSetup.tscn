@@ -1,0 +1,147 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/hotseat_setup.gd" id="2_setup"]
+
+[ext_resource type="PackedScene" path="res://scenes/entities/UI/HotseatPlayerCard.tscn" id="1_167vs"]
+
+[sub_resource type="SystemFont" id="SystemFont_44x60"]
+font_names = PackedStringArray("Noto Sans", "Arial", "Segoe UI")
+
+[node name="HotseatSetup" type="Control" unique_id=1955145111]
+script = ExtResource("2_setup")
+z_index = 10
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HotseatBackdrop" type="ColorRect" parent="." unique_id=745632113]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.023529412, 0.03529412, 0.06666667, 0.5882353)
+
+[node name="ResponsiveLayout" type="MarginContainer" parent="." unique_id=271888815]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 42
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 42
+theme_override_constants/margin_bottom = 30
+
+[node name="Page" type="VBoxContainer" parent="ResponsiveLayout" unique_id=3190434]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="ResponsiveLayout/Page" unique_id=1337894240]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="ResponsiveLayout/Page/Header" unique_id=1230895371]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+text = "‹ BACK"
+
+[node name="Title" type="Label" parent="ResponsiveLayout/Page/Header" unique_id=1683240752]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"HeaderLabel"
+theme_override_font_sizes/font_size = 28
+text = "HOTSEAT SETUP"
+horizontal_alignment = 1
+
+[node name="CountRow" type="HBoxContainer" parent="ResponsiveLayout/Page" unique_id=209152240]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="ResponsiveLayout/Page/CountRow" unique_id=2127187590]
+layout_mode = 2
+text = "PLAYERS"
+
+[node name="PlayerCount" type="OptionButton" parent="ResponsiveLayout/Page/CountRow" unique_id=1774947168]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_44x60")
+selected = 1
+item_count = 8
+popup/item_0/text = "1 — SOLO"
+popup/item_0/id = 1
+popup/item_1/text = "2 PLAYERS"
+popup/item_1/id = 2
+popup/item_2/text = "3 PLAYERS"
+popup/item_2/id = 3
+popup/item_3/text = "4 PLAYERS"
+popup/item_3/id = 4
+popup/item_4/text = "5 PLAYERS"
+popup/item_4/id = 5
+popup/item_5/text = "6 PLAYERS"
+popup/item_5/id = 6
+popup/item_6/text = "7 PLAYERS"
+popup/item_6/id = 7
+popup/item_7/text = "8 PLAYERS"
+popup/item_7/id = 8
+
+[node name="Hint" type="Label" parent="ResponsiveLayout/Page/CountRow" unique_id=1912831601]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Choose a tribe for each player. Tribes can repeat."
+autowrap_mode = 3
+
+[node name="ModeRow" type="HBoxContainer" parent="ResponsiveLayout/Page"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="ResponsiveLayout/Page/ModeRow"]
+layout_mode = 2
+text = "MODE"
+
+[node name="MatchMode" type="OptionButton" parent="ResponsiveLayout/Page/ModeRow"]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "FOG OF WAR"
+popup/item_1/text = "REGULAR"
+popup/item_1/id = 1
+tooltip_text = "Fog of War: explore to reveal the map. Regular: the whole map and all units are visible."
+
+[node name="PlayersScroll" type="ScrollContainer" parent="ResponsiveLayout/Page" unique_id=196939008]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="Players" type="GridContainer" parent="ResponsiveLayout/Page/PlayersScroll" unique_id=1386954046]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16
+columns = 2
+
+[node name="Player1" type="PanelContainer" parent="ResponsiveLayout/Page/PlayersScroll/Players" unique_id=300682096 instance=ExtResource("1_167vs")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Player2" type="PanelContainer" parent="ResponsiveLayout/Page/PlayersScroll/Players" unique_id=1435708210 instance=ExtResource("1_167vs")]
+player_number = 2
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Status" type="Label" parent="ResponsiveLayout/Page" unique_id=167239264]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_44x60")
+text = "0 / 2 players ready"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="StartButton" type="Button" parent="ResponsiveLayout/Page" unique_id=1819141271]
+custom_minimum_size = Vector2(300, 54)
+layout_mode = 2
+size_flags_horizontal = 4
+disabled = true
+text = "START MATCH"
