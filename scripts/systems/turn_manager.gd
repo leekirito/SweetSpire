@@ -49,13 +49,15 @@ func end_turn(game: MatchManager) -> void:
 			break
 		game.active_player_index = (game.active_player_index + 1) % game.players.size()
 		game.active_player_id = game.players[game.active_player_index].player_id
-	if GameSession.hotseat_mode and game.players.size() > 1 and game.hotseat_handoff != null:
+	if GameSession.hotseat_mode and game.human_count() > 1 and not game.get_active_player().is_bot() and game.hotseat_handoff != null:
 		game.begin_hotseat_handoff()
 	else:
 		start_player_turn(game)
 
 
 func start_player_turn(game: MatchManager) -> void:
+	if not game.get_active_player().is_bot():
+		game.human_viewer_id = game.active_player_id
 	game.current_phase = MatchManager.Phase.PLAYER_TURN
 	reset_player_units(game, game.active_player_id)
 	game.update_ui()

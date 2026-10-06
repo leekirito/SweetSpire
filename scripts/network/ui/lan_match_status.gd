@@ -29,7 +29,7 @@ func _refresh() -> void:
 	else:
 		label.text = "Preparing the shared map…\nWaiting for all players to finish loading."
 		for row: Dictionary in LanSession.seats:
-			label.text += "\n%s · %s" % [row.name, "Ready" if LanSession.loaded.get(int(row.id), false) else "Loading…"]
+			label.text += "\n%s · %s" % [row.name, "Bot ready" if row.get("kind", "human") == "bot" else ("Ready" if LanSession.loaded.get(int(row.id), false) else "Loading…")]
 	$Overlay/Center/Panel/Content/Wait.visible = LanSession.hosting and LanSession.paused_for_disconnect and LanSession._disconnect_elapsed >= LanSession.SETTINGS.reconnect_grace
 	NumericFontManager.manage_numeric_control(label)
 	$Bar/Message.text = "LAN · " + ("Your turn" if LanSession.can_act() else "Waiting for the next action")

@@ -59,7 +59,10 @@ func client() -> bool:
 	return active() and not hosting
 
 func can_act() -> bool:
-	return not active() or (state == "playing" and not paused_for_disconnect and not pending_command and is_instance_valid(game) and game.active_player_id == local_player_id)
+	if not active():
+		var local_game := get_tree().current_scene.get_node_or_null("MatchManager") if get_tree().current_scene != null else null
+		return local_game == null or local_game.can_human_act()
+	return (state == "playing" and not paused_for_disconnect and not pending_command and is_instance_valid(game) and game.active_player_id == local_player_id and game.can_human_act())
 
 func prepare_compatibility() -> bool:
 	var generator := BiomeMapGenerator.new()
@@ -135,7 +138,7 @@ func _connect() -> bool:
 	return true
 
 func _seat(id: int, title: String, tribe: String) -> Dictionary:
-	return {"id": id, "name": title.strip_edges().left(24) if not title.strip_edges().is_empty() else "Player %d" % id, "tribe": tribe if LanCatalog.TRIBES.has(tribe) else "saba", "ready": false, "connected": true}
+	return {"kind": "human", "profile": "balanced", "id": id, "name": title.strip_edges().left(24) if not title.strip_edges().is_empty() else "Player %d" % id, "tribe": tribe if LanCatalog.TRIBES.has(tribe) else "saba", "ready": false, "connected": true}
 
 func leave() -> void:
 	if hosting and peer != null:
@@ -212,7 +215,7 @@ func configure_room(title: String, count: int, mode: String, is_private: bool, p
 	private_room = is_private
 	if rules_changed:
 		for row: Dictionary in seats:
-			row.ready = false
+			row.ready = row.get("kind", "human") == "bot"
 	error_message = ""
 	_publish_lobby()
 	return true
@@ -314,6 +317,8 @@ func _install_players() -> void:
 		var player := PlayerState.new()
 		player.player_id = int(row.id)
 		player.player_name = row.name
+		player.controller_kind = row.get("kind", "human")
+		player.bot_profile_id = row.get("profile", "balanced")
 		player.tribe = LanCatalog.TRIBES[row.tribe]
 		player.sugars = 20
 		player.unlock_technology(player.tribe.starting_technology.technology_id)
@@ -338,6 +343,8 @@ func _try_begin() -> void:
 	if not hosting or not is_instance_valid(game):
 		return
 	for row: Dictionary in seats:
+		if row.get("kind", "human") == "bot":
+			continue
 		if game.eliminated_player_ids.has(int(row.id)) and not row.connected:
 			continue
 		if not loaded.get(int(row.id), false) or not row.connected:
@@ -732,3 +739,52 @@ func _process_discovery(delta: float) -> void:
 		if Time.get_ticks_msec() - int(rooms[key].seen) > int(SETTINGS.room_expiry * 1000):
 			rooms.erase(key)
 			rooms_changed.emit()
+func execute_bot(seat: int, command: Dictionary) -> bool:
+	if not hosting or not is_instance_valid(game) or not game.bot_executing or not game.bot_can_act(seat):
+		return false
+	return _execute(seat, int(last_commands.get(seat, 0)) + 1, command)
+
+func add_bot() -> bool:
+	if not hosting or state != "lobby" or seats.size() >= capacity:
+		return false
+	var ids: Array = []
+	for row: Dictionary in seats:
+		ids.append(int(row.id))
+	var id := 2
+	while id in ids:
+		id += 1
+	var row := _seat(id, "Bot %d" % id, "saba")
+	row.kind = "bot"
+	row.profile = "balanced"
+	row.ready = true
+	seats.append(row)
+	_bot_roster_changed()
+	return true
+
+func edit_bot(id: int, title: String, tribe: String, profile_id: String) -> bool:
+	if not hosting or state != "lobby" or not LanCatalog.TRIBES.has(tribe) or not BotCatalog.PROFILES.has(profile_id):
+		return false
+	for row: Dictionary in seats:
+		if int(row.id) == id and row.get("kind", "human") == "bot":
+			row.name = title.strip_edges().left(24) if not title.strip_edges().is_empty() else "Bot %d" % id
+			row.tribe = tribe
+			row.profile = profile_id
+			_bot_roster_changed()
+			return true
+	return false
+
+func remove_bot(id: int) -> bool:
+	if not hosting or state != "lobby":
+		return false
+	for index in seats.size():
+		if int(seats[index].id) == id and seats[index].get("kind", "human") == "bot":
+			seats.remove_at(index)
+			_bot_roster_changed()
+			return true
+	return false
+
+func _bot_roster_changed() -> void:
+	for row: Dictionary in seats:
+		row.ready = row.get("kind", "human") == "bot"
+	seats.sort_custom(func(a: Dictionary, b: Dictionary): return int(a.id) < int(b.id))
+	_publish_lobby()

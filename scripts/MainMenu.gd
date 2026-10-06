@@ -16,6 +16,8 @@ const MENU_DESIGN_SIZE := Vector2(1152.0, 648.0)
 var menu_transitioning: bool = false
 var hotseat_selection_labels: Dictionary[int, Label] = {}
 var hotseat_player_count: int = 2
+var hotseat_kinds: Dictionary = {}
+var hotseat_profiles: Dictionary = {}
 var hotseat_names: Dictionary[int, String] = {}
 var hotseat_tribe_buttons: Dictionary = {}
 var hotseat_grid: GridContainer
@@ -89,8 +91,14 @@ func _refresh_hotseat_selections() -> void:
 		hotseat_selection_labels[player_id].text = selected.tribe_name + " SELECTED" if selected != null else "CHOOSE A TRIBE"
 		for entry: Dictionary in hotseat_tribe_buttons[player_id]:
 			entry.button.set_pressed_no_signal(entry.tribe == selected)
-	hotseat_start.disabled = chosen != hotseat_player_count
+	var humans := 0
+	for id in range(1, hotseat_player_count + 1):
+		if hotseat_kinds.get(id, "human") == "human":
+			humans += 1
+	hotseat_start.disabled = chosen != hotseat_player_count or humans == 0
 	hotseat_status.text = "Solo exploration — capture and hold Sweetspire to win." if hotseat_player_count == 1 and chosen == 1 else "%d / %d players ready" % [chosen, hotseat_player_count]
+	if humans == 0:
+		hotseat_status.text = "Keep at least one human player."
 
 
 func _configure_hotseat_player_panel(panel: PanelContainer, player_id: int) -> void:
@@ -104,7 +112,20 @@ func _configure_hotseat_player_panel(panel: PanelContainer, player_id: int) -> v
 	var tribes: Array[TribeData] = [saba_tribe, malagkit_tribe, kamote_tribe]
 	var choice_names := ["Saba", "Malagkit", "Kamote"]
 	var needs_connections := not panel.has_meta("hotseat_connected")
+	var controller: OptionButton = content.get_node("Controller")
+	var profile_picker: OptionButton = content.get_node("Profile")
+	controller.select(1 if hotseat_kinds.get(player_id, "human") == "bot" else 0)
+	profile_picker.clear()
+	for id: String in BotCatalog.PROFILES:
+		profile_picker.add_item(BotCatalog.profile(id).display_name)
+	profile_picker.select(maxi(0, BotCatalog.PROFILES.keys().find(hotseat_profiles.get(player_id, "balanced"))))
+	profile_picker.visible = controller.selected == 1
 	if needs_connections:
+		controller.item_selected.connect(func(index: int):
+			hotseat_kinds[player_id] = "bot" if index == 1 else "human"
+			profile_picker.visible = index == 1
+			_refresh_hotseat_selections())
+		profile_picker.item_selected.connect(func(index: int): hotseat_profiles[player_id] = BotCatalog.PROFILES.keys()[index])
 		player_name.text_changed.connect(func(value: String) -> void: hotseat_names[player_id] = value)
 	for index in tribes.size():
 		var choice := choices.get_node(choice_names[index])
@@ -221,6 +242,13 @@ func start_game() -> void:
 
 ## Validate all choices and map compatibility before leaving the setup screen.
 func prepare_hotseat_session() -> bool:
+	var humans := 0
+	for id in range(1, hotseat_player_count + 1):
+		if hotseat_kinds.get(id, "human") == "human":
+			humans += 1
+	if humans == 0:
+		hotseat_status.text = "Keep at least one human player."
+		return false
 	var roster: Array = []
 	for player_id in range(1, hotseat_player_count + 1):
 		var tribe: TribeData = selected_tribes.get(player_id)
@@ -243,9 +271,11 @@ func prepare_hotseat_session() -> bool:
 	for player_id in range(1, hotseat_player_count + 1):
 		var player := PlayerState.new()
 		player.player_id = player_id
+		player.controller_kind = hotseat_kinds.get(player_id, "human")
+		player.bot_profile_id = hotseat_profiles.get(player_id, "balanced")
 		player.player_name = hotseat_names.get(player_id, "").strip_edges()
 		if player.player_name.is_empty():
-			player.player_name = "Player %d" % player_id
+			player.player_name = ("Bot %d" if player.is_bot() else "Player %d") % player_id
 		player.tribe = selected_tribes[player_id]
 		player.sugars = 20
 		player.unlock_technology(player.tribe.starting_technology.technology_id)

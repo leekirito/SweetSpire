@@ -15,4 +15,4 @@ extends Resource
 @export var max_packet_bytes: int = 1048576
 @export_range(0.0, 1.0) var move_duration: float = 0.22
 @export var protocol_version: int = 1
-@export var build_version: String = "sweetspire-lan-3"
+@export var build_version: String = "sweetspire-lan-4-bots"

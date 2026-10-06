@@ -23,6 +23,8 @@
 [ext_resource type="Script" uid="uid://bah8mu8udpc5" path="res://scripts/effects/center_objective_highlight.gd" id="22_center_highlight"]
 [ext_resource type="Shader" uid="uid://n87tl322x7hd" path="res://assets/Shader/movement_overlay.gdshader" id="23_movement_shader"]
 [ext_resource type="Script" uid="uid://bpq0ux3l63kff" path="res://scripts/map/map_bootstrap.gd" id="24_map_bootstrap"]
+[ext_resource type="Script" uid="uid://bnkjt0dh0nwc3" path="res://scripts/ai/bot_director.gd" id="bot_director"]
+[ext_resource type="PackedScene" path="res://scenes/UI/BotTurnStatus.tscn" id="bot_status"]
 [ext_resource type="PackedScene" path="res://scenes/UI/HotseatHandoff.tscn" id="ui_HotseatHandoff"]
 [ext_resource type="PackedScene" uid="uid://b18tab1wru4nl" path="res://scenes/network/LanMatchStatus.tscn" id="ui_lan_status"]
 [ext_resource type="PackedScene" path="res://scenes/UI/MapSetupError.tscn" id="ui_MapSetupError"]
@@ -143,6 +145,11 @@ script = ExtResource("6_qkm1d")
 center_control_rounds = 10
 sweetspire_center_cell = Vector2i(14, 14)
 populate_demo_map = true
+
+[node name="BotDirector" type="Node" parent="MatchManager" unique_id=346385353]
+script = ExtResource("bot_director")
+
+[node name="BotTurnStatus" parent="MatchManager" unique_id=1424662572 instance=ExtResource("bot_status")]
 
 [node name="HotseatHandoff" parent="MatchManager" unique_id=1759458237 instance=ExtResource("ui_HotseatHandoff")]
 

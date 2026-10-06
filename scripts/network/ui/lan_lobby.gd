@@ -26,6 +26,7 @@ func _ready() -> void:
 	NumericFontManager.manage_numeric_control(browser.get_node("Manual/Port").get_line_edit())
 	room.get_node("Actions/Leave").pressed.connect(_leave_room)
 	room.get_node("Actions/Ready").toggled.connect(_ready_changed)
+	room.get_node("AddBot").pressed.connect(LanSession.add_bot)
 	room.get_node("Actions/Start").pressed.connect(LanSession.start_match)
 	room.get_node("Settings/RoomName").text_submitted.connect(func(_text: String): _apply_settings())
 	room.get_node("Settings/RoomName").focus_exited.connect(_apply_settings)
@@ -204,6 +205,8 @@ func _refresh() -> void:
 func _refresh_room() -> void:
 	var settings := room.get_node("Settings")
 	var host := LanSession.hosting
+	room.get_node("AddBot").visible = host
+	room.get_node("AddBot").disabled = LanSession.seats.size() >= LanSession.capacity
 	settings.get_node("RoomName").editable = host
 	if not settings.get_node("RoomName").has_focus():
 		settings.get_node("RoomName").text = LanSession.room_name

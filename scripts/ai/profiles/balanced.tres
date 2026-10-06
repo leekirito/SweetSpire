@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="BotProfile" format=3 uid="uid://cws5kiw4bn5b5"]
+
+[ext_resource type="Script" uid="uid://dceady8va66th" path="res://scripts/ai/bot_profile.gd" id="1"]
+
+[resource]
+script = ExtResource("1")

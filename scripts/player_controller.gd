@@ -77,8 +77,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	var mouse_position: Vector2 = (
-		get_global_mouse_position()
+		get_canvas_transform().affine_inverse() * event.position
 	)
+	_handle_board_click(mouse_position)
+
+
+## An unused action click continues into selection instead of requiring a second click.
+func _handle_board_click(mouse_position: Vector2) -> void:
 	if not match_manager.is_cell_visible_to_player(
 		board_manager.cell_from_world(mouse_position), match_manager.active_player_id
 	):
@@ -89,10 +94,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	# A unit is already selected:
 	# let it process movement / attack first.
-	if selected_unit_id != -1:
-		_handle_selected_unit_click(
-			mouse_position
-		)
+	if selected_unit_id != -1 and _handle_selected_unit_click(mouse_position):
 		return
 
 
@@ -220,10 +222,10 @@ func _handle_aim_click(cell: Vector2i) -> void:
 	if match_manager.request_attack_at_cell(selected_unit_id, cell):
 		deselect_unit()
 
-## Interprets a selected unit's next click as an attack, move, or deselection.
+## Returns true only when the selected unit consumes this click.
 func _handle_selected_unit_click(
 	mouse_position: Vector2
-) -> void:
+) -> bool:
 
 	var selected_unit: Unit = (
 		match_manager.get_unit(
@@ -233,16 +235,19 @@ func _handle_selected_unit_click(
 
 	if selected_unit == null:
 		deselect_unit()
-		return
+		return false
 
 	if selected_unit.is_animating:
-		return
+		return true
 
 	var clicked_unit_id: int = (
 		board_manager.get_unit_id_at_world(
 			mouse_position
 		)
 	)
+	if clicked_unit_id == selected_unit_id:
+		deselect_unit()
+		return true
 
 	# ATTACK
 
@@ -271,7 +276,7 @@ func _handle_selected_unit_click(
 			if attack_successful:
 				deselect_unit()
 
-			return
+			return true
 
 	# MOVE
 
@@ -284,7 +289,8 @@ func _handle_selected_unit_click(
 		)
 
 		var move_successful: bool = (
-			match_manager.request_move(
+			board_manager.can_move_to(selected_unit, target_cell)
+			and match_manager.request_move(
 				selected_unit_id,
 				target_cell
 			)
@@ -297,11 +303,12 @@ func _handle_selected_unit_click(
 			# movement animation finishes.
 			clear_highlights()
 
-			return
+			return true
 
 	# INVALID CLICK
 
 	deselect_unit()
+	return false
 
 
 # SELECT UNIT

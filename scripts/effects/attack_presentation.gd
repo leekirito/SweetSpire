@@ -58,7 +58,7 @@ func _play_slash(from_position: Vector2) -> void:
 
 
 func _play_meteor(from_position: Vector2, blast_world_size: Vector2) -> void:
-	if _unit_data.meteor_effect_scene != null:
+	if visible and _unit_data.meteor_effect_scene != null:
 		var instance := _unit_data.meteor_effect_scene.instantiate()
 		if instance is Node2D:
 			_meteor_effect = instance
@@ -86,7 +86,7 @@ func _emit_impact() -> void:
 	if _meteor_attack:
 		if is_instance_valid(_meteor_effect) and _meteor_effect.has_method("trigger_impact"):
 			_meteor_effect.call("trigger_impact")
-	else:
+	elif visible:
 		Fx.spawn("impact_spark", _impact_position, {"size": 0.7})
 	impact.emit()
 

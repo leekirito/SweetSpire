@@ -94,6 +94,11 @@ autowrap_mode = 3
 [node name="PlayersTitle" type="Label" parent="."]
 layout_mode = 2
 text = "PLAYERS · CHOOSE YOUR NAME AND TRIBE"
+[node name="AddBot" type="Button" parent="."]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "ADD BOT"
+tooltip_text = "Fill an open seat with a bot controlled by the host."
 [node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3

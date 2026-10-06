@@ -4,6 +4,12 @@ extends Node
 
 var player_id: int
 var player_name: String = ""
+var controller_kind: String = "human"
+var bot_profile_id: String = "balanced"
+
+func is_bot() -> bool:
+	return controller_kind == "bot"
+
 var tribe: TribeData
 
 var sugars: int = 0

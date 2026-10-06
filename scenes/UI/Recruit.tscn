@@ -69,6 +69,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_uhxda")
+mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="." unique_id=1027456854]
 layout_mode = 1
@@ -80,6 +81,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_0iy8c")
+mouse_filter = 2
 
 [node name="Button" type="Button" parent="Panel" unique_id=1150693934]
 layout_mode = 1

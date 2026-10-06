@@ -1,0 +1,5 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://bstxj450ntmq7" path="res://scripts/ai/tests/bot_eight_seats_test.gd" id="1"]
+[node name="BotEightSeatsTest" type="Node"]
+script = ExtResource("1")

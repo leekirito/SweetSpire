@@ -45,6 +45,24 @@ theme_override_font_sizes/font_size = 22
 text = "PLAYER 1"
 horizontal_alignment = 1
 
+[node name="Controller" type="OptionButton" parent="Margin/Content"]
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "HUMAN"
+popup/item_0/id = 0
+popup/item_1/text = "BOT"
+popup/item_1/id = 1
+
+[node name="Profile" type="OptionButton" parent="Margin/Content"]
+layout_mode = 2
+visible = false
+tooltip_text = "Bot behavior profile"
+item_count = 1
+selected = 0
+popup/item_0/text = "Balanced"
+popup/item_0/id = 0
+
 [node name="PlayerName" type="LineEdit" parent="Margin/Content" unique_id=1016571385]
 layout_mode = 2
 placeholder_text = "Name (optional)"

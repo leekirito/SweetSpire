@@ -25,6 +25,8 @@ func _focus_player(player_id: int, _round: int) -> void:
 	if not focus_active_player_on_turn:
 		return
 	var game := get_node("../MatchManager") as MatchManager
+	if game.get_player(player_id) != null and game.get_player(player_id).is_bot():
+		return
 	if game.fog_of_war == null:
 		return
 	for unit: Unit in game.units.values():

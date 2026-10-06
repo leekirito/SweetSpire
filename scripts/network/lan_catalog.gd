@@ -35,7 +35,7 @@ static func xy(value: Vector2i) -> Array:
 ## Hash authored rule values; textures/audio and editor-only metadata are excluded.
 ## Bump LanSettings.build_version whenever rule scripts change.
 static func rules_signature() -> String:
-	var rules: Array = []
+	var rules: Array = [["bots", BotCatalog.signature()]]
 	for catalog: Dictionary in [TRIBES, TECHS, STRUCTURES]:
 		for key: String in catalog:
 			rules.append([key, _rule_values(catalog[key])])

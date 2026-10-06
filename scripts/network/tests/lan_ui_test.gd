@@ -38,6 +38,23 @@ func run() -> void:
 	ui.room.get_node("Settings/Mode").select(1)
 	ui.room.get_node("Settings/Mode").item_selected.emit(1)
 	check(LanSession.match_mode == GameSession.REGULAR, "mode selector remains functional")
+	ui.room.get_node("AddBot").pressed.emit()
+	check(LanSession.seats.size() == 2 and LanSession.seats[1].kind == "bot", "Host adds bot using authored button")
+	var bot_row: Node = ui.rows[2]
+	check(bot_row.get_node("Profile").visible and bot_row.get_node("PlayerName").editable, "Host can customize bot")
+	bot_row.get_node("PlayerName").text = "Clever Potato"
+	bot_row.get_node("Tribe").select(2)
+	bot_row.get_node("Tribe").item_selected.emit(2)
+	check(LanSession.seats[1].name == "Clever Potato" and LanSession.seats[1].tribe == "kamote", "Bot name and tribe persist")
+	LanSession.choose("kamote", true)
+	check(LanSession.can_start(), "Host and bot can start without a guest")
+	check(not LanSession.edit_bot(1, "No", "saba", "balanced"), "Cannot replace host with bot")
+	check(not LanSession.edit_bot(2, "No", "saba", "missing"), "Unknown profiles rejected")
+	bot_row.get_node("Kick").pressed.emit()
+	check(LanSession.seats.size() == 1 and not LanSession.can_start(), "Host removes bot seat")
+	for index in 7:
+		check(LanSession.add_bot(), "Bot fills available seat")
+	check(not LanSession.add_bot() and ui.room.get_node("AddBot").disabled, "Eight-seat limit includes bots")
 	ui.room.get_node("Actions/Leave").pressed.emit()
 	check(not LanSession.hosting and ui.choice.visible, "host leave returns to choice")
 	ui.choice.get_node("Content/Join").pressed.emit()

@@ -54,7 +54,7 @@ func collect_sugars(game: MatchManager) -> void:
 			continue
 		var income := building.by_turn_sugar + game.structure_manager.income_for(building)
 		player.sugars += income
-		if not LanSession.active() or building.owner_id == game.get_viewing_player_id():
+		if building.owner_id == game.get_viewing_player_id():
 			building.show_sugar_gain(income)
 	for structure: Structure in game.structure_manager.structures.values():
 		structure.on_round_end(game)

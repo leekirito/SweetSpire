@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cnxo4mt4y2fpe" path="res://scripts/ai/tests/bot_lan_test.gd" id="1"]
+[node name="TestRoot" type="Node"]
+[node name="BotLanTest" type="Node" parent="."]
+script = ExtResource("1")

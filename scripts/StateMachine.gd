@@ -98,12 +98,8 @@ func _apply_transition() -> void:
 		return
 
 
-	print(
-		"AI STATE: ",
-		current_state.name if current_state else "NONE",
-		" -> ",
-		new_state.name
-	)
+	if owner is AIController and owner.profile.debug_decisions:
+		print("AI STATE: ", current_state.name if current_state else "NONE", " -> ", new_state.name)
 
 
 	if current_state != null:

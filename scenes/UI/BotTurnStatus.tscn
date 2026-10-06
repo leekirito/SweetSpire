@@ -1,0 +1,51 @@
+[gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/UI/bot_turn_status.gd" id="1"]
+[node name="BotTurnStatus" type="CanvasLayer"]
+layer = 900
+visible = false
+script = ExtResource("1")
+[node name="Status" type="Label" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 64.0
+offset_bottom = 96.0
+mouse_filter = 2
+horizontal_alignment = 1
+text = "Bot is taking their turn…"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+[node name="Cover" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+[node name="Content" type="VBoxContainer" parent="Cover"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -70.0
+offset_right = 280.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 24
+[node name="Message" type="Label" parent="Cover/Content"]
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+text = "Bot is taking their turn…"
+[node name="Hint" type="Label" parent="Cover/Content"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "The next human player will be prompted automatically."
+[node name="Leave" type="Button" parent="Cover/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "LEAVE MATCH"

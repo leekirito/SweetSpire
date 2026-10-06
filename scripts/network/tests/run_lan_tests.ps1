@@ -44,7 +44,7 @@ try {
     for ($index = 0; $index -lt $peers.Count; $index++) {
         Wait-TestProcess $peers[$index] "LAN process $($index + 1)"
     }
-    foreach ($suite in @('hotseat', 'fog', 'structure', 'caster', 'map_generation')) {
+    foreach ($suite in @('hotseat', 'selection', 'fog', 'structure', 'caster', 'map_generation')) {
         $child = Start-TestProcess "res://scenes/${suite}_regression_test.tscn" $suite
         Wait-TestProcess $child $suite
     }

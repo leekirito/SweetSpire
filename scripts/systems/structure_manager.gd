@@ -56,6 +56,8 @@ func placement_error(data: StructureData, cell: Vector2i, player_id: int) -> Str
 	return ""
 
 func build(data: StructureData, cell: Vector2i, player_id: int) -> bool:
+	if not game.bot_executing and game.get_active_player() != null and game.get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		return LanSession.submit({"action": "build", "key": data.structure_id, "cell": LanCatalog.xy(cell)})
 	if not placement_error(data, cell, player_id).is_empty():

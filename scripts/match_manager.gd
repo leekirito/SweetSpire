@@ -107,6 +107,8 @@ var structure_manager := StructureManager.new()
 @export var demo_seed: int = 260926
 var map_manifest: Dictionary = {}
 var map_setup_error: String = ""
+var bot_executing := false
+var human_viewer_id := -1
 @onready var hotseat_handoff: CanvasLayer = get_node_or_null("HotseatHandoff")
 # ============================================================
 # START
@@ -206,6 +208,10 @@ func _initialize_match() -> void:
 	].player_id
 
 
+	for player: PlayerState in players:
+		if not player.is_bot():
+			human_viewer_id = player.player_id
+			break
 	current_phase = Phase.PLAYER_TURN
 	if LanSession.active():
 		current_phase = Phase.SETUP
@@ -641,12 +647,16 @@ func get_building(
 
 ## Validates a player's move request before committing authoritative state and animation.
 func request_move(unit_id: int, target_cell: Vector2i) -> bool:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		return LanSession.submit({"action": "move", "id": unit_id, "cell": LanCatalog.xy(target_cell)})
 	if current_phase != Phase.PLAYER_TURN:
 		return false
 	return combat_resolver.request_move(self, unit_id, target_cell)
 func request_attack(attacker_id: int, target_id: int) -> bool:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		var target := get_unit(target_id)
 		return target != null and request_attack_at_cell(attacker_id, target.current_cell)
@@ -655,6 +665,8 @@ func request_attack(attacker_id: int, target_id: int) -> bool:
 	return combat_resolver.request_attack(self, attacker_id, target_id)
 
 func request_attack_at_cell(attacker_id: int, target_cell: Vector2i) -> bool:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		return LanSession.submit({"action": "attack", "id": attacker_id, "cell": LanCatalog.xy(target_cell)})
 	if current_phase != Phase.PLAYER_TURN:
@@ -731,6 +743,8 @@ func _show_match_result(victor_id: int, victory_reason: String) -> void:
 
 ## Rejects turn completion while unit animations could leave clients visually out of sync.
 func request_end_turn() -> bool:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		return LanSession.submit({"action": "end_turn"})
 	return turn_manager.request_end_turn(self)
@@ -748,12 +762,16 @@ func continue_hotseat_turn() -> bool:
 	hotseat_handoff.dismiss()
 	return true
 func request_upgrade_resource(resource_instance_id: int, player_id: int) -> bool:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		return LanSession.submit({"action": "upgrade", "id": resource_instance_id})
 	return economy_manager.request_upgrade_resource(self, resource_instance_id, player_id)
 func collect_sugars() -> void:
 	economy_manager.collect_sugars(self)
 func request_collect_resource(resource_instance_id: int, player_id: int) -> bool:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		return LanSession.submit({"action": "collect", "id": resource_instance_id})
 	return economy_manager.request_collect_resource(self, resource_instance_id, player_id)
@@ -790,6 +808,8 @@ func refresh_resource_collectibility_authoritative() -> void:
 	_refresh_resource_collectibility()
 ## Purchases and spawns a unit only from an owned, unoccupied town.
 func request_recruit_unit(building_id: int, unit_scene: PackedScene) -> Unit:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return null
 	if LanSession.active() and not LanSession.executing:
 		LanSession.submit({"action": "recruit", "id": building_id, "key": LanCatalog.unit_key(unit_scene.resource_path)})
 		return null
@@ -805,6 +825,8 @@ func can_purchase_technology(player_id: int, technology: TechnologyData) -> bool
 
 
 func request_purchase_technology(player_id: int, technology: TechnologyData) -> bool:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		return LanSession.submit({"action": "technology", "key": technology.technology_id})
 	if not technology_manager.purchase(self, player_id, technology):
@@ -842,7 +864,11 @@ func update_ui() -> void:
 		)
 
 func get_viewing_player_id() -> int:
-	return LanSession.local_player_id if LanSession.active() else active_player_id
+	if LanSession.active():
+		return LanSession.local_player_id
+	if human_viewer_id >= 0 and (get_active_player() == null or get_active_player().is_bot()):
+		return human_viewer_id
+	return active_player_id
 
 func get_viewing_player() -> PlayerState:
 	return get_player(get_viewing_player_id())
@@ -851,6 +877,8 @@ func get_all_buildings_for_network() -> Array[Building]:
 	return _get_all_buildings()
 
 func request_recruitment(building_id: int, unit_scene: PackedScene) -> bool:
+	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
+		return false
 	if LanSession.active() and not LanSession.executing:
 		return LanSession.submit({"action": "recruit", "id": building_id, "key": LanCatalog.unit_key(unit_scene.resource_path)})
 	return request_recruit_unit(building_id, unit_scene) != null
@@ -864,3 +892,30 @@ func _on_button_button_down() -> void:
 ## Captures towns occupied by enemy units when the round finishes.
 func unit_conquer_building() -> void:
 	capture_manager.capture_occupied_buildings(self)
+
+func can_human_act() -> bool:
+	var player := get_active_player()
+	return player == null or not player.is_bot()
+
+func bot_can_act(seat: int) -> bool:
+	var player := get_player(seat)
+	return player != null and player.is_bot() and seat == active_player_id and current_phase == Phase.PLAYER_TURN and not eliminated_player_ids.has(seat) and (not LanSession.active() or (LanSession.hosting and LanSession.state == "playing" and not LanSession.paused_for_disconnect))
+
+func execute_bot_command(seat: int, command: Dictionary) -> bool:
+	if not bot_can_act(seat) or bot_executing:
+		return false
+	bot_executing = true
+	var accepted: bool
+	if LanSession.active():
+		accepted = LanSession.execute_bot(seat, command)
+	else:
+		accepted = GameCommands.execute(self, seat, command)
+	bot_executing = false
+	return accepted
+
+func human_count() -> int:
+	var count := 0
+	for player: PlayerState in players:
+		if not player.is_bot():
+			count += 1
+	return count
