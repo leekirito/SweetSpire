@@ -28,6 +28,7 @@ func _start() -> void:
 			test_run = arg.get_slice("=", 1).validate_filename()
 	if host:
 		assert(LanSession.host_room("Host", "LAN test", expected, "saba", 29876, mode))
+		check(LanSession.configure_room("LAN test", expected, mode, false, "", 180), "host chooses three-minute turns")
 		if "--private" in args:
 			assert(LanSession.configure_room("Private test", expected, mode, true, "process-secret"))
 		LanSession.choose("saba", true)
@@ -74,6 +75,8 @@ func _process(delta: float) -> void:
 		return
 	if stage == 0:
 		check(GameSession.match_mode == mode, "everyone uses the host's selected mode")
+		check(GameSession.turn_duration == 180 and LanSession.turn_duration == 180, "everyone receives host timer setting")
+		check(game.turn_clock.remaining > 0 and game.turn_clock.remaining <= 180, "initial authoritative timer received")
 		if mode == GameSession.REGULAR:
 			check(game.units.size() == expected, "Regular replicates every starting unit")
 			check(game.fog_of_war.visible_by_player[me].size() == game.board_manager.tile_map_layer.get_used_cells().size(), "Regular reveals whole map on each device")
@@ -103,7 +106,11 @@ func _process(delta: float) -> void:
 	elif stage == 3:
 		check(game.get_player(me).has_technology("fishing"), "technology state applied")
 		check(game.get_player(me).sugars == 17, "technology charged once")
-		check(game.request_end_turn(), "turn submitted")
+		if host:
+			game.turn_clock.advance(181)
+			check(game.active_player_id != me, "host deadline advances turn across real peers")
+		else:
+			check(game.request_end_turn(), "turn submitted")
 		stage = 4
 	elif stage == 4 and game.current_round >= 2:
 		check(game.fog_of_war.viewing_player_id == me, "view after full round")
@@ -119,6 +126,7 @@ func _process(delta: float) -> void:
 			stage = 5
 	elif stage == 5:
 		check(GameSession.match_mode == mode, "reconnect preserves match mode")
+		check(GameSession.turn_duration == 180 and game.turn_clock.remaining > 0 and game.turn_clock.remaining <= 180, "reconnect preserves timer configuration and live countdown")
 		check(game.get_player(me).has_technology("fishing"), "reconnect preserved technology")
 		check(game.get_unit(my_unit).current_cell == moved_cell, "reconnect preserved movement")
 		if not host:

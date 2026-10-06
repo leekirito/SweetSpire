@@ -1,5 +1,9 @@
 extends Control
 
+## Town recruitment popup populated from unit scenes and their UnitData.
+## Shows choices and previews, then requests purchases through MatchManager.
+
+
 var selected_building: Building
 
 @onready var choice1: Button = $Panel/Button

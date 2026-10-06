@@ -1,6 +1,10 @@
 class_name AttackPresentation
 extends Node2D
 
+## Cosmetic attack timeline emitting impact, decal, and completion signals.
+## Local combat listens for impact; LAN playback must not apply gameplay damage again.
+
+
 signal impact
 signal decals_due
 signal finished

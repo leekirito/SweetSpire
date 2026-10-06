@@ -1,5 +1,9 @@
 extends TileMapLayer
 
+## Hides unexplored terrain artwork through runtime tile modulation.
+## Keeps raised sprites and cliff faces from showing through the separate fog cover.
+
+
 func _ready() -> void:
 	var fog := get_node_or_null("../FogOfWar") as FogOfWar
 	if fog != null:

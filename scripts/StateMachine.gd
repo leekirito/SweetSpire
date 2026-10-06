@@ -1,6 +1,10 @@
 class_name StateMachine
 extends Node
 
+## Reusable controller for BaseState children, with deferred transitions.
+## Waits for its owner to be ready before forwarding frame callbacks.
+
+
 
 @export var current_state: BaseState
 

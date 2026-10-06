@@ -1,6 +1,11 @@
 class_name MatchManager
 extends Node
 
+## Main gameplay entry point and owner of match entity registries.
+## Humans, bots, and network commands request actions here; systems implement the rules.
+## The active turn and the human viewing player can differ during LAN and bot turns.
+
+
 
 
 signal match_started
@@ -33,6 +38,7 @@ signal player_eliminated(player_id: int)
 signal match_ended(winner_id: int, victory_reason: String)
 
 @export_category("Victory Conditions")
+## Cumulative uncontested center-control rounds needed to win.
 @export_range(1, 99, 1) var center_control_rounds: int = 3
 ## Top-left board cell of the 2x2 Sweetspire objective.
 @export var sweetspire_center_cell: Vector2i = Vector2i.ZERO
@@ -62,7 +68,8 @@ enum Phase {
 	RESOURCE_SCORE_UPDATE,
 	ROUND_END,
 	GAME_OVER,
-	HOTSEAT_HANDOFF
+	HOTSEAT_HANDOFF,
+	TURN_TIMEOUT
 }
 
 
@@ -103,13 +110,16 @@ var turn_manager := TurnManager.new()
 var unit_registry := UnitRegistry.new()
 var victory_manager := VictoryManager.new()
 var structure_manager := StructureManager.new()
+## Populate the fallback demo map; chunk bootstrap disables this path.
 @export var populate_demo_map: bool = false
+## Seed used by fallback demo population.
 @export var demo_seed: int = 260926
 var map_manifest: Dictionary = {}
 var map_setup_error: String = ""
 var bot_executing := false
 var human_viewer_id := -1
 @onready var hotseat_handoff: CanvasLayer = get_node_or_null("HotseatHandoff")
+@onready var turn_clock: Node = get_node_or_null("TurnClock")
 # ============================================================
 # START
 # ============================================================
@@ -331,6 +341,7 @@ func get_player(
 	return null
 
 
+## Returns the player who owns this turn; this may differ from the human viewer.
 func get_active_player() -> PlayerState:
 
 	if players.is_empty():
@@ -521,6 +532,7 @@ func spawn_unit(unit_scene: PackedScene, player: PlayerState, cell: Vector2i) ->
 	return unit_registry.spawn_unit(self, unit_scene, player, cell)
 func conquer_building(building_id: int, player_id: int) -> bool:
 	return capture_manager.conquer_building(self, building_id, player_id)
+## Registers an existing unit through UnitRegistry so IDs and occupancy stay consistent.
 func register_new_unit(unit: Unit) -> void:
 	unit_registry.register_unit(self, unit)
 
@@ -654,6 +666,7 @@ func request_move(unit_id: int, target_cell: Vector2i) -> bool:
 	if current_phase != Phase.PLAYER_TURN:
 		return false
 	return combat_resolver.request_move(self, unit_id, target_cell)
+## Requests an attack against a unit ID, subject to active-seat authorization and combat rules.
 func request_attack(attacker_id: int, target_id: int) -> bool:
 	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
 		return false
@@ -664,6 +677,7 @@ func request_attack(attacker_id: int, target_id: int) -> bool:
 		return false
 	return combat_resolver.request_attack(self, attacker_id, target_id)
 
+## Requests a tile-targeted attack, including area attacks.
 func request_attack_at_cell(attacker_id: int, target_cell: Vector2i) -> bool:
 	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
 		return false
@@ -682,6 +696,7 @@ func get_visible_attack_tiles(unit: Unit) -> Array[Vector2i]:
 	return visible_tiles
 
 
+## Removes unit occupancy and registry state before notifying listeners.
 func remove_unit_authoritative(unit: Unit) -> void:
 	unit_registry.remove_unit(self, unit)
 func evaluate_eliminations() -> void:
@@ -704,6 +719,7 @@ func get_center_controller() -> PlayerState:
 	return victory_manager.get_center_controller(self)
 
 
+## Returns the four cells of the 2x2 Sweetspire objective.
 func get_center_cells() -> Array[Vector2i]:
 	return [
 		sweetspire_center_cell,
@@ -717,6 +733,7 @@ func get_center_control_target() -> int:
 	return center_control_rounds
 
 
+## Ends the match once, announces the winner, and updates result presentation.
 func finish_match_authoritative(victor_id: int, victory_reason: String) -> void:
 	if current_phase == Phase.GAME_OVER:
 		return
@@ -749,11 +766,13 @@ func request_end_turn() -> bool:
 		return LanSession.submit({"action": "end_turn"})
 	return turn_manager.request_end_turn(self)
 
+## Enters the privacy phase before revealing the incoming human turn.
 func begin_hotseat_handoff() -> void:
 	current_phase = Phase.HOTSEAT_HANDOFF
 	_refresh_resource_collectibility()
 	hotseat_handoff.show_for_player(get_active_player(), current_round)
 
+## Starts the pending human turn and dismisses the cover; duplicate continuation is rejected.
 func continue_hotseat_turn() -> bool:
 	if current_phase != Phase.HOTSEAT_HANDOFF:
 		return false
@@ -824,6 +843,7 @@ func can_purchase_technology(player_id: int, technology: TechnologyData) -> bool
 	return technology_manager.can_purchase(self, player_id, technology)
 
 
+## Routes research to the authority, then refreshes presentation after a successful unlock.
 func request_purchase_technology(player_id: int, technology: TechnologyData) -> bool:
 	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
 		return false
@@ -863,6 +883,7 @@ func update_ui() -> void:
 			+ "  SUGAR"
 		)
 
+## Uses the LAN device's seat or the local human perspective retained during bot turns.
 func get_viewing_player_id() -> int:
 	if LanSession.active():
 		return LanSession.local_player_id
@@ -876,6 +897,7 @@ func get_viewing_player() -> PlayerState:
 func get_all_buildings_for_network() -> Array[Building]:
 	return _get_all_buildings()
 
+## Boolean recruitment request suited to UI and asynchronous LAN submission.
 func request_recruitment(building_id: int, unit_scene: PackedScene) -> bool:
 	if not bot_executing and get_active_player() != null and get_active_player().is_bot():
 		return false
@@ -893,14 +915,17 @@ func _on_button_button_down() -> void:
 func unit_conquer_building() -> void:
 	capture_manager.capture_occupied_buildings(self)
 
+## Checks whether the active seat is human; callers still validate phase and network readiness.
 func can_human_act() -> bool:
 	var player := get_active_player()
 	return player == null or not player.is_bot()
 
+## Requires the active surviving bot, local authority, and no LAN disconnect pause.
 func bot_can_act(seat: int) -> bool:
 	var player := get_player(seat)
 	return player != null and player.is_bot() and seat == active_player_id and current_phase == Phase.PLAYER_TURN and not eliminated_player_ids.has(seat) and (not LanSession.active() or (LanSession.hosting and LanSession.state == "playing" and not LanSession.paused_for_disconnect))
 
+## Enters the bot-authorized scope and sends a command through the normal game rules.
 func execute_bot_command(seat: int, command: Dictionary) -> bool:
 	if not bot_can_act(seat) or bot_executing:
 		return false
@@ -913,6 +938,7 @@ func execute_bot_command(seat: int, command: Dictionary) -> bool:
 	bot_executing = false
 	return accepted
 
+## Counts configured human seats, including eliminated humans, for Hotseat privacy.
 func human_count() -> int:
 	var count := 0
 	for player: PlayerState in players:

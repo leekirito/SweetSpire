@@ -1,4 +1,6 @@
-extends SceneTree
+extends Node
+
+## Run through its scene so unit dependencies see the normal project autoloads.
 
 var failures: int = 0
 
@@ -7,7 +9,7 @@ func check(condition: bool, description: String) -> void:
 		failures += 1
 		push_error(description)
 
-func _init() -> void:
+func _ready() -> void:
 	var pattern := RangePattern.new()
 	var small := pattern.get_offsets(1)
 	var large := pattern.get_offsets(2)
@@ -48,4 +50,4 @@ func _init() -> void:
 		check(configured.movement_pattern.base_dimensions == Vector2i(2, 2), path + " movement base")
 		check(configured.attack_pattern.base_dimensions == Vector2i(2, 2), path + " attack base")
 	print("Range regression failures: ", failures)
-	quit(1 if failures else 0)
+	get_tree().quit(1 if failures else 0)

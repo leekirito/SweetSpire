@@ -1,12 +1,17 @@
 class_name ResourceChoices
 extends Control
 
+## Context actions for a resource or construction cell.
+## Shows eligibility and submits requests; shared rules revalidate execution.
+
+
 var resource: Resources
 var match_manager: MatchManager
 var cell: Vector2i
 @onready var actions: HBoxContainer = $Panel/Content/Actions
 @onready var subtitle: Label = $Panel/Content/Subtitle
 
+## Opens contextual construction information only inside the active player's territory.
 static func open_tile(game: MatchManager, target: Vector2i) -> void:
 	var town := game.structure_manager.controlling_town(target)
 	if town == null or town.owner_id != game.active_player_id:
@@ -26,6 +31,7 @@ func setup(new_resource: Resources, game: MatchManager) -> void:
 	resource = new_resource
 	setup_tile(game, resource.current_cell)
 
+## Binds the target cell and closes the popup on turn changes.
 func setup_tile(game: MatchManager, target: Vector2i) -> void:
 	match_manager = game
 	cell = target
@@ -36,6 +42,7 @@ func setup_tile(game: MatchManager, target: Vector2i) -> void:
 	game.technology_purchased.connect(func(_id: int, _tech: String): _refresh())
 	_refresh()
 
+## Rebuilds available collection, upgrade, construction, or structure-information choices.
 func _refresh() -> void:
 	for child: Node in actions.get_children():
 		actions.remove_child(child)

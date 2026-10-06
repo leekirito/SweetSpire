@@ -1,12 +1,19 @@
 class_name Unit
 extends CharacterBody2D
 
+## One live unit's ownership, combat stats, range configuration, and feedback.
+## UnitData supplies defaults; match systems authorize actions and BoardManager owns occupancy.
+
+
 signal range_configuration_changed(unit: Unit)
 
 const HIT_BURST: PackedScene = preload("res://scenes/effects/HitBurst.tscn")
 
+## Shared unit defaults copied into this unit's runtime state.
 @export var data: UnitData
+## Owning player seat ID; this is not a network peer ID.
 @export var owner_id: int
+## World-space movement speed for local presentation.
 @export var pixels_per_second: float = 300.0
 
 var player_state: PlayerState
@@ -72,11 +79,15 @@ var target_cell: Vector2i
 @onready var walk_trail: GPUParticles2D = $GPUParticles2D
 
 #vfx
+## Current cosmetic shake amplitude.
 @export var shake_strength: float = 0.0
+## Rate at which cosmetic shake fades.
 @export var shake_decay: float = 5.0
 @export_group("Walk Trail")
+## Enable cosmetic movement trails.
 @export var walk_trail_enabled: bool = true
 @export_group("Tribe Outline")
+## Opacity of the ownership outline.
 @export_range(0.0, 1.0, 0.05) var outline_opacity: float = 1.0:
 	set(value):
 		outline_opacity = value
@@ -131,6 +142,7 @@ func _process(delta: float) -> void:
 		defence_ui.position = _defence_rest_position
 	tribe_outline.position = sprite.position
 
+## Starts cosmetic sprite shake without changing board occupancy.
 func apply_shake(strength: float = 10.0) -> void:
 	shake_strength = strength
 
@@ -317,6 +329,7 @@ func get_attack_damage() -> int:
 	return unit_damage
 
 
+## A blast pattern enables area attacks only while the unit is not embarked.
 func has_area_attack() -> bool:
 	return not is_embarked and data != null and data.blast_pattern != null
 
@@ -359,6 +372,7 @@ func embark(boat: StructureData) -> void:
 		sprite.offset = Vector2(0, -60)
 	range_configuration_changed.emit(self)
 
+## Restores the saved land form while preserving combat stats and spent actions.
 func disembark() -> void:
 	if not is_embarked:
 		return

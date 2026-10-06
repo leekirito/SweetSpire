@@ -1,6 +1,10 @@
 class_name FogCell
 extends Node2D
 
+## Visual cover for one isometric fog tile.
+## FogOfWar chooses the state; this node draws and animates it.
+
+
 ## Scene tile owned by FogOfWar. Visibility rules apply before animation.
 var fog_state: int = 0
 var transition: Tween
@@ -14,6 +18,7 @@ var explored_color := Color(0.09, 0.13, 0.20, 0.58)
 func _ready() -> void:
 	configure(tile_size, unknown_color, explored_color)
 
+## Fits the cover to the tile dimensions and stores its hidden/explored colors.
 func configure(size: Vector2, unexplored: Color, explored: Color, texture: Texture2D = null) -> void:
 	tile_size = size
 	unknown_color = unexplored
@@ -44,6 +49,7 @@ func _apply_color(color: Color) -> void:
 	# Preserve the sprite's artwork; only its opacity follows the fog state.
 	fog_sprite.modulate = Color(1.0, 1.0, 1.0, color.a)
 
+## Displays 0=unexplored, 1=explored, or 2=visible, optionally animating the cover.
 func set_fog_state(next_state: int, animate: bool, duration: float) -> void:
 	if cover == null:
 		return

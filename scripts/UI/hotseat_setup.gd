@@ -1,6 +1,10 @@
 @tool
 extends Control
 
+## Responsive columns for authored Hotseat cards, previewable in both editor and runtime.
+
+
+## Available width in pixels required to display two columns of player cards.
 @export var two_column_min_width: float = 850.0
 
 func _ready() -> void:

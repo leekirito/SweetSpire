@@ -1,4 +1,8 @@
 extends CanvasLayer
+
+## Displays bot activity while preserving the human perspective.
+## Multiple-human Hotseat covers bot turns without pausing simulation.
+
 @onready var game: MatchManager = get_parent()
 
 func _ready() -> void:

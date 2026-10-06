@@ -1,6 +1,11 @@
 class_name BotStrategy
 extends RefCounted
 
+## Scores combat and movement toward towns, exploration, docks, and Sweetspire.
+## Uses visible threats, health, friendly-fire penalties, and remembered commitments.
+
+
+## Estimates danger from visible enemies using attack reach and the profile's threat horizon.
 static func threat(view: Dictionary, cell: Vector2i, profile: BotProfile) -> float:
 	var value := 0.0
 	for enemy: Dictionary in view.units:
@@ -14,6 +19,7 @@ static func threat(view: Dictionary, cell: Vector2i, profile: BotProfile) -> flo
 			value += float(enemy.damage) / maxf(1.0, float(distance))
 	return value
 
+## Scores attacks/moves while preserving occupied capture or healthy center positions.
 static func unit_actions(view: Dictionary, unit: Dictionary, profile: BotProfile, memory: BotMemory) -> Array:
 	var actions: Array = []
 	var attacks := BotNavigation.attacks(view, unit)
@@ -89,6 +95,7 @@ static func unit_actions(view: Dictionary, unit: Dictionary, profile: BotProfile
 	actions.append_array(candidates.slice(0, profile.candidate_limit))
 	return actions
 
+## Keeps a safe reachable commitment or compares known towns, center, frontier, and docks.
 static func choose_goal(view: Dictionary, unit: Dictionary, profile: BotProfile, memory: BotMemory) -> Dictionary:
 	var old: Dictionary = memory.goals.get(unit.id, {})
 	var threatened := threat(view, unit.cell, profile) >= profile.threat_response_threshold

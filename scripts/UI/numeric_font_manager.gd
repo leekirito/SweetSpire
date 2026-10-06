@@ -1,5 +1,9 @@
 extends Node
 
+## Autoload substituting a readable font when control text contains digits.
+## Restores previous overrides when the text no longer needs a numeric font.
+
+
 ## Cocogoose trial fonts replace digits with trial-watermark glyphs.
 ## This manager keeps Cocogoose for normal copy and restores Godot's original
 ## fallback font on controls whose current text contains a number.

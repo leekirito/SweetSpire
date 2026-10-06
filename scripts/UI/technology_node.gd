@@ -1,5 +1,8 @@
 @tool
 extends Button
+
+## Authored technology button previewing a TechnologyData resource in the editor and game.
+
 ## The scene owns geometry; the resource supplies the preview and live values.
 @export var technology: TechnologyData:
 	set(value):
@@ -10,6 +13,7 @@ extends Button
 func _ready() -> void:
 	refresh_content()
 
+## Copies research icon, description, and price into the authored button controls.
 func refresh_content() -> void:
 	if technology == null:
 		return

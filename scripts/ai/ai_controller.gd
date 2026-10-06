@@ -1,7 +1,15 @@
 class_name AIController
 extends Node2D
+
+## Runs one bot seat through the existing AI state machine.
+## Builds filtered observations, scores decisions across frames, and submits normal commands.
+## Waits for animations/network pauses and bounds failed actions with turn safety limits.
+
+## Player seat controlled by this bot.
 @export var controlled_player_id: int = 1
+## Authoritative match receiving this bot's commands.
 @export var match_manager: MatchManager
+## Shared tuning resource; the controller works with a validated copy.
 @export var profile: BotProfile = preload("res://scripts/ai/profiles/balanced.tres")
 @onready var state_machine: StateMachine = $AIStateMachine
 var memory := BotMemory.new()
@@ -19,9 +27,11 @@ func _ready() -> void:
 	memory.rng.seed = int(match_manager.map_manifest.get("seed", GameSession.map_seed)) * 31 + controlled_player_id * 7919
 	match_manager.turn_started.connect(_on_turn_started)
 
+## Checks whether this seat currently has local simulation authority.
 func permitted() -> bool:
 	return is_instance_valid(match_manager) and match_manager.bot_can_act(controlled_player_id)
 
+## Requires authority plus no ongoing combat or logical unit animation.
 func settled() -> bool:
 	return permitted() and not match_manager.combat_resolver.attack_in_progress and not match_manager._any_unit_animating()
 
@@ -29,6 +39,7 @@ func _process(delta: float) -> void:
 	if permitted():
 		delay = maxf(0.0, delay - delta)
 
+## Begins once per owned round; repeated reconnect signals cannot restart this turn.
 func _on_turn_started(player_id: int, round_number: int) -> void:
 	if not permitted() or player_id != controlled_player_id or started_round == round_number:
 		return
@@ -41,11 +52,13 @@ func _on_turn_started(player_id: int, round_number: int) -> void:
 	candidates.clear()
 	state_machine.on_state_transition(&"ChooseUnit")
 
+## Clears current planning work without discarding long-term memory.
 func prepare_decision() -> void:
 	observation.clear()
 	candidates.clear()
 	unit_index = 0
 
+## Generates economy choices, scores a bounded number of units per frame, and selects an action.
 func plan_step() -> void:
 	if not settled() or delay > 0.0:
 		return
@@ -67,6 +80,7 @@ func plan_step() -> void:
 	chosen = BotDecision.choose(candidates, profile, memory)
 	state_machine.on_state_transition(&"EndTurn" if chosen.action == "end_turn" else (&"Move" if chosen.action == "move" else &"Attack"))
 
+## Submits the command, records failure/backtracking history, and schedules another decision.
 func execute_choice() -> void:
 	if not settled() or delay > 0.0:
 		return
@@ -86,6 +100,7 @@ func execute_choice() -> void:
 	delay = profile.action_delay
 	state_machine.on_state_transition(&"ChooseUnit")
 
+## Finishes only after authority, pacing, and animation conditions allow it.
 func try_end_turn() -> void:
 	if not permitted():
 		state_machine.on_state_transition(&"Idle")

@@ -1,17 +1,27 @@
 class_name FogOfWar
 extends TileMapLayer
 
+## Maintains explored and currently visible cells separately for each player.
+## The authority calculates vision; LAN guests display received views.
+## Presentation follows the human viewer, including while a bot owns the active turn.
+
+
 signal fog_updated
  
 enum State { UNEXPLORED, EXPLORED, VISIBLE }
 const CELL_SCENE: PackedScene = preload("res://scenes/fog/fog_cell.tscn")
 
+## Board providing cells, terrain, and occupancy for visibility.
 @export var board: BoardManager
+## Match whose players and viewing perspective determine fog.
 @export var game: MatchManager
 ## Starting vision at territory radius 1; each extra territory ring adds vision.
 @export_range(0, 10, 1) var building_vision_radius: int = 2
+## Seconds to animate a fog-state change.
 @export_range(0.0, 1.0, 0.05) var transition_duration: float = 0.3
+## Cover color for cells the viewer has never seen.
 @export var unexplored_color := Color(0.055, 0.075, 0.12, 1.0)
+## Cover color for remembered cells outside current vision.
 @export var explored_color := Color(0.09, 0.13, 0.20, 0.58)
 ## Optional artwork fitted to each tile. Empty uses the polygon fog.
 @export var fog_texture: Texture2D:
@@ -29,6 +39,8 @@ var viewing_player_id: int = -1
 var initialized := false
 var _elapsed := 0.0
 var _refreshing := false
+var knowledge = preload("res://scripts/systems/match_knowledge.gd").new()
+var memory_view: Node2D
 
 func _ready() -> void:
 	z_index = 100
@@ -40,6 +52,9 @@ func _ready() -> void:
 		push_error("FogOfWar requires Board and Game references.")
 		return
 	_build_layer()
+	memory_view = preload("res://scripts/fog_memory_view.gd").new()
+	memory_view.name = "RememberedEntities"
+	get_parent().add_child.call_deferred(memory_view)
 	game.match_started.connect(_on_match_started)
 	game.turn_started.connect(_on_turn_started)
 	game.vision_sources_changed.connect(refresh)
@@ -99,6 +114,8 @@ func _process(delta: float) -> void:
 	# Moving enemy sprites are hidden according to their rendered cell too.
 	_apply_unit_visibility()
 
+## Recomputes authoritative vision or displays the guest's received view.
+## Regular reveals the whole board; instant skips visual transitions.
 func refresh(instant: bool = false) -> void:
 	if not initialized or _refreshing:
 		return
@@ -148,7 +165,12 @@ func refresh(instant: bool = false) -> void:
 	_display_view(instant)
 	_refreshing = false
 
+## Applies the human viewer's fog without blending between different players' views.
 func _display_view(instant: bool) -> void:
+	if not LanSession.client():
+		# Observe every seat, even when a different human is viewing a Hotseat turn.
+		for player: PlayerState in game.players:
+			knowledge.observe(game, player.player_id, visible_by_player.get(player.player_id, {}))
 	var switched := viewing_player_id != game.get_viewing_player_id()
 	viewing_player_id = game.get_viewing_player_id()
 	var view_changed := switched
@@ -161,7 +183,6 @@ func _display_view(instant: bool) -> void:
 	_apply_entity_visibility()
 	if view_changed:
 		fog_updated.emit()
-	_refreshing = false
 
 func _reveal_building(views: Dictionary, player_id: int, center: Vector2i, radius: int) -> void:
 	if not views.has(player_id):
@@ -173,6 +194,7 @@ func _reveal_building(views: Dictionary, player_id: int, center: Vector2i, radiu
 			if board.is_cell_on_map(cell):
 				cells[cell] = true
 
+## Returns the fog state for a seat; -1 selects the current viewer.
 func state_for(cell: Vector2i, player_id: int = -1) -> int:
 	if player_id == -1:
 		player_id = viewing_player_id
@@ -182,16 +204,19 @@ func state_for(cell: Vector2i, player_id: int = -1) -> int:
 		return State.EXPLORED
 	return State.UNEXPLORED
 
+## Tests current sight, not historical exploration.
 func is_cell_visible(cell: Vector2i, player_id: int = -1) -> bool:
 	if player_id == -1:
 		player_id = viewing_player_id
 	return visible_by_player.get(player_id, {}).has(cell)
 
+## Tests whether this player has ever revealed the cell.
 func is_cell_explored(cell: Vector2i, player_id: int = -1) -> bool:
 	if player_id == -1:
 		player_id = viewing_player_id
 	return explored_by_player.get(player_id, {}).has(cell)
 
+## Filters settled units and moving sprites against the viewer's current sight.
 func _apply_unit_visibility() -> void:
 	for unit: Unit in game.units.values():
 		var rendering_move := unit.is_animating or (unit.network_move_tween != null and unit.network_move_tween.is_running())
@@ -199,12 +224,17 @@ func _apply_unit_visibility() -> void:
 		unit.visible = is_cell_visible(cell)
 		unit.refresh_tribe_outline(viewing_player_id)
 
+## Shows remembered static entities while keeping units restricted to current sight.
 func _apply_entity_visibility() -> void:
 	_apply_unit_visibility()
 	for building: Building in game.buildings.values():
-		building.visible = is_cell_explored(building.current_cell)
+		building.visible = is_cell_visible(building.current_cell)
 	for resource: Resources in game.resources.values():
 		# Constructed structures intentionally hide the resource underneath.
-		resource.visible = is_cell_explored(resource.current_cell) and not game.structure_manager.structures.has(resource.current_cell)
+		resource.visible = is_cell_visible(resource.current_cell) and not game.structure_manager.structures.has(resource.current_cell)
 	for structure: Structure in game.structure_manager.structures.values():
-		structure.visible = is_cell_explored(structure.current_cell)
+		structure.visible = is_cell_visible(structure.current_cell)
+	var memory: Dictionary = knowledge.view(viewing_player_id)
+	game.territory_manager.set_display_claims(memory.claims)
+	if is_instance_valid(memory_view) and memory_view.is_inside_tree():
+		memory_view.display(self, memory, knowledge.appearances[viewing_player_id])

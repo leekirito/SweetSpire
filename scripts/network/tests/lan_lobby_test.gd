@@ -70,6 +70,7 @@ func run() -> void:
 		client.poll()
 		await get_tree().process_frame
 	check(LanSession.can_start(), "all occupied seats ready")
+	LanSession.choose_mode(GameSession.FOG_OF_WAR)
 	LanSession.choose_mode(GameSession.REGULAR)
 	check(not LanSession.can_start() and LanSession.seats.all(func(row: Dictionary): return not row.ready), "host mode change clears everyone's readiness")
 	check(LanSession._roster().mode == GameSession.REGULAR, "mode is included in shared lobby state")

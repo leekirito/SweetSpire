@@ -6,6 +6,7 @@ var game: MatchManager
 
 func _enter_tree() -> void:
 	GameSession.clear_players()
+	GameSession.match_mode = GameSession.FOG_OF_WAR
 	for id in [1, 2]:
 		var player := PlayerState.new()
 		player.player_id = id

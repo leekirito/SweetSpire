@@ -1,36 +1,56 @@
 class_name BoardManager
 extends Node2D
 
+## Converts world positions to board cells and tracks terrain and entity occupancy.
+## Provides movement, attack, vision, and highlight queries. Logical cells are committed
+## before sprite animations; visual motion does not decide occupancy.
+
+
 @export_group("Tilemap")
 
+## Authoritative ground layer used for cells, terrain metadata, and coordinates.
 @export var tile_map_layer: TileMapLayer
+## Attack highlight layer, also used as the fallback for movement highlights.
 @export var tile_map_overlay: TileMapLayer
+## Optional separate movement-highlight layer.
 @export var movement_overlay: TileMapLayer
+## Authored building-layer reference.
 @export var buildings_tile: TileMapLayer
 
+## TileSet custom-data layer that marks impassable terrain.
 @export var solid_custom_data_name: String = "solid"
+## TileSet custom-data layer that identifies navigable water.
 @export var water_custom_data_name: String = "water"
 
 
 @export_group("Obstacles")
 
+## Additional tile layers whose occupied cells block movement.
 @export var obstacle_layers: Array[TileMapLayer]
+## Manual blocked-cell overrides in tile-grid coordinates.
 @export var extra_solid_cells: Array[Vector2i] = []
 
 
 @export_group("Overlay")
 
+## TileSet source used to paint movement highlights.
 @export var movement_source_id: int = 2
+## TileSet source used to paint attack highlights.
 @export var attack_source_id: int = 0
 
+## Atlas tile used for movement highlights.
 @export var movement_atlas_coordinate: Vector2i = Vector2i.ZERO
+## Atlas tile used for attack highlights.
 @export var attack_atlas_coordinate: Vector2i = Vector2i.ZERO
 
 @export_group("Debug")
 
+## Draw the debug grid and blocked-cell overlay.
 @export var debug_draw: bool = true
+## Show cell coordinates when debug drawing is enabled.
 @export var debug_show_coordinates: bool = true
 
+## Debug grid outline color.
 @export var cell_border_color: Color = Color(
 	0.2,
 	0.5,
@@ -38,6 +58,7 @@ extends Node2D
 	0.5
 )
 
+## Debug fill for blocked cells.
 @export var solid_color: Color = Color(
 	0.8,
 	0.2,
@@ -45,7 +66,9 @@ extends Node2D
 	0.35
 )
 
+## Pixel offset for debug coordinate labels.
 @export var coordinate_offset: Vector2 = Vector2(-20, 5)
+## Font size for debug coordinate labels.
 @export var coordinate_font_size: int = 16
 
 
@@ -74,8 +97,10 @@ var resources_occupied_cells: Dictionary[Vector2i, int] = {}
 var water_cells: Dictionary[Vector2i, bool] = {}
 var mountain_cells: Dictionary[Vector2i, bool] = {}
 var structure_manager: StructureManager
+## Ground source IDs treated as open ocean, where docks cannot be constructed.
 @export var ocean_source_ids: Array[int] = [5]
 
+## Distinguishes open ocean from other water; dock construction excludes ocean.
 func is_ocean(cell: Vector2i) -> bool:
 	return tile_map_layer.get_cell_source_id(cell) in ocean_source_ids
 
@@ -296,6 +321,7 @@ func cell_from_world(
 	)
 
 
+## Returns the global center of a cell using the ground layer's transform.
 func cell_to_world(
 	cell: Vector2i
 ) -> Vector2:
@@ -349,6 +375,7 @@ func register_unit(unit: Unit) -> void:
 
 	occupied_cells[cell] = unit.unit_id
 	
+## Snaps a town to the grid and indexes its ID by cell.
 func register_building(building: Building) -> void:
 	var cell: Vector2i = cell_from_world(
 		building.global_position
@@ -362,6 +389,7 @@ func register_building(building: Building) -> void:
 
 	building_occupied_cells[cell] = building.building_id
 
+## Snaps a resource, chooses its biome art, and indexes its cell and terrain metadata.
 func register_resource(
 	resource: Resources
 ) -> void:
@@ -426,6 +454,7 @@ func get_resource_id_at_cell(
 	)
 
 
+## Requires an actual ground tile, not just a point inside the grid's rectangle.
 func is_cell_on_map(
 	cell: Vector2i
 ) -> bool:
@@ -687,6 +716,7 @@ func get_movement_tiles(
 	return available_tiles
 
 
+## Builds attack cells using geometry, path, and minimum-distance rules.
 func get_attack_tiles(
 	unit: Unit
 ) -> Array[Vector2i]:
@@ -754,6 +784,7 @@ func get_pattern_tiles(
 	return tiles
 # MOVEMENT VALIDATION
 
+## Checks destination occupancy and membership in the unit's legal movement cells.
 func can_move_to(
 	unit: Unit,
 	target_cell: Vector2i
@@ -858,6 +889,7 @@ func animate_unit_move(
 
 # OVERLAY
 
+## Clears tile highlights without removing separate decal nodes.
 func clear_overlay() -> void:
 	tile_map_overlay.clear()
 	if movement_overlay != null:

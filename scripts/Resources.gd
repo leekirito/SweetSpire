@@ -1,10 +1,17 @@
 class_name Resources
 extends Area2D
 
+## One harvestable or upgradeable resource on a board cell.
+## Tracks its controlling town, owner, and biome artwork; EconomyManager validates its actions.
 
+
+
+## Shared rewards, requirements, and biome artwork.
 @export var data: ResourceData
+## Neutral fallback artwork for this placed resource.
 @export var base_sprite: Texture2D
 
+## Popup scene used for resource interactions.
 @export var resource_choices_scene: PackedScene
 
 
@@ -43,6 +50,7 @@ func _ready() -> void:
 	make_neutral()
 
 
+## Clears owner and controlling-town IDs and restores neutral presentation.
 func make_neutral() -> void:
 
 	owner_id = -1
@@ -117,6 +125,7 @@ func set_player_owner(
 	owner_id = new_owner_id
 
 
+## Removes the node after the economy system has granted rewards and removed registry entries.
 func collect_resource() -> void:
 
 	queue_free()

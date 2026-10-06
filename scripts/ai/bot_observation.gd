@@ -1,5 +1,9 @@
 class_name BotObservation
 extends RefCounted
+
+## Boundary between authoritative match state and a bot's permitted knowledge.
+## Planners receive copied dictionaries rather than live game entities.
+
 ## Only this adapter can see authoritative state. Planners receive copied data.
 static func capture(game: MatchManager, seat: int, memory: BotMemory) -> Dictionary:
 	var board := game.board_manager
@@ -51,5 +55,6 @@ static func capture(game: MatchManager, seat: int, memory: BotMemory) -> Diction
 	resources.sort_custom(func(a: Dictionary, b: Dictionary): return int(a.id) < int(b.id))
 	return {"seat": seat, "round": game.current_round, "sugar": player.sugars, "tech": player.unlocked_technologies.duplicate(), "tiles": memory.tiles.duplicate(true), "visible": visible.duplicate(), "towns": towns, "resources": resources, "structures": memory.structures.duplicate(true), "territory": territory, "units": units, "center": game.get_center_cells(), "center_rounds": player.center_control_rounds, "center_target": game.center_control_rounds}
 
+## Checks the copied unlock list, treating empty requirements as satisfied.
 static func has_tech(view: Dictionary, id: String) -> bool:
 	return id.is_empty() or id in view.tech

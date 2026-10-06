@@ -9,6 +9,9 @@ func check(condition: bool, message: String) -> void:
 		failures += 1
 		push_error(message)
 
+func _enter_tree() -> void:
+	GameSession.match_mode = GameSession.FOG_OF_WAR
+
 func _ready() -> void:
 	call_deferred("run")
 

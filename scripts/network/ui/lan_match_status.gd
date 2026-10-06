@@ -1,4 +1,8 @@
 extends CanvasLayer
+
+## Displays loading, disconnect/reconnect status, and leave-match controls.
+## Reads session state without owning simulation or retry policy.
+
 func _ready() -> void:
 	$Overlay/Center/Panel/Content/Leave.pressed.connect(_leave)
 	$Bar/Leave.pressed.connect(_leave)

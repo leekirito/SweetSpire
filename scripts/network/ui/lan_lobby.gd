@@ -1,4 +1,8 @@
 extends Control
+
+## Binds authored Host/Join, nearby-room, and lobby screens to LanSession.
+## Only roster rows and discovered-room entries depend on runtime data.
+
 signal back_requested
 const PLAYER_ROW := preload("res://scenes/network/LanPlayerRow.tscn")
 @onready var page := $Margin/Page
@@ -32,6 +36,10 @@ func _ready() -> void:
 	room.get_node("Settings/RoomName").focus_exited.connect(_apply_settings)
 	room.get_node("Settings/Capacity").value_changed.connect(func(_value: float): _apply_settings())
 	room.get_node("Settings/Mode").item_selected.connect(func(_index: int): _apply_settings())
+	var duration_picker: OptionButton = room.get_node("TimerRow/TurnTime")
+	duration_picker.item_selected.connect(func(_index: int): _apply_settings())
+	NumericFontManager.manage_numeric_control(duration_picker)
+	duration_picker.get_popup().add_theme_font_override("font", duration_picker.get_theme_font("font"))
 	room.get_node("Settings/Privacy").item_selected.connect(func(_index: int): _apply_settings())
 	room.get_node("PasswordRow/Save").pressed.connect(_save_password)
 	room.get_node("PasswordRow/Copy").pressed.connect(func(): DisplayServer.clipboard_set(LanSession.room_access.password); _status("Room password copied."))
@@ -43,6 +51,7 @@ func _ready() -> void:
 	LanSession.rooms_changed.connect(_refresh_rooms)
 	_refresh()
 
+## Shows LAN setup, returning to the lobby when a room is already active.
 func open() -> void:
 	show()
 	screen = "room" if LanSession.state == "lobby" else "choice"
@@ -120,7 +129,7 @@ func _apply_settings() -> void:
 	if updating or not LanSession.hosting or LanSession.state != "lobby":
 		return
 	var settings := room.get_node("Settings")
-	if not LanSession.configure_room(settings.get_node("RoomName").text, int(settings.get_node("Capacity").value), GameSession.MATCH_MODES[settings.get_node("Mode").selected], settings.get_node("Privacy").selected == 1, LanSession.room_access.password):
+	if not LanSession.configure_room(settings.get_node("RoomName").text, int(settings.get_node("Capacity").value), GameSession.MATCH_MODES[settings.get_node("Mode").selected], settings.get_node("Privacy").selected == 1, LanSession.room_access.password, room.get_node("TimerRow/TurnTime").get_selected_id()):
 		_refresh()
 		_status("Capacity cannot be smaller than the number of players already here.")
 
@@ -148,6 +157,7 @@ func _copy_address() -> void:
 		DisplayServer.clipboard_set(addresses.get_item_text(addresses.selected))
 		_status("Host address copied.")
 
+## Rebuilds discovery entries, preserves selection, and disables full/incompatible rooms.
 func _refresh_rooms() -> void:
 	var list: ItemList = browser.get_node("Rooms")
 	list.clear()
@@ -168,6 +178,7 @@ func _refresh_rooms() -> void:
 	browser.get_node("JoinSelected").disabled = not can_join or LanSession.state == "connecting"
 	browser.get_node("Empty").visible = room_keys.is_empty()
 
+## Chooses the authored screen and displays current connection/lobby status.
 func _refresh() -> void:
 	if not is_node_ready():
 		return
@@ -202,6 +213,7 @@ func _refresh() -> void:
 		_status("Play with friends on the same network." if screen == "choice" else "Select a public room, or enter a friend's address and password.")
 	updating = false
 
+## Synchronizes room settings, addresses, roster controls, readiness, and host actions.
 func _refresh_room() -> void:
 	var settings := room.get_node("Settings")
 	var host := LanSession.hosting
@@ -212,6 +224,8 @@ func _refresh_room() -> void:
 		settings.get_node("RoomName").text = LanSession.room_name
 	settings.get_node("Capacity").editable = host
 	settings.get_node("Capacity").set_value_no_signal(LanSession.capacity)
+	room.get_node("TimerRow/TurnTime").disabled = not host
+	room.get_node("TimerRow/TurnTime").select(GameSession.TURN_DURATIONS.find(LanSession.turn_duration))
 	settings.get_node("Mode").disabled = not host
 	settings.get_node("Mode").select(GameSession.MATCH_MODES.find(LanSession.match_mode))
 	settings.get_node("Privacy").disabled = not host

@@ -1,4 +1,8 @@
 extends Node
+
+## Attaches controllers to configured bot seats when the authoritative match starts.
+## LAN guests do not create bot planners.
+
 ## Only the authoritative process creates bot controllers.
 func _ready() -> void:
 	get_parent().match_started.connect(_attach)

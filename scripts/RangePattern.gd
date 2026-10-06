@@ -2,6 +2,10 @@
 class_name RangePattern
 extends Resource
 
+## Reusable tile-offset geometry for movement, attacks, and blasts.
+## BoardManager separately applies terrain, occupancy, and path restrictions.
+
+
 
 enum Shape {
 	SQUARE,
@@ -41,6 +45,8 @@ enum LineAxis {
 		emit_changed()
 
 
+## Returns shape offsets excluding the origin. Exact dimensions override base plus expansion.
+## Even dimensions put the extra row/column on the positive side.
 func get_offsets(
 	expansion: int,
 	base_dimensions_override: Vector2i = Vector2i.ZERO,

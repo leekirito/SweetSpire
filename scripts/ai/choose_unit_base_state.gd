@@ -1,4 +1,7 @@
 extends AIBaseState
+
+## Planning state for units, economy, and research despite its legacy ChooseUnit name.
+
 func enter() -> void:
 	get_ai().prepare_decision()
 func update(_delta: float) -> void:

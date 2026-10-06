@@ -1,7 +1,12 @@
 class_name UnitRegistry
 extends RefCounted
 
+## Creates/removes units while keeping match IDs and board occupancy synchronized.
+## Notifies visibility and selection listeners through MatchManager.
 
+
+
+## Creates a unit for a player at a free cell; invalid input or occupancy returns null.
 func spawn_unit(
 	game: MatchManager,
 	unit_scene: PackedScene,
@@ -24,6 +29,7 @@ func spawn_unit(
 	return unit
 
 
+## Assigns a stable match ID, binds ownership, updates occupancy, and refreshes vision.
 func register_unit(game: MatchManager, unit: Unit) -> void:
 	if unit == null:
 		return
@@ -41,6 +47,7 @@ func register_unit(game: MatchManager, unit: Unit) -> void:
 	game.vision_sources_changed.emit()
 
 
+## Releases occupancy and registry entries before notifying listeners and freeing the node.
 func remove_unit(game: MatchManager, unit: Unit) -> void:
 	if unit == null:
 		return

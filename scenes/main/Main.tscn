@@ -30,6 +30,9 @@
 [ext_resource type="PackedScene" path="res://scenes/UI/MapSetupError.tscn" id="ui_MapSetupError"]
 [ext_resource type="PackedScene" path="res://scenes/UI/MatchResult.tscn" id="ui_MatchResult"]
 
+[ext_resource type="Script" path="res://scripts/systems/turn_clock.gd" id="turn_clock"]
+[ext_resource type="PackedScene" path="res://scenes/UI/TurnTimer.tscn" id="turn_timer"]
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_water_surface"]
 shader = ExtResource("18_water_shader")
 shader_parameter/surface_tint = Color(0.06, 0.42, 0.7, 1)
@@ -146,6 +149,9 @@ center_control_rounds = 10
 sweetspire_center_cell = Vector2i(14, 14)
 populate_demo_map = true
 
+[node name="TurnClock" type="Node" parent="MatchManager"]
+script = ExtResource("turn_clock")
+
 [node name="BotDirector" type="Node" parent="MatchManager" unique_id=346385353]
 script = ExtResource("bot_director")
 
@@ -243,6 +249,8 @@ theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 14
 text = "ROUND 1"
 horizontal_alignment = 1
+
+[node name="TurnTimer" parent="CanvasLayer/Control" instance=ExtResource("turn_timer")]
 
 [node name="SugarPanel" type="Panel" parent="CanvasLayer/Control" unique_id=1059392110]
 layout_mode = 1

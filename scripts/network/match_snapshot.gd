@@ -1,30 +1,18 @@
 class_name MatchSnapshot
 extends RefCounted
 
-## Per-seat remembered static entities: unseen changes are never leaked.
-var memories: Dictionary = {}
+## Builds per-player snapshots and reconciles them on LAN guests.
+## Remembers seen static entities without copying unseen changes or opponent economies.
 
+
+## Copies this seat's economy, sight, visible units, and remembered static entities.
+## Unseen changes must not enter the outgoing snapshot.
 func capture(game: MatchManager, seat: int) -> Dictionary:
 	var fog := game.fog_of_war
 	fog.refresh(true)
-	var memory: Dictionary = memories.get(seat, {"towns": {}, "resources": {}, "structures": {}})
+	# The local view and network recipient share the same observation history.
+	var memory: Dictionary = fog.knowledge.view(seat)
 	var visible: Dictionary = fog.visible_by_player.get(seat, {})
-	for town: Building in game.buildings.values():
-		if town.owner_id == seat or int(memory.towns.get(town.building_id, {}).get("owner", -1)) == seat or visible.has(town.current_cell):
-			memory.towns[town.building_id] = {"id": town.building_id, "owner": town.owner_id, "level": town.building_level, "exp": town.current_exp, "recruited": town.last_recruited_round}
-	for resource: Resources in game.resources.values():
-		if resource.owner_id == seat or int(memory.resources.get(resource.resource_instance_id, {}).get("owner", -1)) == seat or visible.has(resource.current_cell):
-			memory.resources[resource.resource_instance_id] = {"id": resource.resource_instance_id, "owner": resource.owner_id, "town": resource.controlling_building_id, "upgraded": resource.is_upgraded}
-	# Static entity positions are public map data, but removals are revealed by vision.
-	for id in LanSession.resource_cells:
-		if not game.resources.has(id):
-			var location: Vector2i = LanSession.resource_cells.get(int(id), Vector2i(-999, -999))
-			if visible.has(location):
-				memory.resources[id] = {"id": id, "removed": true}
-	for structure: Structure in game.structure_manager.structures.values():
-		if visible.has(structure.current_cell):
-			memory.structures[str(structure.current_cell)] = {"key": structure.data.structure_id, "cell": LanCatalog.xy(structure.current_cell), "town": structure.controlling_building_id}
-	memories[seat] = memory
 	var units: Array = []
 	for unit: Unit in game.units.values():
 		if unit.owner_id == seat or visible.has(unit.current_cell):
@@ -36,8 +24,9 @@ func capture(game: MatchManager, seat: int) -> Dictionary:
 		explored.append(LanCatalog.xy(cell))
 	for cell: Vector2i in visible:
 		view.append(LanCatalog.xy(cell))
-	return {"revision": LanSession.revision, "round": game.current_round, "active": game.active_player_id, "phase": int(game.current_phase), "winner": game.winner_id, "eliminated": game.eliminated_player_ids.keys(), "sugars": player.sugars, "tech": player.unlocked_technologies, "score": player.score, "center_rounds": player.center_control_rounds, "units": units, "towns": memory.towns.values(), "resources": memory.resources.values(), "structures": memory.structures.values(), "explored": explored, "visible": view}
+	return {"clock": game.turn_clock.capture() if game.turn_clock != null else {}, "revision": LanSession.revision, "round": game.current_round, "active": game.active_player_id, "phase": int(game.current_phase), "winner": game.winner_id, "eliminated": game.eliminated_player_ids.keys(), "sugars": player.sugars, "tech": player.unlocked_technologies, "score": player.score, "center_rounds": player.center_control_rounds, "units": units, "towns": memory.towns.values(), "resources": memory.resources.values(), "structures": memory.structures.values(), "claims": memory.claims.values(), "explored": explored, "visible": view}
 
+## Reconciles guest state and entities to the host snapshot; any animation is presentation only.
 static func apply(game: MatchManager, state: Dictionary) -> void:
 	var old_turn := game.active_player_id
 	var old_round := game.current_round
@@ -54,6 +43,8 @@ static func apply(game: MatchManager, state: Dictionary) -> void:
 		if game.players[index].player_id == game.active_player_id:
 			game.active_player_index = index
 	game.current_phase = int(state.phase)
+	if game.turn_clock != null:
+		game.turn_clock.apply_remote(state.get("clock", {}))
 	game.eliminated_player_ids.clear()
 	for id in state.eliminated:
 		game.eliminated_player_ids[int(id)] = true
@@ -72,7 +63,7 @@ static func apply(game: MatchManager, state: Dictionary) -> void:
 		town._update_territory_radius()
 		town._update_building_income()
 		town._refresh_exp_bar()
-	game.territory_manager.rebuild_territories(game.get_all_buildings_for_network())
+	game.territory_manager.apply_known_claims(state.claims, game.get_all_buildings_for_network())
 	for row: Dictionary in state.resources:
 		var resource := game.get_resource(int(row.id))
 		if resource == null:
@@ -87,6 +78,15 @@ static func apply(game: MatchManager, state: Dictionary) -> void:
 			resource.controlling_building_id = int(row.town)
 			if row.upgraded and not resource.is_upgraded:
 				resource.upgrade_resource()
+	var known_structures: Dictionary = {}
+	for row: Dictionary in state.structures:
+		known_structures[LanCatalog.cell(row.cell)] = true
+	for cell: Vector2i in game.structure_manager.structures.keys():
+		if not known_structures.has(cell):
+			var old: Structure = game.structure_manager.structures[cell]
+			old.hide()
+			old.queue_free()
+			game.structure_manager.structures.erase(cell)
 	for row: Dictionary in state.structures:
 		var location := LanCatalog.cell(row.cell)
 		if not game.structure_manager.structures.has(location):
@@ -99,6 +99,7 @@ static func apply(game: MatchManager, state: Dictionary) -> void:
 			game.get_tree().current_scene.add_child(structure)
 			structure.global_position = game.board_manager.cell_to_world(location)
 			game.structure_manager.structures[location] = structure
+		game.structure_manager.structures[location].controlling_building_id = int(row.town)
 	var keep: Dictionary = {}
 	for row: Dictionary in state.units:
 		keep[int(row.id)] = true
@@ -132,6 +133,7 @@ static func apply(game: MatchManager, state: Dictionary) -> void:
 		if animate:
 			unit.present_network_move(old_position)
 	var fog := game.fog_of_war
+	fog.knowledge.import_view(game, LanSession.local_player_id, state)
 	fog.explored_by_player[LanSession.local_player_id] = {}
 	fog.visible_by_player[LanSession.local_player_id] = {}
 	for cell in state.explored:

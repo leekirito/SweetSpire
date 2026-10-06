@@ -1,6 +1,10 @@
 class_name MeteorEffect
 extends Node2D
 
+## Editable meteor art, particles, audio, and standalone preview.
+## AttackPresentation controls timing; CombatResolver owns damage.
+
+
 ## The caster data controls when impact happens; edit this scene for its look and sound.
 ## Starting position of the falling sprite and trail relative to the targeted tile.
 @export var start_offset: Vector2 = Vector2(-180.0, -490.0)

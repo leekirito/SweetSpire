@@ -1,7 +1,14 @@
 extends CanvasLayer
 
+## Connects the authored menu scenes to setup and navigation.
+## Creates the Hotseat roster and delegates LAN rooms to LanSession and the LAN setup screen.
+
+
+## Tribe data assigned to seats that choose Saba.
 @export var saba_tribe: TribeData
+## Tribe data assigned to seats that choose Malagkit.
 @export var malagkit_tribe: TribeData
+## Tribe data assigned to seats that choose Kamote.
 @export var kamote_tribe: TribeData
 
 var selected_tribes: Dictionary[int, TribeData] = {}
@@ -57,6 +64,9 @@ func _setup_hotseat_layout() -> void:
 	hotseat_start.pressed.connect(start_game)
 	hotseat_count_picker.select(hotseat_player_count - 1)
 	hotseat_count_picker.item_selected.connect(func(index: int) -> void: set_hotseat_player_count(hotseat_count_picker.get_item_id(index)))
+	var duration_picker: OptionButton = page.get_node("ModeRow/TurnTime")
+	NumericFontManager.manage_numeric_control(duration_picker)
+	duration_picker.get_popup().add_theme_font_override("font", duration_picker.get_theme_font("font"))
 	NumericFontManager.manage_numeric_control(hotseat_count_picker)
 	hotseat_count_picker.get_popup().add_theme_font_override("font", hotseat_count_picker.get_theme_font("font"))
 	_rebuild_hotseat_players()
@@ -267,6 +277,7 @@ func prepare_hotseat_session() -> bool:
 	GameSession.clear_players()
 	GameSession.hotseat_mode = true
 	GameSession.match_mode = GameSession.MATCH_MODES[$HotseatSetup/ResponsiveLayout/Page/ModeRow/MatchMode.selected]
+	GameSession.turn_duration = $HotseatSetup/ResponsiveLayout/Page/ModeRow/TurnTime.get_selected_id()
 	GameSession.map_manifest = manifest
 	for player_id in range(1, hotseat_player_count + 1):
 		var player := PlayerState.new()

@@ -21,6 +21,15 @@ func run() -> void:
 	ui.choice.get_node("Content/Host").pressed.emit()
 	await get_tree().process_frame
 	check(LanSession.hosting and ui.room.visible and not ui.choice.visible, "Host opens lobby immediately")
+	check(LanSession.match_mode == GameSession.REGULAR, "new LAN room defaults to Regular")
+	var timer: OptionButton = ui.room.get_node("TimerRow/TurnTime")
+	check(timer.item_count == 3 and timer.get_selected_id() == 120, "LAN timer defaults to two minutes")
+	for index in [1, 2, 0]:
+		LanSession.choose("saba", true)
+		timer.select(index)
+		timer.item_selected.emit(index)
+		check(LanSession.turn_duration == GameSession.TURN_DURATIONS[index] and not LanSession.seats[0].ready, "changing timer applies option and clears readiness")
+	check(not LanSession.configure_room("Invalid", 8, GameSession.REGULAR, false, "", 60), "LAN rejects unsupported duration")
 	check(LanSession.port > 0 and not ui.room.has_node("Port"), "host does not enter a port")
 	check(ui.rows.size() == 1 and not ui.rows[1].get_node("Kick").visible, "host row cannot kick itself")
 	ui.rows[1].get_node("PlayerName").text = "Mika"
@@ -55,6 +64,11 @@ func run() -> void:
 	for index in 7:
 		check(LanSession.add_bot(), "Bot fills available seat")
 	check(not LanSession.add_bot() and ui.room.get_node("AddBot").disabled, "Eight-seat limit includes bots")
+	LanSession.hosting = false
+	ui._refresh()
+	check(timer.disabled, "guests cannot edit timer")
+	check(not LanSession.configure_room("Guest edit", 8, GameSession.REGULAR, false, "", 300), "host authority protects timer setting")
+	LanSession.hosting = true
 	ui.room.get_node("Actions/Leave").pressed.emit()
 	check(not LanSession.hosting and ui.choice.visible, "host leave returns to choice")
 	ui.choice.get_node("Content/Join").pressed.emit()

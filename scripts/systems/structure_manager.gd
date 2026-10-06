@@ -1,6 +1,10 @@
 class_name StructureManager
 extends RefCounted
 
+## Validates and places improvements in owned territory.
+## Resolves ownership through towns and handles income, docks, embarkation, and landing.
+
+
 const DOCK: StructureData = preload("res://scripts/data/Structures/Dock.tres")
 const LUMBER: StructureData = preload("res://scripts/data/Structures/LumberFactory.tres")
 const MINE: StructureData = preload("res://scripts/data/Structures/MiningDen.tres")
@@ -8,6 +12,7 @@ const FARM: StructureData = preload("res://scripts/data/Structures/Farm.tres")
 var structures: Dictionary[Vector2i, Structure] = {}
 var game: MatchManager
 
+## Resolves retained structure/resource claims before falling back to territory ownership.
 func controlling_town(cell: Vector2i) -> Building:
 	var existing: Structure = structures.get(cell)
 	var resource := game.get_resource(game.board_manager.get_resource_id_at_cell(cell))
@@ -16,6 +21,7 @@ func controlling_town(cell: Vector2i) -> Building:
 	var town_id: int = existing.controlling_building_id if existing != null else game.territory_manager.get_building_id_at_cell(cell)
 	return game.get_building(town_id)
 
+## Returns an empty string for legal placement, otherwise a player-readable rejection reason.
 func placement_error(data: StructureData, cell: Vector2i, player_id: int) -> String:
 	if data not in [DOCK, LUMBER, MINE, FARM]:
 		return "Unknown structure"
@@ -55,6 +61,7 @@ func placement_error(data: StructureData, cell: Vector2i, player_id: int) -> Str
 		return "Requires %d Sugar" % data.sugar_cost
 	return ""
 
+## Routes to LAN if needed, validates construction, pays Sugar, and awards town EXP.
 func build(data: StructureData, cell: Vector2i, player_id: int) -> bool:
 	if not game.bot_executing and game.get_active_player() != null and game.get_active_player().is_bot():
 		return false
@@ -82,6 +89,7 @@ func build(data: StructureData, cell: Vector2i, player_id: int) -> bool:
 	game.refresh_resource_collectibility_authoritative()
 	return true
 
+## Checks that the dock belongs to this player through its controlling town.
 func can_use_dock(cell: Vector2i, player_id: int) -> bool:
 	var structure: Structure = structures.get(cell)
 	if structure == null or not structure.data.converts_to_boat:
@@ -89,6 +97,7 @@ func can_use_dock(cell: Vector2i, player_id: int) -> bool:
 	var town := controlling_town(cell)
 	return town != null and town.owner_id == player_id
 
+## Totals recurring Sugar from improvements claimed by this town.
 func income_for(town: Building) -> int:
 	var income := 0
 	for structure: Structure in structures.values():
@@ -96,6 +105,7 @@ func income_for(town: Building) -> int:
 			income += structure.data.sugar_per_round
 	return income
 
+## Restores land form on shore and invokes an owned structure's entry behavior.
 func on_unit_arrived(unit: Unit) -> void:
 	if not game.board_manager.water_cells.has(unit.current_cell):
 		if unit.is_embarked:

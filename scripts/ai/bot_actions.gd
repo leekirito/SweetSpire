@@ -1,10 +1,15 @@
 class_name BotActions
 extends RefCounted
+
+## Scores collection, upgrades, useful prerequisite research, recruitment, and construction
+## using the bot's copied knowledge and owned territory.
+
 ## Candidates contain only wire-safe commands and bounded utility scores.
 static func offer(actions: Array, command: Dictionary, score: float, reason: String) -> void:
 	if score > 0.0:
 		actions.append({"command": command, "score": clampf(score, 0.0, 1.0), "reason": reason})
 
+## Builds development options from copied knowledge; the authority revalidates each submission.
 static func economy(view: Dictionary, profile: BotProfile) -> Array:
 	var actions: Array = []
 	var own_units := 0
@@ -114,6 +119,7 @@ static func economy(view: Dictionary, profile: BotProfile) -> Array:
 				offer(actions, {"action": "technology", "key": tech.technology_id}, minf(0.9, float(desired[id]) * profile.research_weight), "research for a usable capability")
 	return actions
 
+## Returns the shortest Manhattan distance to an objective tile.
 static func distance_to_center(view: Dictionary, cell: Vector2i) -> int:
 	var result := 999999
 	for center: Vector2i in view.center:

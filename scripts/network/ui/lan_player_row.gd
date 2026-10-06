@@ -1,4 +1,8 @@
 extends HBoxContainer
+
+## One human or bot lobby row.
+## Humans edit their own choices; the host customizes bots and removes eligible seats.
+
 const TRIBES := ["saba", "malagkit", "kamote"]
 var seat := -1
 var local := false
@@ -26,6 +30,7 @@ func _save_bot() -> void:
 	if bot_editable:
 		LanSession.edit_bot(seat, $PlayerName.text, TRIBES[$Tribe.selected], BotCatalog.PROFILES.keys()[$Profile.selected])
 
+## Displays roster values and enables only locally authorized human or host-bot editing.
 func configure(row: Dictionary) -> void:
 	seat = int(row.id)
 	local = seat == LanSession.local_player_id

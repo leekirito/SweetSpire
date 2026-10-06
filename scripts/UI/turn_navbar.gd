@@ -1,6 +1,10 @@
 class_name TurnNavbar
 extends Control
 
+## Coordinates the technology modal and End Turn button.
+## MatchManager and LanSession remain responsible for purchase authorization.
+
+
 @onready var technology_button: Button = $BottomNav/Technology
 @onready var technology_tree: Control = $TechnologyTree
 @onready var match_manager: MatchManager = get_tree().current_scene.get_node("MatchManager")

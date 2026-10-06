@@ -1,7 +1,12 @@
 class_name VictoryManager
 extends RefCounted
 
+## Determines elimination and cumulative Sweetspire-control victories.
+## A seat survives while it has a town or unit; contested center tiles award no control round.
 
+
+
+## Eliminates seats with no towns or units; a multiplayer match ends when one survivor remains.
 func evaluate_eliminations(game: MatchManager) -> void:
 	if game.current_phase == MatchManager.Phase.GAME_OVER:
 		return
@@ -26,6 +31,7 @@ func evaluate_eliminations(game: MatchManager) -> void:
 		game.finish_match_authoritative(survivors[0].player_id, "LAST PLAYER STANDING")
 
 
+## Awards a cumulative round to the uncontested center holder and checks the target.
 func evaluate_center_control(game: MatchManager) -> void:
 	if game.current_phase == MatchManager.Phase.GAME_OVER:
 		return
@@ -42,6 +48,7 @@ func evaluate_center_control(game: MatchManager) -> void:
 		)
 
 
+## Returns the sole player occupying objective cells, or null when empty or contested.
 func get_center_controller(game: MatchManager) -> PlayerState:
 	var controlling_player_id := -1
 	for cell: Vector2i in game.get_center_cells():

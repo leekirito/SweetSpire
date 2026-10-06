@@ -1,7 +1,12 @@
 class_name CaptureManager
 extends RefCounted
 
+## Resolves town captures and transfers associated resource claims.
+## TurnManager invokes occupation checks at round boundaries.
 
+
+
+## Transfers town ownership, resource claims, and visibility information.
 func conquer_building(game: MatchManager, building_id: int, player_id: int) -> bool:
 	var building: Building = game.get_building(building_id)
 	var player: PlayerState = game.get_player(player_id)
@@ -18,6 +23,7 @@ func conquer_building(game: MatchManager, building_id: int, player_id: int) -> b
 	return true
 
 
+## Captures towns occupied by another player's unit at the round boundary.
 func capture_occupied_buildings(game: MatchManager) -> void:
 	for cell: Vector2i in game.board_manager.occupied_cells:
 		if not game.board_manager.building_occupied_cells.has(cell):

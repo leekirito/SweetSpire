@@ -1,6 +1,11 @@
 class_name LanAddress
 extends RefCounted
 
+## Parses manual connection addresses and lists local IPv4 choices.
+## LanSession handles discovery and transport.
+
+
+## Parses an address and optional single-colon port suffix; malformed input returns {}.
 static func parse(text: String, fallback_port: int) -> Dictionary:
 	var address := text.strip_edges()
 	var port := fallback_port
@@ -14,6 +19,7 @@ static func parse(text: String, fallback_port: int) -> Dictionary:
 		return {}
 	return {"address": address, "port": port}
 
+## Returns sorted IPv4 choices excluding loopback and link-local addresses.
 static func local_addresses() -> PackedStringArray:
 	var addresses := PackedStringArray()
 	for ip: String in IP.get_local_addresses():

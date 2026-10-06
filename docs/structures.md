@@ -21,4 +21,4 @@ Run `scenes/main/Main.tscn` directly for a two-player demo, or start a match fro
 
 ## Validation
 
-Run `scenes/structure_regression_test.tscn` for 33 integration checks covering demo setup, construction, payouts, technology/ownership/funds restrictions, ocean rejection, embarkation, landing, stat preservation, and collection. The existing `scripts/range_regression_test.gd` checks range geometry.
+Run `scenes/structure_regression_test.tscn` for integration checks covering construction, payouts, technology/ownership/funds restrictions, ocean rejection, embarkation, landing, stat preservation, and collection. Run `scenes/range_regression_test.tscn` for range geometry and live unit-data checks with the normal project autoloads.

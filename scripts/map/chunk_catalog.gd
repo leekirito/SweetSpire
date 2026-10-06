@@ -1,6 +1,11 @@
 class_name ChunkCatalog
 extends RefCounted
 
+## Explicit chunk registry and authoring validator shared by builds.
+## Checks seams, budgets, starts, connected land, and Sweetspire's ocean ring,
+## then fingerprints the serialized content for compatibility.
+
+
 ## Explicit catalog: exported games and peers use the same stable identifiers.
 const SCENES: Array[String] = [
 	"res://scenes/map/chunks/saba_grove.tscn",
@@ -23,6 +28,7 @@ var variants: Dictionary = {}
 var errors: PackedStringArray = []
 var signature: String = ""
 
+## Loads registered scenes, collects validation failures, and hashes serialized authored content.
 func load_catalog(paths: Array[String] = SCENES) -> bool:
 	variants.clear()
 	errors.clear()
@@ -50,6 +56,7 @@ func load_catalog(paths: Array[String] = SCENES) -> bool:
 	signature = JSON.stringify(variants).sha256_text()
 	return errors.is_empty()
 
+## Returns sorted IDs for a biome, optionally filtered to a compatible map slot.
 func ids_for(biome: String, slot: int = -1) -> Array[String]:
 	var result: Array[String] = []
 	for id: String in variants:
@@ -58,6 +65,7 @@ func ids_for(biome: String, slot: int = -1) -> Array[String]:
 	result.sort()
 	return result
 
+## Checks center-only Sweetspire placement and the declared inward shoreline direction.
 func fits_slot(id: String, slot: int) -> bool:
 	if not variants.has(id) or slot < 0 or slot > 8:
 		return false
@@ -68,6 +76,7 @@ func fits_slot(id: String, slot: int) -> bool:
 		return false
 	return chunk.shore_edge == BiomeChunk.ShoreEdge.NONE or chunk.shore_edge == INWARD_EDGES.get(slot, -1)
 
+## Tests the declared tile-grid edge, excluding corners shared with another seam.
 static func on_shore_edge(cell: Vector2i, edge: int) -> bool:
 	# Corners touch a second seam, which must remain land.
 	match edge:
@@ -81,6 +90,7 @@ static func on_shore_edge(cell: Vector2i, edge: int) -> bool:
 			return cell.x == 0 and cell.y > 0 and cell.y < SIZE - 1
 	return false
 
+## Converts painted layers and markers into plain data and validates placement budgets.
 func _read_chunk(chunk: BiomeChunk) -> Dictionary:
 	var data := {"id": chunk.variant_id, "biome": chunk.biome_id, "revision": chunk.revision, "shore_edge": chunk.shore_edge, "layers": {}, "placements": []}
 	if chunk.shore_edge not in BiomeChunk.ShoreEdge.values() or (chunk.biome_id == "SWEETSPIRE" and chunk.shore_edge != BiomeChunk.ShoreEdge.NONE):
@@ -134,6 +144,7 @@ func _read_chunk(chunk: BiomeChunk) -> Dictionary:
 	_validate_terrain(chunk, ground, occupied)
 	return data
 
+## Checks coverage, biome tiles, ocean/shore seams, and connected starting land.
 func _validate_terrain(chunk: BiomeChunk, ground: TileMapLayer, occupied: Dictionary) -> void:
 	var center := chunk.biome_id == "SWEETSPIRE"
 	var land: Dictionary = {}

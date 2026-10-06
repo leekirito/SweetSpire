@@ -1,6 +1,10 @@
 class_name CenterControlHUD
 extends Control
 
+## Displays the uncontested center holder and accumulated control rounds.
+## Only progress segments are generated dynamically because the target can vary.
+
+
 
 @onready var match_manager: MatchManager = get_node("../../MatchManager")
 @onready var panel: PanelContainer = $Panel

@@ -1,11 +1,17 @@
 class_name BiomeMapGenerator
 extends RefCounted
 
+## Seeded assembly of eight outer chunks and central Sweetspire.
+## Assigns separate matching-biome starts and respects inward shoreline directions.
+## Produces plain data; MapBootstrap creates the scene nodes.
+
+
 const VERSION := 2
 const SLOT_ORIGINS := [[0, 0], [10, 0], [20, 0], [20, 10], [20, 20], [10, 20], [0, 20], [0, 10], [10, 10]]
 var catalog := ChunkCatalog.new()
 var last_error: String = ""
 
+## Loads the catalog and copies authoring errors into last_error.
 func prepare() -> bool:
 	if not catalog.load_catalog():
 		last_error = "\n".join(catalog.errors)
@@ -136,11 +142,13 @@ func validate(manifest: Dictionary, roster: Array) -> bool:
 		return _fail("Starting placements do not match the authored chunks.")
 	return true
 
+## Validates an explicit manifest before expanding its global tiles, entities, and starts.
 func build(manifest: Dictionary, roster: Array) -> Dictionary:
 	if not validate(manifest, roster):
 		return {}
 	return _expand(manifest.chunks)
 
+## Offsets chunk cells, assigns deterministic entity IDs, and adds the outside ocean border.
 func _expand(chunks: Array) -> Dictionary:
 	var result := {"layers": {"Ground": [], "Decoration": [], "Obstacles": []}, "entities": [], "starts": []}
 	var town_id := 0
@@ -170,6 +178,7 @@ func _expand(chunks: Array) -> Dictionary:
 				result.starts.append({"player_id": int(entry.player_id), "building_id": id, "cell": cell})
 	return result
 
+## Rejects empty/oversized rosters, duplicate player IDs, and unsupported tribes.
 func _valid_roster(roster: Array) -> bool:
 	if roster.is_empty() or roster.size() > 8:
 		return _fail("Chunk maps support 1 to 8 players.")

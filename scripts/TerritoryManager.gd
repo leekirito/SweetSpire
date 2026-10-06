@@ -1,6 +1,10 @@
 class_name TerritoryManager
 extends Node2D
 
+## Tracks town claims, binds resources to those claims, and draws territory.
+## Existing claims keep priority when town ranges overlap.
+
+
 
 
 
@@ -12,9 +16,12 @@ extends Node2D
 
 @export_group("Territory Visuals")
 
+## Master switch for territory drawing, including fill.
 @export var show_territory_borders: bool = true
+## Draw translucent ownership fill inside the territory outline.
 @export var show_territory_fill: bool = true
 
+## Reserved neutral color; current territory drawing does not use this field.
 @export var neutral_border_color: Color = Color(
 	1.0,
 	1.0,
@@ -22,6 +29,7 @@ extends Node2D
 	1.0
 )
 
+## Main territory outline thickness in world pixels.
 @export_range(1.0, 16.0, 0.5) var border_width: float = 4.0
 
 @export var border_shadow_color: Color = Color(
@@ -31,9 +39,12 @@ extends Node2D
 	0.8
 )
 
+## Additional thickness of the outline's shadow.
 @export_range(0.0, 12.0, 0.5) var border_shadow_extra_width: float = 2.5
 
+## Opacity of the ownership fill.
 @export_range(0.0, 0.5, 0.01) var territory_fill_alpha: float = 0.10
+## Opacity of the outline highlight.
 @export_range(0.0, 1.0, 0.05) var border_highlight_alpha: float = 0.45
 
 
@@ -43,6 +54,35 @@ var cell_to_building_id: Dictionary[Vector2i,int] = {}
 
 # Building ID -> Building
 var buildings_by_id: Dictionary[int,Building] = {}
+
+# Presentation uses the viewer's remembered claims, never another seat's live borders.
+var display_claims: Dictionary = {}
+var has_display_claims := false
+
+## Install the host's filtered claim table without recomputing overlap priority.
+func apply_known_claims(rows: Array, buildings: Array[Building]) -> void:
+	buildings_by_id.clear()
+	cell_to_building_id.clear()
+	for building: Building in buildings:
+		buildings_by_id[building.building_id] = building
+		building.territory_cells.clear()
+	for row: Dictionary in rows:
+		var cell := LanCatalog.cell(row.cell)
+		var town_id := int(row.town)
+		if town_id == -1:
+			continue
+		cell_to_building_id[cell] = town_id
+		var town: Building = buildings_by_id.get(town_id)
+		if town != null:
+			town.territory_cells.append(cell)
+	queue_redraw()
+
+## Detach presentation data from the changing per-seat memory dictionaries.
+func set_display_claims(claims: Dictionary) -> void:
+	if not has_display_claims or display_claims != claims:
+		has_display_claims = true
+		display_claims = claims.duplicate(true)
+		queue_redraw()
 
 
 
@@ -71,6 +111,7 @@ func rebuild_territories(buildings: Array[Building]) -> void:
 				cell_to_building_id[cell] = building.building_id
 	queue_redraw()
 
+## Returns existing map cells within a square radius, regardless of terrain type.
 func get_territory_cells(
 	center: Vector2i,
 	radius: int
@@ -134,6 +175,7 @@ func update_resources_for_building(building: Building, resources: Array[Resource
 	rebuild_territories(buildings)
 	bind_resources_to_territories(resources)
 
+## Returns the claiming town ID, or -1 for an unclaimed cell.
 func get_building_id_at_cell(
 	cell: Vector2i
 ) -> int:
@@ -146,84 +188,48 @@ func get_building_id_at_cell(
 
 
 func _draw() -> void:
-
-	if not show_territory_borders:
+	if not show_territory_borders or board_manager == null or board_manager.tile_map_layer == null:
 		return
-
-
-	if board_manager == null:
+	var half_size := Vector2(board_manager.tile_map_layer.tile_set.tile_size) / 2.0
+	var groups: Dictionary = {}
+	var game := get_node_or_null("../MatchManager") as MatchManager
+	if game == null:
 		return
-
-
-	if board_manager.tile_map_layer == null:
+	var claims := display_claims
+	if not has_display_claims:
+		# Before the first fog view exists, reveal no authoritative ownership.
 		return
-
-
-	var tile_size: Vector2 = Vector2(
-		board_manager
-		.tile_map_layer
-		.tile_set
-		.tile_size
-	)
-
-
-	var half_size: Vector2 = (
-		tile_size / 2.0
-	)
-
-
-	# Paint every territory first so borders stay crisp on top.
-	if show_territory_fill:
-		for building: Building in buildings_by_id.values():
-			if building.owner_id == -1 or building.visual_tribe == null:
-				continue
-			_draw_building_fill(
-				building,
-				half_size,
-				building.visual_tribe.territory_color
-			)
-
-	for building: Building in buildings_by_id.values():
-
-		# Neutral towns do not draw territory borders.
-		if building.owner_id == -1:
+	for cell: Vector2i in claims:
+		var row: Dictionary = claims[cell]
+		var owner := int(row.owner)
+		if owner == -1:
 			continue
-
-		# Safety check.
-		if building.visual_tribe == null:
+		var key := Vector2i(int(row.town), owner)
+		if not groups.has(key):
+			groups[key] = []
+		groups[key].append(cell)
+	for key: Vector2i in groups:
+		var player := game.get_player(key.y)
+		if player == null or player.tribe == null:
 			continue
+		var cells: Array = groups[key]
+		if show_territory_fill:
+			_draw_claim_fill(cells, half_size, player.tribe.territory_color)
+	for key: Vector2i in groups:
+		var player := game.get_player(key.y)
+		if player != null and player.tribe != null:
+			_draw_building_border(groups[key], half_size, player.tribe.territory_color)
 
-		var border_color: Color = (
-			building
-				.visual_tribe
-				.territory_color
-		)
-
-		_draw_building_border(
-			building,
-			half_size,
-			border_color
-		)
-
-
-## Gives controlled ground a quiet tribe-colored wash without extra nodes or textures.
-func _draw_building_fill(
-	building: Building,
-	half_size: Vector2,
-	territory_color: Color
-) -> void:
+## Draw a remembered claim set without consulting live town level or ownership.
+func _draw_claim_fill(cells: Array, half_size: Vector2, territory_color: Color) -> void:
 	var fill_color := territory_color
 	fill_color.a = territory_fill_alpha
-
-	for cell: Vector2i in building.territory_cells:
-		var center: Vector2 = to_local(board_manager.cell_to_world(cell))
-		var diamond := PackedVector2Array([
-			center + Vector2(0.0, -half_size.y),
-			center + Vector2(half_size.x, 0.0),
-			center + Vector2(0.0, half_size.y),
-			center + Vector2(-half_size.x, 0.0)
-		])
-		draw_colored_polygon(diamond, fill_color)
+	for cell: Vector2i in cells:
+		var center := to_local(board_manager.cell_to_world(cell))
+		draw_colored_polygon(PackedVector2Array([
+			center + Vector2(0.0, -half_size.y), center + Vector2(half_size.x, 0.0),
+			center + Vector2(0.0, half_size.y), center + Vector2(-half_size.x, 0.0)
+		]), fill_color)
 func _draw_territory_line(
 	from: Vector2,
 	to: Vector2,
@@ -261,7 +267,7 @@ func _draw_territory_line(
 
 ## Draws only exposed diamond edges so adjacent territory cells share no internal border.
 func _draw_building_border(
-	building: Building,
+	cells: Array,
 	half_size: Vector2,
 	border_color: Color
 ) -> void:
@@ -269,7 +275,7 @@ func _draw_building_border(
 	var territory_set: Dictionary[Vector2i,bool] = {}
 
 
-	for cell: Vector2i in building.territory_cells:
+	for cell: Vector2i in cells:
 
 		territory_set[
 			cell
@@ -284,7 +290,7 @@ func _draw_building_border(
 	]
 
 
-	for cell: Vector2i in building.territory_cells:
+	for cell: Vector2i in cells:
 
 		var center: Vector2 = to_local(
 			board_manager.cell_to_world(

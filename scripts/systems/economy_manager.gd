@@ -1,7 +1,12 @@
 class_name EconomyManager
 extends RefCounted
 
+## Shared collection, upgrade, town-income, and recruitment rules.
+## Costs and rewards use the same PlayerState values for humans and bots.
 
+
+
+## Requires active ownership and a controlling town; structures prevent harvesting underneath them.
 func can_interact_with_resource(
 	game: MatchManager,
 	resource: Resources,
@@ -20,6 +25,7 @@ func can_interact_with_resource(
 	return building != null and building.owner_id == player_id
 
 
+## Checks a one-time upgrade and its research, then grants town EXP without consuming the resource.
 func request_upgrade_resource(
 	game: MatchManager,
 	resource_instance_id: int,
@@ -44,6 +50,7 @@ func request_upgrade_resource(
 	return true
 
 
+## Pays each owned town plus improvements once per round, then invokes structure round-end hooks.
 func collect_sugars(game: MatchManager) -> void:
 	for building: Building in game.buildings.values():
 		if building.owner_id == -1:
@@ -60,6 +67,7 @@ func collect_sugars(game: MatchManager) -> void:
 		structure.on_round_end(game)
 
 
+## Awards town EXP and player Sugar before unregistering and removing the resource.
 func request_collect_resource(
 	game: MatchManager,
 	resource_instance_id: int,
@@ -86,6 +94,8 @@ func request_collect_resource(
 	return true
 
 
+## Requires an owned free town, research, funds, and unused recruitment this round.
+## Returns the new unit with actions spent, or null when rejected.
 func request_recruit_unit(
 	game: MatchManager,
 	building_id: int,

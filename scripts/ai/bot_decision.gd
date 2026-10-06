@@ -1,5 +1,11 @@
 class_name BotDecision
 extends RefCounted
+
+## Ranks candidates with deterministic ties and excludes rejected commands.
+## Optional mistakes choose a bounded nearby alternative according to BotProfile.
+
+## Deduplicates and ranks candidates, excluding previously rejected commands.
+## Optional imperfect choices stay within the configured score loss; no options yields end_turn.
 static func choose(candidates: Array, profile: BotProfile, memory: BotMemory) -> Dictionary:
 	var unique: Dictionary = {}
 	for candidate: Dictionary in candidates:

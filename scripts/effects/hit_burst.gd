@@ -1,4 +1,8 @@
 extends Node2D
+
+## Cosmetic debris and shadows after damage, with separate visual randomness.
+## Chunk motion has no collision or combat effects.
+
 ## Cosmetic debris: two drawing layers, no collision bodies or gameplay RNG.
 
 @export_range(1, 24) var chunk_count: int = 8

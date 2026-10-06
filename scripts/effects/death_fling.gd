@@ -1,11 +1,15 @@
 class_name DeathFling
 extends Node2D
 
+## Visual copy of a defeated unit that can animate after the real unit leaves the registries.
+
+
 ## A visual copy that survives after the defeated unit leaves the board.
 var destination: Vector2
 var _sprite: Sprite2D
 
 
+## Copies the defeated unit's sprite and animates the copy beyond the board.
 func launch(unit: Unit, board: BoardManager) -> void:
 	global_position = unit.global_position
 	z_index = 1200

@@ -1,9 +1,14 @@
 class_name WaterEffects
 extends TileMapLayer
 
+## Copies water tiles into a dedicated cosmetic shader layer.
+## The source terrain remains authoritative for movement and construction.
+
+
 ## The ground map remains the source of truth. This layer copies only water
 ## cells, keeping its shader separate from selection and cursor rendering.
 @export var source_layer: TileMapLayer
+## TileSet source IDs copied into this cosmetic water layer.
 @export var water_source_ids: Array[int] = [5]
 
 
@@ -11,6 +16,7 @@ func _ready() -> void:
 	rebuild()
 
 
+## Replaces this visual layer with water tiles copied from the authoritative source.
 func rebuild() -> void:
 	clear()
 

@@ -1,6 +1,10 @@
 class_name DemoMap
 extends RefCounted
 
+## Seeded fallback population for authored demo maps and default editor players.
+## Manifest-driven chunk bootstrap normally replaces this population path in Main.
+
+
 const BIOMES: Array[String] = ["SABA", "KAMOTE", "MALAGKIT", "SWEETSPIRE"]
 const LAND_RESOURCE_KINDS: Array[String] = ["forest", "mountain", "fruit", "animal"]
 const TOWNS_PER_BIOME := 3

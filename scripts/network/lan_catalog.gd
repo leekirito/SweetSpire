@@ -1,6 +1,10 @@
 class_name LanCatalog
 extends RefCounted
 
+## Stable IDs for network-visible tribes, units, research, and structures.
+## Encodes cells and fingerprints authored rules for compatibility checks.
+
+
 const TRIBES := {
 	"saba": preload("res://scripts/data/Tribe/SABA.tres"),
 	"malagkit": preload("res://scripts/data/Tribe/MALAGKIT_DATA.tres"),
@@ -20,15 +24,18 @@ const STRUCTURES := {
 }
 const TECHS := TechnologyTreeUI.TECH_PATHS
 
+## Maps an approved scene path to its catalog ID, or an empty string.
 static func unit_key(scene_path: String) -> String:
 	for key: String in UNITS:
 		if UNITS[key].resource_path == scene_path:
 			return key
 	return ""
 
+## Converts an already-validated [x, y] array into a board cell.
 static func cell(value: Variant) -> Vector2i:
 	return Vector2i(int(value[0]), int(value[1]))
 
+## Encodes a board cell as a plain two-number array.
 static func xy(value: Vector2i) -> Array:
 	return [value.x, value.y]
 

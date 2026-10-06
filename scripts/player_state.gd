@@ -1,12 +1,17 @@
 class_name PlayerState
 extends Node
 
+## Mutable state for one human or bot seat: tribe, currency, research, and score.
+## Owned by GameSession. player_id identifies a seat, not an ENet peer.
+
+
 
 var player_id: int
 var player_name: String = ""
 var controller_kind: String = "human"
 var bot_profile_id: String = "balanced"
 
+## Whether this seat is assigned to a bot controller.
 func is_bot() -> bool:
 	return controller_kind == "bot"
 
@@ -28,6 +33,7 @@ func _ready() -> void:
 	pass
 
 
+## An empty requirement is satisfied; other IDs must be in the player's unlock list.
 func has_technology(
 	technology_id: String
 ) -> bool:
@@ -38,6 +44,7 @@ func has_technology(
 	return technology_id in unlocked_technologies
 
 
+## Adds a nonempty unlock once; false means empty or already owned.
 func unlock_technology(technology_id: String) -> bool:
 	if technology_id.is_empty() or has_technology(technology_id):
 		return false

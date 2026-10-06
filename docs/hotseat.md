@@ -10,7 +10,9 @@ Open `scenes/entities/UI/HotseatPlayerCard.tscn` to edit the reusable card, incl
 
 Main Menu → Hotseat offers a player-count selector from 1 to 8. The scrollable setup shows exactly that many player cards. Each card has an optional name and three tribe choices; multiple players can choose the same tribe. Start Match enables after every active card has a tribe. Reducing and increasing the count preserves hidden cards' choices, but hidden players are not included in the match.
 
-The Mode selector offers **Fog of War** (default) and **Regular**. Fog of War reveals terrain through exploration and current vision. Regular shows the entire map and all units from the start. Both modes keep normal movement/attack ranges and the pass-the-device cover. This control is authored in `HotseatSetup.tscn` under `ResponsiveLayout/Page/ModeRow`.
+The Mode selector offers **Fog of War** and **Regular** (default). Fog of War reveals terrain through exploration and current vision. Regular shows the entire map and all units from the start. Both modes keep normal movement/attack ranges and the pass-the-device cover. This control is authored in `HotseatSetup.tscn` under `ResponsiveLayout/Page/ModeRow`.
+
+The **Turn Time** dropdown beside Mode offers **2 minutes** (default), **3 minutes**, and **5 minutes**. A countdown below the player/round header appears only for the active human player; bot turns and the handoff cover hide it. At zero the turn ends automatically after any committed animation finishes. The cover does not use up time: Continue starts the next turn with its full allowance. The HUD layout is authored in `scenes/UI/TurnTimer.tscn`; `scripts/systems/turn_clock.gd` handles timing in both Hotseat and LAN.
 
 The menu validates the roster against the chunk catalog before leaving setup. If shore restrictions or invalid painted chunks prevent a valid map, an error appears in setup. A valid manifest is retained in GameSession and used by Main.
 

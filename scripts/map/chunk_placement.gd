@@ -2,6 +2,11 @@
 class_name ChunkPlacement
 extends Marker2D
 
+## Editor marker for a town or resource in a chunk.
+## The catalog converts its position to a cell; generation creates the actual entity.
+
+
+## Entity to create at this marker. Fish requires water; other resource kinds require land.
 @export_enum("town", "forest", "mountain", "fruit", "animal", "fish") var kind: String = "town"
 ## One starting town per outer chunk. Ignored for neutral Sweetspire towns.
 @export var starting_town: bool = false

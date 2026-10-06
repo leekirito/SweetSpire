@@ -2,6 +2,10 @@
 class_name UnitData
 extends Resource
 
+## Reusable Inspector-authored defaults for a unit type.
+## Unit copies these into runtime state; shared resources do not store individual unit health.
+
+
 @export_group("Identity")
 ## Label for this unit's role. Blast Pattern, not this text, enables area attacks.
 @export var type: String = ""

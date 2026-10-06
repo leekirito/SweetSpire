@@ -1,6 +1,10 @@
 class_name CenterObjectiveHighlight
 extends Node2D
 
+## Cosmetic shader diamonds for the four objective cells.
+## VictoryManager owns occupation and scoring.
+
+
 const HIGHLIGHT_SHADER: Shader = preload("res://assets/Shader/center_objective.gdshader")
 
 @export_group("Center Highlight")

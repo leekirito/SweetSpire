@@ -1,6 +1,10 @@
 class_name GameCommands
 extends RefCounted
 
+## Shared authoritative command dispatcher using catalog IDs and plain cell arrays.
+## Calls normal MatchManager rules after validating command shape.
+
+
 ## Whitelist and type-check before calling any gameplay entry point.
 static func execute(game: MatchManager, seat: int, command: Dictionary) -> bool:
 	if game.current_phase != MatchManager.Phase.PLAYER_TURN or seat != game.active_player_id:

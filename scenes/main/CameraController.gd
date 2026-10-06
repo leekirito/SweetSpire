@@ -1,8 +1,13 @@
 class_name CameraController
 extends Camera2D
 
+## Local camera zoom, panning, and human-turn focus.
+## Skips bot turns and other LAN players when choosing a focus target.
+
+
 var zoom_tween: Tween
 var target_zoom: Vector2
+## Focus eligible local human turns; bot turns retain the human viewing perspective.
 @export var focus_active_player_on_turn: bool = true
 
 

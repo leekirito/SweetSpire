@@ -1,6 +1,10 @@
 class_name PlayerController
 extends Node2D
 
+## Turns local mouse input into selections and MatchManager requests.
+## Handles movement, attacks, caster aiming, and town/resource popups for the human viewer.
+
+
 
 # REFERENCES
 

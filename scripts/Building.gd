@@ -1,6 +1,10 @@
 class_name Building
 extends Area2D
 
+## A capturable town with levels, income, territory, and recruitment options.
+## Level changes notify MatchManager so territory and resource claims can be refreshed.
+
+
 
 # ============================================================
 # IDENTITY
@@ -31,6 +35,7 @@ var visual_tribe: TribeData = null
 # ============================================================
 
 # Radius 1 = 3x3 territory.
+## Square claim radius: 1 covers up to 3x3 cells. Town progression can increase it.
 @export var territory_radius: int = 1
 
 # Filled automatically by TerritoryManager.
@@ -50,6 +55,7 @@ var territory_cells: Array[Vector2i] = []
 # Empty means this town cannot be selected
 # as a starting town.
 
+## Tribes allowed to start here; an empty list excludes the town from starting selection.
 @export var allowed_starting_tribe_ids: Array[String] = []
 
 
@@ -57,8 +63,10 @@ var territory_cells: Array[Vector2i] = []
 # DATA
 # ============================================================
 
+## Shared town identity and neutral artwork.
 @export var data: BuildingData
 
+## Recruitable unit scenes, still subject to research, funds, and turn limits.
 @export var available_unit_types: Array[PackedScene] = [
 	preload("uid://kyhenfdpjtn"),
 	preload("uid://dw8n2deqnba4p"),
@@ -122,6 +130,7 @@ func increase_level() -> void:
 
 
 
+## Returns this level's EXP requirement, or zero at the maximum level.
 func get_exp_required() -> int:
 	if building_level >= 5:
 		return 0
@@ -131,6 +140,7 @@ func get_exp_required() -> int:
 		0
 	)
 	
+## Adds town EXP, resolves level-ups, and refreshes the segmented meter.
 func add_exp(amount: int) -> void:
 	if building_level >= 5:
 		return
@@ -307,6 +317,7 @@ func can_be_starting_base_for(
 # NEUTRAL
 # ============================================================
 
+## Clears ownership and restores neutral artwork.
 func make_neutral() -> void:
 
 	owner_id = -1
@@ -383,6 +394,7 @@ func apply_visual_theme(
 # CONQUER
 # ============================================================
 
+## Applies this player's ownership and tribe artwork to the town.
 func conquer(
 	player: PlayerState
 ) -> void:

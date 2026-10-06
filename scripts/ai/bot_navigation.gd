@@ -1,16 +1,23 @@
 class_name BotNavigation
 extends RefCounted
+
+## Known-map movement and routes including dock, boat, and landing states.
+## The normal gameplay rules still validate every submitted move.
+
 const DIRECTIONS := [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
 
+## Manhattan distance for strategic comparisons, not the unit's actual movement shape.
 static func distance(a: Vector2i, b: Vector2i) -> int:
 	return absi(a.x - b.x) + absi(a.y - b.y)
 
+## Checks observed units only; hidden blockers are left to authoritative validation.
 static func occupied(view: Dictionary, cell: Vector2i) -> bool:
 	for unit: Dictionary in view.units:
 		if unit.cell == cell:
 			return true
 	return false
 
+## Checks known terrain, climbing, and friendly-dock access for a hypothetical boat state.
 static func passable(view: Dictionary, unit: Dictionary, cell: Vector2i, from: Vector2i, boat: bool) -> bool:
 	if not view.tiles.has(cell):
 		return false
@@ -26,6 +33,7 @@ static func passable(view: Dictionary, unit: Dictionary, cell: Vector2i, from: V
 		return boat or (unit.water and not unit.boat) or (distance(from, cell) == 1 and structure.get("dock", false))
 	return unit.land and (not tile.mountain or BotObservation.has_tech(view, "climbing"))
 
+## Checks sampled path cells and diagonal corners using only known terrain.
 static func clear_path(view: Dictionary, unit: Dictionary, target: Vector2i, movement: bool) -> bool:
 	var start: Vector2i = unit.cell
 	var steps := maxi(absi(target.x - start.x), absi(target.y - start.y))
@@ -50,6 +58,7 @@ static func clear_path(view: Dictionary, unit: Dictionary, target: Vector2i, mov
 		previous = cell
 	return true
 
+## Finds known unoccupied destinations allowed by movement geometry and profile capabilities.
 static func moves(view: Dictionary, unit: Dictionary, profile: BotProfile) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
 	for offset: Vector2i in unit.move:
@@ -62,6 +71,7 @@ static func moves(view: Dictionary, unit: Dictionary, profile: BotProfile) -> Ar
 			result.append(cell)
 	return result
 
+## Finds visible attack cells allowed by shape, minimum distance, and clear-path rules.
 static func attacks(view: Dictionary, unit: Dictionary) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
 	for offset: Vector2i in unit.attack:

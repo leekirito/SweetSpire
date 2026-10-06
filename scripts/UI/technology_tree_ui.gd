@@ -2,6 +2,10 @@
 class_name TechnologyTreeUI
 extends Control
 
+## Displays research nodes, prerequisite connections, and purchase details.
+## Refreshes the viewing player's state and requests purchases through MatchManager.
+
+
 signal closed
 
 const TECH_PATHS := {
@@ -53,6 +57,7 @@ func _network_refresh() -> void:
 		_refresh_states()
 
 
+## Displays research for the viewer and refreshes affordability/unlock states.
 func open_for_player(player: PlayerState) -> void:
 	active_player = player
 	visible = true
@@ -79,6 +84,7 @@ func _bind_nodes() -> void:
 	queue_redraw()
 
 
+## Updates authored buttons from the player's research, prerequisites, and Sugar.
 func _refresh_states() -> void:
 	for technology_id: String in tech_nodes:
 		var button: Button = tech_nodes[technology_id]
@@ -136,6 +142,7 @@ func _update_card(technology: TechnologyData) -> void:
 		buy.text = "BUY FOR %d SUGAR" % technology.cost
 
 
+## Requests the chosen technology through MatchManager rather than granting it in UI code.
 func _purchase_selected() -> void:
 	if selected_technology == null or active_player == null:
 		return

@@ -1,11 +1,16 @@
 class_name CombatResolver
 extends RefCounted
 
+## Validates and resolves unit moves, attacks, area damage, and casualties.
+## Local combat uses presentation impact timing; LAN resolves rules independently of playback.
+
+
 const ATTACK_PRESENTATION: GDScript = preload("res://scripts/effects/attack_presentation.gd")
 const DEATH_FLING: GDScript = preload("res://scripts/effects/death_fling.gd")
 
 var attack_in_progress: bool = false
 
+## Validates ownership and remaining movement, commits the destination, then presents motion.
 func request_move(game: MatchManager, unit_id: int, target_cell: Vector2i) -> bool:
 	if attack_in_progress:
 		return false
@@ -30,6 +35,7 @@ func request_move(game: MatchManager, unit_id: int, target_cell: Vector2i) -> bo
 	return true
 
 
+## Resolves the target unit's cell and delegates to tile-based validation.
 func request_attack(game: MatchManager, attacker_id: int, target_id: int) -> bool:
 	var target: Unit = game.get_unit(target_id)
 	if target == null:
@@ -37,6 +43,8 @@ func request_attack(game: MatchManager, attacker_id: int, target_id: int) -> boo
 	return request_attack_at_cell(game, attacker_id, target.current_cell)
 
 
+## Validates targeting, consumes movement/attack, and resolves ordinary or area damage.
+## LAN applies state immediately; local combat waits for the presentation impact signal.
 func request_attack_at_cell(game: MatchManager, attacker_id: int, target_cell: Vector2i) -> bool:
 	if attack_in_progress:
 		return false
@@ -97,6 +105,7 @@ func request_attack_at_cell(game: MatchManager, attacker_id: int, target_cell: V
 	return true
 
 
+## Applies damage, removes casualties, and checks elimination; feedback respects the viewer's sight.
 func _on_attack_impact(
 	game: MatchManager,
 	targets: Array[Unit],
@@ -120,6 +129,7 @@ func _on_attack_impact(
 		game.evaluate_eliminations()
 
 
+## Creates decals only for affected cells visible to the human viewer.
 func _on_attack_decals_due(
 	game: MatchManager,
 	target_cells: Array[Vector2i],

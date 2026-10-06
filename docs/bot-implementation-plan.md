@@ -67,7 +67,7 @@ build and profiles.
 | bot_decision.gd | Deterministic ranking and bounded imperfect choices |
 
 `scripts/systems/game_commands.gd` dispatches validated commands to the existing
-game rules. `scripts/network/match_commands.gd` is the compatible LAN wrapper.
+game rules. LAN calls this same dispatcher directly.
 Bot LAN commands use the same ordered execution and snapshot publication as
 human commands. Guests cannot create controllers or submit actions for bot seats.
 

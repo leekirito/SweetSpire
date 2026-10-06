@@ -1,6 +1,10 @@
 class_name BaseState
 extends Node
 
+## Enter, exit, and update contract for StateMachine children.
+## Subclasses request transitions instead of replacing themselves during a callback.
+
+
 signal transition(new_state_name: StringName)
 
 @export var scene_resource: PackedScene

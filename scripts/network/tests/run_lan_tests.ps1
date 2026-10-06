@@ -23,11 +23,15 @@ function Start-TestProcess([string]$Scene, [string]$Label, [string[]]$UserArgs =
 function Wait-TestProcess([System.Diagnostics.Process]$Child, [string]$Label) {
     if (-not $Child.WaitForExit(150000)) { throw "$Label timed out; see $logRoot" }
     if ($Child.ExitCode -ne 0) { throw "$Label failed; see $logRoot" }
+    $log = Get-Content (Join-Path $logRoot ($Label + '.log')) -Raw
+    if ($log -match 'SCRIPT ERROR:|Assertion failed|[1-9][0-9]* failures|Range regression failures: [1-9]') {
+        throw "$Label reported script errors or failed checks; see $logRoot"
+    }
     Write-Output "$Label passed"
 }
 
 try {
-    foreach ($suite in @('LanLobbyTest', 'LanUITest', 'LanRulesTest')) {
+    foreach ($suite in @('LanLobbyTest', 'LanUITest', 'LanRulesTest', 'KnowledgeRegressionTest', 'TurnClockTest')) {
         $child = Start-TestProcess "res://scenes/network/tests/$suite.tscn" $suite
         Wait-TestProcess $child $suite
     }
@@ -42,9 +46,10 @@ try {
         Start-Sleep -Milliseconds 500
     }
     for ($index = 0; $index -lt $peers.Count; $index++) {
-        Wait-TestProcess $peers[$index] "LAN process $($index + 1)"
+        $label = if ($index -eq 0) { 'host' } else { "guest-$($index + 1)" }
+        Wait-TestProcess $peers[$index] $label
     }
-    foreach ($suite in @('hotseat', 'selection', 'fog', 'structure', 'caster', 'map_generation')) {
+    foreach ($suite in @('hotseat', 'selection', 'fog', 'structure', 'caster', 'map_generation', 'range', 'territory', 'shore_edge', 'mountain_movement')) {
         $child = Start-TestProcess "res://scenes/${suite}_regression_test.tscn" $suite
         Wait-TestProcess $child $suite
     }

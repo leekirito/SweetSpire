@@ -1,4 +1,9 @@
 extends Node
+
+## Persistent LAN hosting, discovery, lobby, command, and reconnect lifecycle.
+## The host owns simulation; guests request actions and receive filtered snapshots.
+## Seat IDs, peer IDs, and command sequence numbers have separate roles.
+
 ## Transport/session lifecycle only. Rules and state codecs live beside this file.
 signal changed
 signal notice(message: String)
@@ -14,7 +19,8 @@ var local_player_id := -1
 var seats: Array = []
 var capacity := 8
 var room_name := ""
-var match_mode: String = GameSession.FOG_OF_WAR
+var match_mode: String = GameSession.REGULAR
+var turn_duration: int = 120
 var address := ""
 var port := 0
 var display_name := ""
@@ -52,18 +58,22 @@ var private_room := false
 var join_password := ""
 var discovery_available := false
 
+## Reports an active network lifecycle, including an ended session still owning a match scene.
 func active() -> bool:
 	return state in ["loading", "playing", "reconnecting"] or (state == "ended" and is_instance_valid(game))
 
+## Reports whether this device is a guest in the active network lifecycle.
 func client() -> bool:
 	return active() and not hosting
 
+## Checks local human-turn access, pending commands, and disconnect pauses.
 func can_act() -> bool:
 	if not active():
 		var local_game := get_tree().current_scene.get_node_or_null("MatchManager") if get_tree().current_scene != null else null
 		return local_game == null or local_game.can_human_act()
 	return (state == "playing" and not paused_for_disconnect and not pending_command and is_instance_valid(game) and game.active_player_id == local_player_id and game.can_human_act())
 
+## Combines protocol/build versions with catalog/rule fingerprints before joining or hosting.
 func prepare_compatibility() -> bool:
 	var generator := BiomeMapGenerator.new()
 	if not generator.prepare():
@@ -77,7 +87,8 @@ func prepare_compatibility() -> bool:
 	compatibility = "%d/%s/%s/%s" % [SETTINGS.protocol_version, SETTINGS.build_version, str(sample.catalog), LanCatalog.rules_signature()]
 	return true
 
-func host_room(player_name: String, title: String, count: int, tribe: String, custom_port: int = 0, mode: String = GameSession.FOG_OF_WAR) -> bool:
+## Creates an ENet host and initial seat; automatic hosting can fall back to another open port.
+func host_room(player_name: String, title: String, count: int, tribe: String, custom_port: int = 0, mode: String = GameSession.REGULAR) -> bool:
 	leave()
 	if not prepare_compatibility():
 		return false
@@ -95,7 +106,7 @@ func host_room(player_name: String, title: String, count: int, tribe: String, cu
 	hosting = true
 	state = "lobby"
 	local_player_id = 1
-	match_mode = mode if mode in GameSession.MATCH_MODES else GameSession.FOG_OF_WAR
+	match_mode = mode if mode in GameSession.MATCH_MODES else GameSession.REGULAR
 	capacity = clampi(count, 2, SETTINGS.max_players)
 	room_name = title.strip_edges().left(32)
 	if room_name.is_empty():
@@ -107,6 +118,7 @@ func host_room(player_name: String, title: String, count: int, tribe: String, cu
 	changed.emit()
 	return true
 
+## Stores endpoint and player choices, then begins the connection handshake.
 func join_room(host_address: String, player_name: String, tribe: String, custom_port: int = 0, password: String = "") -> bool:
 	leave()
 	var endpoint := LanAddress.parse(host_address, custom_port if custom_port > 0 else SETTINGS.game_port)
@@ -140,6 +152,7 @@ func _connect() -> bool:
 func _seat(id: int, title: String, tribe: String) -> Dictionary:
 	return {"kind": "human", "profile": "balanced", "id": id, "name": title.strip_edges().left(24) if not title.strip_edges().is_empty() else "Player %d" % id, "tribe": tribe if LanCatalog.TRIBES.has(tribe) else "saba", "ready": false, "connected": true}
 
+## Closes transport/discovery and resets session state for safe return to local setup.
 func leave() -> void:
 	if hosting and peer != null:
 		_broadcast("closed", {"message": "The host closed the game."})
@@ -155,7 +168,8 @@ func leave() -> void:
 	room_access.configure(false)
 	join_password = ""
 	state = "offline"
-	match_mode = GameSession.FOG_OF_WAR
+	match_mode = GameSession.REGULAR
+	turn_duration = 120
 	hosting = false
 	game = null
 	local_player_id = -1
@@ -167,7 +181,7 @@ func leave() -> void:
 	_peer_budgets.clear()
 	_handshake_deadlines.clear()
 	_rejected.clear()
-	snapshot_codec.memories.clear()
+	snapshot_codec = MatchSnapshot.new()
 	resource_cells.clear()
 	bootstrap.clear()
 	rooms.clear()
@@ -199,17 +213,23 @@ func _broadcast(kind: String, data: Dictionary = {}) -> void:
 		_send(remote, kind, data)
 
 func _roster() -> Dictionary:
-	return {"seats": seats, "capacity": capacity, "room": room_name, "mode": match_mode, "private": private_room, "paused": paused_for_disconnect, "loaded": loaded.keys()}
+	return {"seats": seats, "capacity": capacity, "room": room_name, "mode": match_mode, "turn_duration": turn_duration, "private": private_room, "paused": paused_for_disconnect, "loaded": loaded.keys()}
 
-func configure_room(title: String, count: int, mode: String, is_private: bool, password: String = "") -> bool:
+## Applies host-only lobby settings and resets human readiness when rules change.
+func configure_room(title: String, count: int, mode: String, is_private: bool, password: String = "", seconds: int = 0) -> bool:
+	if seconds == 0:
+		seconds = turn_duration
+	if seconds not in GameSession.TURN_DURATIONS:
+		return false
 	if not hosting or state != "lobby" or count < maxi(2, seats.size()) or count > SETTINGS.max_players or mode not in GameSession.MATCH_MODES:
 		return false
-	var rules_changed := capacity != count or match_mode != mode or private_room != is_private
+	var rules_changed := capacity != count or match_mode != mode or private_room != is_private or turn_duration != seconds
 	room_name = title.strip_edges().left(32)
 	if room_name.is_empty():
 		room_name = "Sweetspire game"
 	capacity = count
 	match_mode = mode
+	turn_duration = seconds
 	if private_room != is_private or (is_private and password != room_access.password):
 		room_access.configure(is_private, password.left(64))
 	private_room = is_private
@@ -234,6 +254,7 @@ func _set_name(id: int, title: String) -> void:
 			row.name = title.strip_edges().left(24) if not title.strip_edges().is_empty() else "Player %d" % id
 	_publish_lobby()
 
+## Removes a non-host human lobby seat and invalidates its reconnect token.
 func kick_player(seat: int) -> bool:
 	if not hosting or state != "lobby" or seat == local_player_id:
 		return false
@@ -257,6 +278,7 @@ func _publish_lobby() -> void:
 	_broadcast("roster", _roster())
 	changed.emit()
 
+## Submits the local human's tribe and ready state.
 func choose(tribe: String, ready: bool) -> void:
 	if state != "lobby" or not LanCatalog.TRIBES.has(tribe):
 		return
@@ -272,6 +294,7 @@ func _set_choice(id: int, tribe: String, ready: bool) -> void:
 			row.tribe = tribe
 	_publish_lobby()
 
+## Requires a host lobby with at least two connected ready seats; bots count as ready.
 func can_start() -> bool:
 	if not hosting or state != "lobby" or seats.size() < 2:
 		return false
@@ -280,6 +303,7 @@ func can_start() -> bool:
 			return false
 	return true
 
+## Generates the host map, broadcasts bootstrap data, installs players, and opens Main.
 func start_match() -> bool:
 	if not can_start():
 		return false
@@ -313,6 +337,7 @@ func start_match() -> bool:
 func _install_players() -> void:
 	GameSession.clear_players()
 	GameSession.match_mode = match_mode
+	GameSession.turn_duration = turn_duration
 	for row: Dictionary in seats:
 		var player := PlayerState.new()
 		player.player_id = int(row.id)
@@ -328,6 +353,7 @@ func _open_match() -> void:
 	get_tree().change_scene_to_file("res://scenes/main/Main.tscn")
 	changed.emit()
 
+## Binds the new MatchManager and reports this device's loading completion.
 func attach_match(value: MatchManager) -> void:
 	game = value
 	if hosting:
@@ -339,6 +365,7 @@ func attach_match(value: MatchManager) -> void:
 			_apply_snapshot(pending_snapshot)
 			pending_snapshot.clear()
 
+## Starts/resumes when required human peers load; bots have no network loading handshake.
 func _try_begin() -> void:
 	if not hosting or not is_instance_valid(game):
 		return
@@ -352,11 +379,14 @@ func _try_begin() -> void:
 	state = "playing"
 	paused_for_disconnect = false
 	game.current_phase = MatchManager.Phase.PLAYER_TURN if game.winner_id == -1 else MatchManager.Phase.GAME_OVER
+	if game.turn_clock != null:
+		game.turn_clock.start_turn()
 	revision += 1
 	_publish_lobby()
 	publish_state()
 	game.turn_started.emit(game.active_player_id, game.current_round)
 
+## Submits one local-human command with a sequence number; guest acceptance is asynchronous.
 func submit(command: Dictionary) -> bool:
 	if not can_act():
 		return false
@@ -370,18 +400,20 @@ func submit(command: Dictionary) -> bool:
 	changed.emit()
 	return true
 
+## Rejects duplicate sequences and paused state, runs rules, and publishes accepted changes.
 func _execute(seat: int, sequence: int, command: Dictionary) -> bool:
 	if sequence <= int(last_commands.get(seat, 0)) or state != "playing" or paused_for_disconnect or not is_instance_valid(game):
 		return false
 	last_commands[seat] = sequence
 	executing = true
-	var accepted := MatchCommands.execute(game, seat, command)
+	var accepted := GameCommands.execute(game, seat, command)
 	executing = false
 	if accepted:
 		revision += 1
 		publish_state()
 	return accepted
 
+## Sends each loaded peer its filtered snapshot and refreshes host presentation.
 func publish_state() -> void:
 	if not hosting or not is_instance_valid(game):
 		return
@@ -391,6 +423,11 @@ func publish_state() -> void:
 	game.update_ui()
 	game.fog_of_war.refresh(true)
 	changed.emit()
+
+## Frequent small clock updates avoid retransmitting entities every second.
+func broadcast_clock() -> void:
+	if hosting and is_instance_valid(game) and game.turn_clock != null:
+		_broadcast("clock", game.turn_clock.capture())
 
 func _apply_snapshot(data: Dictionary) -> void:
 	if int(data.get("revision", -1)) < revision:
@@ -403,6 +440,7 @@ func _apply_snapshot(data: Dictionary) -> void:
 	MatchSnapshot.apply(game, data)
 	changed.emit()
 
+## Releases a lobby seat or pauses an ongoing match for human reconnection.
 func _peer_left(remote: int) -> void:
 	room_access.pending.erase(remote)
 	_peer_budgets.erase(remote)
@@ -429,6 +467,7 @@ func _peer_left(remote: int) -> void:
 			_disconnect_elapsed = 0.0
 	_publish_lobby()
 
+## Dispatches messages according to sender identity and host/guest role.
 func _receive(sender: int, kind: String, data: Dictionary) -> void:
 	if hosting:
 		if kind == "auth":
@@ -495,6 +534,9 @@ func _receive(sender: int, kind: String, data: Dictionary) -> void:
 				_install_players()
 				GameSession.network_map = bootstrap
 				_open_match()
+			"clock":
+				if is_instance_valid(game) and game.turn_clock != null:
+					game.turn_clock.apply_remote(data)
 			"snapshot":
 				_apply_snapshot(data)
 			"result":
@@ -518,8 +560,10 @@ func _receive(sender: int, kind: String, data: Dictionary) -> void:
 
 func _set_roster(data: Dictionary) -> void:
 	private_room = bool(data.get("private", false))
-	match_mode = str(data.get("mode", GameSession.FOG_OF_WAR))
+	match_mode = str(data.get("mode", GameSession.REGULAR))
 	GameSession.match_mode = match_mode
+	GameSession.turn_duration = int(data.get("turn_duration", 120))
+	turn_duration = GameSession.turn_duration
 	seats = data.seats
 	capacity = int(data.capacity)
 	room_name = data.room
@@ -529,6 +573,7 @@ func _set_roster(data: Dictionary) -> void:
 		loaded[int(id)] = true
 	changed.emit()
 
+## Checks compatibility/access before assigning a seat or restoring a reconnect-token seat.
 func _accept(remote: int, data: Dictionary, authenticated: bool = false) -> void:
 	if peer_seats.has(remote):
 		return
@@ -575,6 +620,7 @@ func _reject(remote: int, message: String) -> void:
 	_send(remote, "reject", {"message": message})
 	_rejected[remote] = Time.get_ticks_msec() + 500
 
+## Applies a per-peer packet budget to bound excessive message processing.
 func _allow_packet(remote: int) -> bool:
 	var now := Time.get_ticks_msec()
 	var budget: Dictionary = _peer_budgets.get(remote, {"at": now, "remaining": 40.0})
@@ -703,6 +749,7 @@ func _setup_discovery(as_host: bool) -> void:
 		return
 	_discovery_elapsed = SETTINGS.discovery_interval
 
+## Starts nearby discovery for a guest browser.
 func scan_rooms() -> void:
 	if not hosting:
 		_setup_discovery(false)
@@ -739,11 +786,13 @@ func _process_discovery(delta: float) -> void:
 		if Time.get_ticks_msec() - int(rooms[key].seen) > int(SETTINGS.room_expiry * 1000):
 			rooms.erase(key)
 			rooms_changed.emit()
+## Uses ordered host execution and snapshot publication for an authorized bot command.
 func execute_bot(seat: int, command: Dictionary) -> bool:
 	if not hosting or not is_instance_valid(game) or not game.bot_executing or not game.bot_can_act(seat):
 		return false
 	return _execute(seat, int(last_commands.get(seat, 0)) + 1, command)
 
+## Adds a ready bot to a free host-lobby seat and resets human readiness.
 func add_bot() -> bool:
 	if not hosting or state != "lobby" or seats.size() >= capacity:
 		return false
@@ -761,6 +810,7 @@ func add_bot() -> bool:
 	_bot_roster_changed()
 	return true
 
+## Validates bot profile/tribe and changes its host-managed lobby settings.
 func edit_bot(id: int, title: String, tribe: String, profile_id: String) -> bool:
 	if not hosting or state != "lobby" or not LanCatalog.TRIBES.has(tribe) or not BotCatalog.PROFILES.has(profile_id):
 		return false
@@ -773,6 +823,7 @@ func edit_bot(id: int, title: String, tribe: String, profile_id: String) -> bool
 			return true
 	return false
 
+## Frees a bot seat in the lobby; it cannot remove or replace a human.
 func remove_bot(id: int) -> bool:
 	if not hosting or state != "lobby":
 		return false

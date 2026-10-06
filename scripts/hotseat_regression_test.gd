@@ -56,11 +56,16 @@ func run() -> void:
 	menu.set_hotseat_player_count(8)
 	check(menu.prepare_hotseat_session(), "Returning to eight restores chosen roster")
 	var mode_picker: OptionButton = menu.get_node("HotseatSetup/ResponsiveLayout/Page/ModeRow/MatchMode")
-	check(mode_picker.item_count == 2 and mode_picker.selected == 0, "Setup offers exactly two modes, defaulting to Fog of War")
+	check(mode_picker.item_count == 2 and mode_picker.selected == 1, "Setup offers exactly two modes, defaulting to Regular")
 	mode_picker.select(1)
 	check(menu.prepare_hotseat_session() and GameSession.match_mode == GameSession.REGULAR, "Hotseat setup applies Regular")
 	mode_picker.select(0)
 	check(menu.prepare_hotseat_session() and GameSession.match_mode == GameSession.FOG_OF_WAR, "Hotseat setup applies Fog of War")
+	var timer_picker: OptionButton = menu.get_node("HotseatSetup/ResponsiveLayout/Page/ModeRow/TurnTime")
+	check(timer_picker.item_count == 3 and timer_picker.get_selected_id() == 120, "Hotseat timer defaults to two minutes")
+	for index in [1, 2, 0]:
+		timer_picker.select(index)
+		check(menu.prepare_hotseat_session() and GameSession.turn_duration == GameSession.TURN_DURATIONS[index], "Hotseat applies chosen timer")
 	menu.queue_free()
 	await get_tree().process_frame
 	var scene = load("res://scenes/main/Main.tscn").instantiate()
@@ -151,6 +156,6 @@ func run() -> void:
 	await get_tree().process_frame
 	GameSession.clear_players()
 	check(not GameSession.hotseat_mode, "Session reset does not leak hotseat mode")
-	check(GameSession.match_mode == GameSession.FOG_OF_WAR, "Session reset restores default visibility mode")
+	check(GameSession.match_mode == GameSession.REGULAR, "Session reset restores default visibility mode")
 	print("HOTSEAT REGRESSION: %d checks, %d failures" % [checks, failures])
 	get_tree().quit(0 if failures == 0 else 1)

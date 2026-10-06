@@ -1,7 +1,12 @@
 class_name TurnManager
 extends RefCounted
 
+## Advances surviving seats and resolves captures, victory, and income when a round ends.
+## Human Hotseat turns can pause behind the pass-the-device cover.
 
+
+
+## Rejects completion during combat or logical movement animation.
 func request_end_turn(game: MatchManager) -> bool:
 	if game.current_phase != MatchManager.Phase.PLAYER_TURN:
 		return false
@@ -14,6 +19,7 @@ func request_end_turn(game: MatchManager) -> bool:
 	return true
 
 
+## Selects the next surviving seat and resolves captures, victory, and income when the round wraps.
 func end_turn(game: MatchManager) -> void:
 	if game.players.is_empty():
 		return
@@ -55,6 +61,7 @@ func end_turn(game: MatchManager) -> void:
 		start_player_turn(game)
 
 
+## Updates human perspective when applicable, resets units, and emits turn_started.
 func start_player_turn(game: MatchManager) -> void:
 	if not game.get_active_player().is_bot():
 		game.human_viewer_id = game.active_player_id
@@ -65,6 +72,7 @@ func start_player_turn(game: MatchManager) -> void:
 	game.turn_started.emit(game.active_player_id, game.current_round)
 
 
+## Restores movement and attack availability for the incoming player's units.
 func reset_player_units(game: MatchManager, player_id: int) -> void:
 	for unit: Unit in game.units.values():
 		if unit.owner_id == player_id:
@@ -72,6 +80,7 @@ func reset_player_units(game: MatchManager, player_id: int) -> void:
 			unit.has_attacked = false
 
 
+## Checks logical animations that must settle before actions or turn completion.
 func any_unit_animating(game: MatchManager) -> bool:
 	for unit: Unit in game.units.values():
 		if unit.is_animating:

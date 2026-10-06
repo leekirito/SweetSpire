@@ -1,6 +1,12 @@
 class_name MapBootstrap
 extends Node2D
 
+## Assembles Main's map before children cache terrain.
+## Guests use host-provided data; local/host setup validates or generates a manifest.
+## Setup errors are reported instead of silently generating a different map.
+
+
+## Assemble the generated map before child nodes initialize their terrain caches.
 @export var enabled: bool = true
 var manifest: Dictionary = {}
 var setup_error: String = ""
@@ -43,6 +49,7 @@ func _enter_tree() -> void:
 		return
 	_apply_map(assembled)
 
+## Replaces authored terrain/entities with the validated assembly before child caches initialize.
 func _apply_map(assembled: Dictionary) -> void:
 	var root := self
 	var game := root.get_node("MatchManager") as MatchManager
@@ -78,6 +85,7 @@ func _apply_map(assembled: Dictionary) -> void:
 	game.map_manifest = manifest.duplicate(true)
 	GameSession.map_manifest = manifest.duplicate(true)
 
+## Records the error on bootstrap and MatchManager for the setup-failure overlay.
 func _fail(message: String) -> void:
 	setup_error = message
 	get_node("MatchManager").map_setup_error = message
